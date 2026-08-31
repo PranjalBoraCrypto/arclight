@@ -4,7 +4,7 @@ A read-only lens on [Arcus](https://app.arcus.xyz) perpetuals. Paste any EVM
 wallet address and get its whole trading story explained in plain English —
 positions, profit, funding, archetype, score and badges.
 
-**Live:** _(add your Vercel URL here)_
+**Live:** https://arclight-five.vercel.app
 
 ## How it works
 
@@ -36,7 +36,7 @@ The first lines of the `<script>` block in `index.html`:
 ```js
 const SITE_NAME = "Arclight";
 const REF_LINK  = "https://app.arcus.xyz/ref/PRANJAL";
-const SITE_URL  = "";   // set to your domain once deployed
+const SITE_URL  = "https://arclight-five.vercel.app";
 ```
 
 ## Deploying
