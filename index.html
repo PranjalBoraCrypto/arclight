@@ -647,7 +647,7 @@ td.r,th.r{text-align:right}
 .rrow .rbody{min-width:0}
 .rrow .rtop{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:4px}
 .rrow .rad{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-2)}
-.rrow .rv{font-family:"Archivo";font-weight:700;font-size:13.5px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.rrow .rval{font-family:"Archivo";font-weight:700;font-size:14px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;flex:none}
 .rbar{height:8px;border-radius:100px;background:var(--surface-3);overflow:hidden}
 .rbar i{display:block;height:100%;border-radius:100px;width:0;
   background:linear-gradient(90deg,var(--brand-dim),var(--brand));transition:width .85s cubic-bezier(.2,.85,.3,1)}
@@ -1764,6 +1764,9 @@ const io = "IntersectionObserver" in window ? new IntersectionObserver((es)=>{
 function reveal(scope,stagger){
   const nodes=$$(".rv:not(.in)",scope||document);
   nodes.forEach((n,i)=>{ n.style.animationDelay=((stagger==null?55:stagger)*Math.min(i,10))+"ms"; io?io.observe(n):n.classList.add("in"); });
+  /* if an observer never fires — offscreen container, hidden page, odd browser —
+     show the content anyway rather than leaving it invisible */
+  setTimeout(()=>nodes.forEach(n=>{ if(!n.classList.contains("in")&&n.isConnected&&n.offsetParent!==null) n.classList.add("in"); }),1600);
 }
 
 /* ---------- count-up ---------- */
@@ -2527,7 +2530,7 @@ function renderLeaders(){
           <span class="rk">${i+4}</span>
           <div class="rbody">
             <div class="rtop"><span class="rad">${shortA(r2.e.address)}</span>
-              <span class="rv ${lbS==="pnl"?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span></div>
+              <span class="rval ${lbS==="pnl"?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span></div>
             <div class="rbar${r2.v<0?" neg":""}"><i data-w="${clamp(Math.abs(r2.v)/mx*100,1.5,100).toFixed(1)}"></i></div>
             <div class="rsub"><span>${LBM[lbS][0]}</span><span>${other}</span></div>
           </div></div>`;}).join("")}</div>`;
