@@ -391,8 +391,10 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .bar{display:grid;grid-template-columns:98px 1fr 38px;align-items:center;gap:11px}
 .bar .lb{font-size:12.5px;color:var(--ink-2)}
 .bar .tr{height:7px;border-radius:100px;background:var(--surface-3);overflow:hidden}
-.bar .fl{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--brand-dim),var(--brand));
-  width:0;transition:width 1.2s cubic-bezier(.2,.8,.25,1)}
+.bar .fl{display:block;height:100%;border-radius:100px;
+  background:linear-gradient(90deg,var(--b0,var(--brand-dim)),var(--b1,var(--brand)));
+  width:0;transition:width 1.15s cubic-bezier(.2,.85,.25,1);
+  box-shadow:0 0 14px -4px var(--b1,var(--brand))}
 .bar .nm{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-3);text-align:right}
 
 /* ================= NARRATIVE ================= */
@@ -534,6 +536,100 @@ td.r,th.r{text-align:right}
 .trow .px{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
 .trow .ad{font-family:"JetBrains Mono",monospace;color:var(--ink-3);font-size:11px}
 .trow .ad:hover{color:var(--brand)}
+
+/* ================= LEARN: INTERACTIVE ================= */
+.lhero{position:relative;padding:52px 0 10px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.lhero h1{max-width:15ch}
+.lhero .lede{max-width:52ch;color:var(--ink-2);font-size:clamp(15.5px,2vw,18px);line-height:1.5}
+.lhero .scrollcue{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:8px;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+.lhero .scrollcue i{display:block;width:1px;height:26px;background:linear-gradient(var(--brand),transparent);
+  animation:cueDrop 1.8s ease-in-out infinite}
+@keyframes cueDrop{0%,100%{opacity:.25;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+
+.lab{border:1px solid var(--rule);border-radius:22px;overflow:hidden;background:var(--surface);position:relative}
+.lab .lh{display:flex;align-items:flex-start;gap:14px;padding:20px 22px 0}
+.lab .lh .n{width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;
+  background:var(--surface-3);color:var(--brand);font-family:"Archivo";font-weight:800;font-size:14px}
+.lab .lh h3{font-size:19px}
+.lab .lh p{color:var(--ink-2);font-size:14px;margin-top:5px;line-height:1.5;max-width:56ch}
+.lab .lb2{padding:20px 22px 22px}
+
+.pg{display:grid;gap:18px}
+.pgctl{display:flex;flex-direction:column;gap:16px}
+.pgrow{display:flex;flex-direction:column;gap:8px}
+.pgrow .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pgrow .top span{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3)}
+.pgrow .top b{font-family:"Archivo";font-weight:700;font-size:17px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+input[type=range].sl{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:100px;
+  background:var(--surface-3);outline:none;cursor:pointer}
+input[type=range].sl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+  background:var(--brand);cursor:grab;border:3px solid var(--surface);
+  box-shadow:0 0 0 3px var(--brand-glow),0 4px 12px -3px rgba(0,0,0,.6);transition:transform .18s}
+input[type=range].sl:active::-webkit-slider-thumb{transform:scale(1.18);cursor:grabbing}
+input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid var(--surface);border-radius:50%;
+  background:var(--brand);cursor:grab}
+.sideseg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sideseg button{padding:13px 10px;border-radius:13px;border:1px solid var(--rule);background:var(--surface-2);
+  font-weight:700;font-size:14.5px;color:var(--ink-3);transition:.24s cubic-bezier(.2,1.2,.4,1);
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.sideseg button svg{width:16px;height:16px;flex:none}
+.sideseg button span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+.sideseg button i{font-style:normal;font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:500;
+  letter-spacing:.06em;opacity:.62;margin-top:3px}
+.sideseg button:hover{color:var(--ink);transform:translateY(-2px)}
+.sideseg button.on.long{background:var(--gain-bg);border-color:var(--gain);color:var(--gain)}
+.sideseg button.on.short{background:var(--loss-bg);border-color:var(--loss);color:var(--loss)}
+
+.pgout{border-radius:18px;border:1px solid var(--rule-2);padding:20px;display:flex;flex-direction:column;gap:14px;
+  background:linear-gradient(160deg,var(--surface-2),var(--surface));position:relative;overflow:hidden}
+.pgout::before{content:"";position:absolute;inset:0;transition:background .5s;
+  background:radial-gradient(420px circle at 50% -10%,var(--pgglow,transparent),transparent 65%)}
+.pgout>*{position:relative}
+.pgout .big{font-family:"Archivo";font-weight:800;font-size:clamp(32px,6vw,46px);letter-spacing:-.04em;
+  line-height:1;font-variant-numeric:tabular-nums}
+.pgout .cap{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3)}
+.pgout .say{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.pgout .say b{color:var(--ink)}
+.liqtrack{position:relative;height:38px;border-radius:11px;background:var(--surface-3);overflow:hidden}
+.liqtrack .zone{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,var(--loss),transparent);opacity:.30}
+.liqtrack .entry{position:absolute;top:0;bottom:0;width:2px;background:var(--ink-3);opacity:.6}
+.liqtrack .now{position:absolute;top:0;bottom:0;width:3px;border-radius:2px;background:var(--brand);
+  transition:left .28s cubic-bezier(.2,.9,.3,1);box-shadow:0 0 12px var(--brand)}
+.liqtrack .lbl{position:absolute;bottom:4px;font-family:"JetBrains Mono",monospace;font-size:9.5px;
+  color:var(--ink-3);letter-spacing:.06em}
+.warn{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:12px;font-size:13.5px;line-height:1.45}
+.warn svg{width:16px;height:16px;flex:none}
+.warn.ok{background:var(--gain-bg);color:var(--gain)}
+.warn.mid{background:rgba(217,164,65,.13);color:var(--warn)}
+.warn.bad{background:var(--loss-bg);color:var(--loss)}
+
+.seesaw{position:relative;height:150px;display:grid;place-items:center;overflow:hidden}
+.seesaw .beamwrap{position:relative;width:min(100%,340px)}
+.seesaw .beam{width:100%;height:9px;border-radius:100px;background:var(--rule-2);position:relative;
+  transform-origin:50% 50%;transition:transform 1s cubic-bezier(.3,.9,.3,1)}
+.seesaw .side{position:absolute;top:-52px;width:104px;text-align:center}
+.seesaw .side.l{left:-10px} .seesaw .side.r{right:-10px}
+.seesaw .side b{display:block;font-family:"Archivo";font-weight:800;font-size:15px;letter-spacing:-.02em}
+.seesaw .side s{text-decoration:none;display:block;font-family:"JetBrains Mono",monospace;font-size:10px;
+  color:var(--ink-3);margin-top:2px}
+.seesaw .pivot{position:absolute;left:50%;top:8px;transform:translateX(-50%);
+  width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;
+  border-top:26px solid var(--surface-3)}
+
+.clocks{display:grid;gap:14px}
+.clockcard{border-radius:16px;border:1px solid var(--rule);padding:17px;background:var(--surface-2);
+  display:flex;align-items:center;gap:14px;transition:border-color .3s,transform .3s}
+.clockcard:hover{transform:translateY(-3px);border-color:var(--rule-2)}
+.clockcard .dial{width:54px;height:54px;flex:none}
+.clockcard .dial svg{width:100%;height:100%}
+.clockcard .who{font-family:"Archivo";font-weight:700;font-size:15px}
+.clockcard .st{font-family:"JetBrains Mono",monospace;font-size:11px;margin-top:3px}
+.clockcard .st.open{color:var(--gain)} .clockcard .st.shut{color:var(--ink-3)}
+.clockcard .tm{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums}
 
 /* ================= LEARN PAGE ================= */
 .learn-hero{padding:60px 0 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
@@ -876,6 +972,8 @@ td.r,th.r{text-align:right}
   .badges{grid-template-columns:repeat(6,1fr)}
   .watch{grid-template-columns:repeat(4,1fr)}
   .cast{grid-template-columns:1fr 1.15fr}
+  .pg{grid-template-columns:1fr 1fr}
+  .clocks{grid-template-columns:1fr 1fr}
   .ehero .searchbox{max-width:600px}
   .podium{grid-template-columns:repeat(3,1fr)}
   .plays{grid-template-columns:repeat(4,1fr)}
@@ -901,6 +999,12 @@ td.r,th.r{text-align:right}
   .badges{grid-template-columns:repeat(3,1fr)}
   .watch{grid-template-columns:1fr}
   .cast{grid-template-columns:1fr}
+  .pg{grid-template-columns:1fr}
+  .clocks{grid-template-columns:1fr}
+  .lab .lh{padding:16px 16px 0;gap:11px}
+  .lab .lb2{padding:16px}
+  .pgout{padding:16px}
+  .seesaw{height:136px}
   .castgrid{grid-template-columns:repeat(4,1fr);gap:8px}
   .castcell{border-radius:13px;padding:5px}
   .castbig{padding:22px 16px;border-radius:20px}
@@ -1584,6 +1688,7 @@ function usd(v,opt){
   if(a>=1e6) return sign+"$"+(a/1e6).toFixed(a>=1e7?1:2)+"M";
   if(a>=1e4) return sign+"$"+(a/1e3).toFixed(a>=1e5?0:1)+"K";
   if(a>=1)   return sign+"$"+a.toLocaleString("en-US",{maximumFractionDigits:a>=100?0:2});
+  if(a===0)  return "$0";
   return sign+"$"+a.toFixed(a>=0.01?2:4);
 }
 function usdExact(v){const s=v<0?"-":"";return s+"$"+Math.abs(v).toLocaleString("en-US",{maximumFractionDigits:2,minimumFractionDigits:2});}
@@ -1759,14 +1864,25 @@ const safe = (p,fb)=>p.then(v=>v).catch(()=>fb);
 
 /* ---------- reveal on scroll ---------- */
 const io = "IntersectionObserver" in window ? new IntersectionObserver((es)=>{
-  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-},{rootMargin:"0px 0px -8% 0px",threshold:.05}) : null;
-function reveal(scope,stagger){
+  /* stagger whatever entered together, so each section plays as it arrives */
+  const hits=es.filter(e=>e.isIntersecting)
+               .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+  hits.forEach((e,i)=>{
+    e.target.style.animationDelay=(Math.min(i,8)*70)+"ms";
+    e.target.classList.add("in");
+    io.unobserve(e.target);
+  });
+},{rootMargin:"0px 0px -14% 0px",threshold:.08}) : null;
+function reveal(scope){
   const nodes=$$(".rv:not(.in)",scope||document);
-  nodes.forEach((n,i)=>{ n.style.animationDelay=((stagger==null?55:stagger)*Math.min(i,10))+"ms"; io?io.observe(n):n.classList.add("in"); });
-  /* if an observer never fires — offscreen container, hidden page, odd browser —
-     show the content anyway rather than leaving it invisible */
-  setTimeout(()=>nodes.forEach(n=>{ if(!n.classList.contains("in")&&n.isConnected&&n.offsetParent!==null) n.classList.add("in"); }),1600);
+  nodes.forEach(n=>{ io?io.observe(n):n.classList.add("in"); });
+  /* safety net for elements already on screen that the observer never reported —
+     deliberately NOT a blanket reveal, so anything below the fold still waits its turn */
+  setTimeout(()=>nodes.forEach(n=>{
+    if(n.classList.contains("in")||!n.isConnected||n.offsetParent===null) return;
+    const r=n.getBoundingClientRect();
+    if(r.top<window.innerHeight && r.bottom>0) n.classList.add("in");
+  }),1400);
 }
 
 /* ---------- count-up ---------- */
@@ -2613,42 +2729,251 @@ const QA=[
 function renderLearn(){
   const root=$("#learnRoot");
   root.innerHTML=`
-  <div class="learn-hero">
+  <div class="lhero">
     <span class="eyebrow rv">A five-minute primer</span>
-    <h1 class="rv" style="max-width:16ch">Perps, without the vocabulary test.</h1>
-    <p class="lede rv">Everything on Arclight comes from one exchange. Here's what that exchange actually does — written for someone who has never opened a trading app.</p>
+    <h1 class="rv">Perps, without the vocabulary test.</h1>
+    <p class="lede rv">Three things you can play with, then eight questions answered plainly.
+      Nothing here needs an account — pull the sliders and see what happens.</p>
+    <div class="scrollcue rv"><span>Try it below</span><i></i></div>
   </div>
-  <section style="margin-top:34px"><div class="qa">${QA.map((q,i)=>`
-    <div class="qcard rv${i===0?" open":""}">
-      <div class="qh"><span class="qn">${i+1}</span><h3>${q.q}</h3><span class="tg">${ic("plus")}</span></div>
-      <div class="qb"><div class="qi">${q.a.map(p=>`<p>${p}</p>`).join("")}
-        ${q.an?`<div class="analog"><div class="t">Put another way</div>${q.an}</div>`:""}</div></div>
-    </div>`).join("")}</div></section>
+
+  <section>
+    <div class="lab rv">
+      <div class="lh"><span class="n">1</span>
+        <div><h3>What leverage actually does to you</h3>
+          <p>You put in $1,000. Leverage borrows the rest. Pick a side, choose how much to borrow,
+            then drag the price and watch what comes back.</p></div></div>
+      <div class="lb2"><div class="pg">
+        <div class="pgctl">
+          <div class="pgrow">
+            <div class="top"><span>Your side</span></div>
+            <div class="sideseg" id="pgSide">
+              <button class="long on" data-side="1">${ic("up")}<span>Long<i>price goes up</i></span></button>
+              <button class="short" data-side="-1">${ic("down")}<span>Short<i>price goes down</i></span></button>
+            </div>
+          </div>
+          <div class="pgrow">
+            <div class="top"><span>Leverage</span><b id="pgLevV">5×</b></div>
+            <input type="range" class="sl" id="pgLev" min="1" max="20" step="1" value="5" aria-label="Leverage">
+          </div>
+          <div class="pgrow">
+            <div class="top"><span>Price moves</span><b id="pgMovV">+5%</b></div>
+            <input type="range" class="sl" id="pgMov" min="-25" max="25" step="1" value="5" aria-label="Price move">
+          </div>
+          <div class="liqtrack" id="pgTrack">
+            <div class="zone" id="pgZone"></div>
+            <div class="entry" style="left:50%"></div>
+            <div class="now" id="pgNow" style="left:50%"></div>
+            <span class="lbl" style="left:8px">−25%</span>
+            <span class="lbl" style="left:50%;transform:translateX(-50%)">entry</span>
+            <span class="lbl" style="right:8px">+25%</span>
+          </div>
+        </div>
+        <div class="pgout" id="pgOut">
+          <div><div class="cap">Your $1,000 controls</div><div class="big" id="pgNot">$5,000</div></div>
+          <div><div class="cap">You end up with</div>
+            <div class="big" id="pgPnl">$1,250</div></div>
+          <p class="say" id="pgSay"></p>
+          <div class="warn ok" id="pgWarn">${ic("shield")}<span></span></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lab rv">
+      <div class="lh"><span class="n">2</span>
+        <div><h3>Why holding costs money</h3>
+          <p>A perp never expires, so something has to keep its price glued to the real asset.
+            Every hour the crowded side pays the other. This is live, right now, on Arcus.</p></div></div>
+      <div class="lb2">
+        <div class="seesaw"><div class="beamwrap">
+          <div class="beam" id="ssBeam">
+            <div class="side l"><b id="ssL">Longs</b><s id="ssLs">—</s></div>
+            <div class="side r"><b id="ssR">Shorts</b><s id="ssRs">—</s></div>
+          </div>
+          <div class="pivot"></div>
+        </div></div>
+        <p class="dim" style="font-size:14px;text-align:center;margin-top:6px" id="ssSay">Reading the funding rate…</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px" id="ssPick"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lab rv">
+      <div class="lh"><span class="n">3</span>
+        <div><h3>The stock market that never shuts</h3>
+          <p>34 of the 51 markets on Arcus track real shares — Nvidia, Tesla, Robinhood itself.
+            The exchanges behind them keep office hours. Arcus doesn't.</p></div></div>
+      <div class="lb2"><div class="clocks" id="clocks"></div>
+        <p class="dim3" style="font-size:12.5px;margin-top:14px">When earnings drop after the closing bell, everyone else waits for morning. Here the price moves immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">The rest, in plain words</span>
+      <h2>Everything else you might be wondering</h2></div></div>
+    <div class="qa">${QA.map((q,i)=>`
+      <div class="qcard rv${i===0?" open":""}">
+        <div class="qh"><span class="qn">${i+1}</span><h3>${q.q}</h3><span class="tg">${ic("plus")}</span></div>
+        <div class="qb"><div class="qi">${q.a.map(pp=>`<p>${pp}</p>`).join("")}
+          ${q.an?`<div class="analog"><div class="t">Put another way</div>${q.an}</div>`:""}</div></div>
+      </div>`).join("")}</div>
+  </section>
+
   <section>
     <div class="refblk rv"><div class="ri">
-      <div><h3>Ready to stop reading and start looking?</h3>
-        <p>Open an Arcus account, make one small trade, then paste your own address into Arclight and watch the story build itself.</p></div>
+      <canvas id="learnChar" style="width:76px;height:76px;border-radius:50%;flex:none"></canvas>
+      <div><h3>Stop reading, start looking</h3>
+        <p>Open an account, make one small trade, then paste your own address into Arclight and watch the story build itself.</p></div>
       <div class="rr">
         <a class="btn pri" href="${REF_LINK}" target="_blank" rel="noopener">${ic("ext")}Open Arcus</a>
         <button class="btn ghost" id="refCopy">${ic("copy")}Copy link</button>
       </div></div></div>
-    <p class="dim3" style="font-size:12px;margin-top:12px">That's a referral link — it costs you nothing and helps keep this site running. Not available in the US, Canada or UK. Trading perps is risky; leverage makes it riskier.</p>
+    <p class="dim3" style="font-size:12px;margin-top:12px">That's a referral link — costs you nothing, helps keep this running. Not available in the US, Canada or UK. Trading perps is risky; leverage makes it riskier.</p>
   </section>
+
   <section>
     <div class="sechead"><div class="t"><span class="eyebrow">Provenance</span><h2>Where every number comes from</h2>
-    <p>No middleman, no database of ours, no guesses. Arclight calls the Arcus API straight from your browser and does the arithmetic in front of you.</p></div></div>
+    <p>No middleman, no database of ours, no guesses. Arclight calls the Arcus API straight from your browser.</p></div></div>
     <div class="tiles t3">
-      ${[["act","The exchange's own API","Markets, trades, positions, fills and funding come from api.arcus.xyz — the same endpoints their app uses."],
-         ["shield","Your browser, not our server","Requests go from your device to Arcus directly. We never see which wallet you searched, because it never touches us."],
-         ["scale","Converted, then explained","Raw values arrive as quantums and microseconds. We convert to dollars and dates, then say what each one means."]]
+      ${[["act","The exchange's own API","Markets, trades, positions, fills and funding all come from api.arcus.xyz — the same endpoints their app uses."],
+         ["shield","Your browser, not our server","Requests go from your device to Arcus directly. We never see which wallet you looked up, because it never touches us."],
+         ["scale","Converted, then explained","Raw values arrive as quantums and microseconds. We turn them into dollars and dates, then say what they mean."]]
         .map(t=>`<div class="tile rv"><div class="k">${ic(t[0],"width:14px;height:14px;color:var(--brand)")}<span>${t[1]}</span></div>
           <div class="sub" style="margin-top:2px;font-size:13.5px">${t[2]}</div></div>`).join("")}
     </div>
   </section>`;
+
   $$(".qcard .qh",root).forEach(h=>h.addEventListener("click",()=>h.parentElement.classList.toggle("open")));
   $("#refCopy").addEventListener("click",()=>copy(REF_LINK,"Referral link copied"));
+  const lc=$("#learnChar");
+  if(lc && window.ArcChars){ const pool=ArcChars.ids.filter(x=>x!=="ghost");
+    character(lc,pool[Math.floor(Math.random()*pool.length)],76); }
+  wirePlayground(); wireSeesaw(); wireClocks();
   reveal(root); glow(root);
 }
+
+/* ---------- 1. leverage playground ---------- */
+function wirePlayground(){
+  const lev=$("#pgLev"), mov=$("#pgMov"); if(!lev) return;
+  let side=1;
+  const DEP=1000;
+  function paint(){
+    const L=+lev.value, M=+mov.value/100;
+    const notional=DEP*L;
+    const raw=notional*M*side;
+    const liqPct=100/L;                       /* the move that wipes the deposit out */
+    const wiped=(M*side*-100)>=liqPct;
+    const pnl=wiped? -DEP : raw;
+    const end=DEP+pnl;
+    $("#pgLevV").textContent=L+"×";
+    $("#pgMovV").textContent=(M>=0?"+":"")+(M*100).toFixed(0)+"%";
+    $("#pgNot").textContent=usd(notional);
+    const pe=$("#pgPnl");
+    pe.textContent=usd(Math.max(0,end));
+    pe.className="big "+(pnl>0?"gain":pnl<0?"loss":"");
+    $("#pgOut").style.setProperty("--pgglow", pnl>0?"rgba(95,176,124,.18)":pnl<0?"rgba(217,105,92,.18)":"transparent");
+    $("#pgSay").innerHTML = wiped
+      ? `The price moved <b>${(Math.abs(M)*100).toFixed(0)}%</b> against you. At ${L}× you only had <b>${liqPct.toFixed(0)}%</b> of room — the position was closed for you before it got worse.`
+      : `A <b>${(Math.abs(M)*100).toFixed(0)}%</b> move ${M*side>=0?"in your favour":"against you"} turns your $1,000 into <b>${usd(end)}</b>. That's ${pct(pnl/DEP*100,0)} on your money from a ${(Math.abs(M)*100).toFixed(0)}% move in the price.`;
+    /* liquidation zone on the track */
+    const zone=$("#pgZone"), now=$("#pgNow"), warn=$("#pgWarn");
+    const half=50, span=25;
+    const liqOffset=clamp(liqPct/span*half,0,half);
+    if(side>0){ /* a long dies on the way down: band hugs the left edge */
+      zone.style.left="0%"; zone.style.width=Math.max(0,half-liqOffset)+"%"; zone.style.transform="none"; }
+    else {       /* a short dies on the way up: band hugs the right edge */
+      zone.style.left=(half+liqOffset)+"%"; zone.style.width=Math.max(0,half-liqOffset)+"%";
+      zone.style.transform="scaleX(-1)"; }
+    now.style.left=clamp(half+(M*100)/span*half,1,99)+"%";
+    now.style.background = wiped?"var(--loss)":"var(--brand)";
+    const room=liqPct;
+    warn.className="warn "+(room>=33?"ok":room>=12?"mid":"bad");
+    $("span",warn).innerHTML = room>=33
+      ? `At ${L}× the price has to move <b>${room.toFixed(0)}%</b> against you before you're wiped out. That's a lot of room.`
+      : room>=12
+      ? `At ${L}× a <b>${room.toFixed(0)}%</b> move against you wipes out the whole $1,000. Bitcoin does that in a bad week.`
+      : `At ${L}× just <b>${room.toFixed(1)}%</b> against you and it's all gone. Bitcoin does that in an afternoon.`;
+  }
+  lev.addEventListener("input",paint); mov.addEventListener("input",paint);
+  $("#pgSide").addEventListener("click",e=>{ const b=e.target.closest("[data-side]"); if(!b) return;
+    side=+b.dataset.side; $$("#pgSide button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); paint(); });
+  paint();
+}
+
+/* ---------- 2. funding see-saw, on live rates ---------- */
+async function wireSeesaw(){
+  const beam=$("#ssBeam"); if(!beam) return;
+  const ms=await markets().catch(()=>[]);
+  if(!ms.length){ $("#ssSay").textContent="Couldn't reach Arcus for live funding just now."; return; }
+  const pick=ms.slice().sort((a,b)=>b.vol-a.vol).slice(0,5);
+  let cur=pick[0];
+  $("#ssPick").innerHTML=pick.map((m,i)=>`<button class="chip" data-ss="${m.name}"
+    style="${i===0?"border-color:var(--brand);color:var(--brand)":""}">${m.name}</button>`).join("");
+  function show(m){
+    cur=m;
+    const rate=m.fr, longsPay=rate>=0;
+    const mag=clamp(Math.abs(rate)*100/0.01,0.12,1);      /* 0.01%/hr reads as a full tilt */
+    beam.style.transform=`rotate(${(longsPay?1:-1)*mag*9}deg)`;
+    $("#ssL").textContent="Longs"; $("#ssR").textContent="Shorts";
+    $("#ssLs").textContent=longsPay?"paying":"collecting";
+    $("#ssRs").textContent=longsPay?"collecting":"paying";
+    $("#ssLs").style.color=longsPay?"var(--loss)":"var(--gain)";
+    $("#ssRs").style.color=longsPay?"var(--gain)":"var(--loss)";
+    const perDay=Math.abs(rate)*24*100;
+    $("#ssSay").innerHTML=`On <b style="color:var(--ink)">${m.name}</b> the rate is <b style="color:var(--ink)">${(rate*100).toFixed(4)}% an hour</b> —
+      ${longsPay?"people betting the price rises are paying those betting it falls":"people betting the price falls are paying those betting it rises"}.
+      Hold $10,000 on the paying side for a day and it costs about <b style="color:var(--ink)">${usd(10000*perDay/100)}</b>.`;
+    $$("#ssPick .chip").forEach(c=>{ const on=c.dataset.ss===m.name;
+      c.style.borderColor=on?"var(--brand)":""; c.style.color=on?"var(--brand)":""; });
+  }
+  $("#ssPick").addEventListener("click",e=>{ const b=e.target.closest("[data-ss]"); if(!b) return;
+    const m=ms.find(x=>x.name===b.dataset.ss); if(m) show(m); });
+  show(cur);
+}
+
+/* ---------- 3. clocks ---------- */
+function wireClocks(){
+  const host=$("#clocks"); if(!host) return;
+  function dial(frac,col,open){
+    const a=-Math.PI/2+frac*Math.PI*2;
+    return `<svg viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface-3)" stroke-width="7"/>
+      ${open?`<circle cx="50" cy="50" r="42" fill="none" stroke="${col}" stroke-width="7"
+        stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="${264*(1-0.999)}" opacity=".28"/>`:""}
+      <line x1="50" y1="50" x2="${50+Math.cos(a)*28}" y2="${50+Math.sin(a)*28}"
+        stroke="${col}" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="4.5" fill="${col}"/></svg>`;
+  }
+  function tick(){
+    const now=new Date();
+    /* New York cash session, 09:30–16:00 ET, weekdays */
+    const ny=new Date(now.toLocaleString("en-US",{timeZone:"America/New_York"}));
+    const mins=ny.getHours()*60+ny.getMinutes(), wd=ny.getDay();
+    const nyOpen = wd>=1 && wd<=5 && mins>=570 && mins<960;
+    const nyFrac=((ny.getHours()%12)+ny.getMinutes()/60)/12;
+    const meFrac=((now.getHours()%12)+now.getMinutes()/60)/12;
+    const t=(d)=>d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    host.innerHTML=`
+      <div class="clockcard">
+        <span class="dial">${dial(nyFrac,nyOpen?"var(--gain)":"var(--ink-3)",nyOpen)}</span>
+        <div><div class="who">New York Stock Exchange</div>
+          <div class="st ${nyOpen?"open":"shut"}">${nyOpen?"OPEN — 6.5 hours a day":"CLOSED right now"}</div></div>
+        <span class="tm">${t(ny)} ET</span></div>
+      <div class="clockcard" style="border-color:var(--brand-dim)">
+        <span class="dial">${dial(meFrac,"var(--brand)",true)}</span>
+        <div><div class="who">Arcus</div>
+          <div class="st open">OPEN — always, including weekends</div></div>
+        <span class="tm">${t(now)} local</span></div>`;
+  }
+  tick();
+  if(learnClock) clearInterval(learnClock);
+  learnClock=setInterval(tick,20000);
+}
+let learnClock=null;
 
 /* ============================================================
    WALLET — fetch + analyse
@@ -3225,7 +3550,7 @@ function paintWallet(){
   if(sn) countUp(sn,sc.total,v=>Math.round(v),1400);
   paintStory(lines);
   if(w.curve.length>3) areaChart($("#eqChart"), w.curve, w.curveLabel);
-  setTimeout(()=>$$("#walletRoot .fl").forEach(f=>{ f.style.width=(f.dataset.w||0)+"%"; }),260);
+  setTimeout(()=>$$("#walletRoot .fl[data-w]").forEach(f=>{ f.style.width=f.dataset.w+"%"; }),260);
 
   /* interactions */
   $("#wcopy").addEventListener("click",()=>copy(w.addr,"Address copied"));
