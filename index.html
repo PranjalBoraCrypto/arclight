@@ -1,4 +1,5 @@
 <title>Arclight</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 29'%3E%3Crect width='29' height='29' rx='7' fill='%23234728'/%3E%3Cg fill='%23F7F2EA'%3E%3Cpath d='M6 5h7.5A10.5 10.5 0 0 1 24 15.5V23a1 1 0 0 1-1 1h-3.6a1 1 0 0 1-1-1v-7.5A5.9 5.9 0 0 0 12.5 9.6H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z'/%3E%3Cpath d='M6 11.6h6.2a1 1 0 0 1 .72 1.7l-6.2 6.2A1 1 0 0 1 5 18.8v-6.2a1 1 0 0 1 1-1z'/%3E%3Cpath d='M18.4 17.5v6.2a1 1 0 0 1-1 1h-6.2a1 1 0 0 1-.7-1.7l6.2-6.2a1 1 0 0 1 1.7.7z'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
@@ -503,6 +504,14 @@ tbody tr{transition:background .2s}
 tbody tr:hover{background:var(--surface-2)}
 tbody tr:last-child td{border-bottom:none}
 td.r,th.r{text-align:right}
+.chartbtn{width:30px;height:30px;border-radius:9px;display:inline-grid;place-items:center;color:var(--ink-3);
+  border:1px solid var(--rule);background:var(--surface);transition:.2s;flex:none}
+.chartbtn svg{width:14px;height:14px}
+.chartbtn:hover{color:var(--brand);border-color:var(--brand);transform:translateY(-1px)}
+.coinlink{cursor:pointer;transition:color .2s;text-decoration:underline;text-decoration-color:transparent;
+  text-underline-offset:3px}
+.coinlink:hover{color:var(--brand);text-decoration-color:var(--brand)}
+tbody tr[data-coin]{cursor:pointer}
 .mktname{display:flex;align-items:center;gap:10px}
 .mktname .tk{width:30px;height:30px;border-radius:9px;background:var(--surface-3);display:grid;place-items:center;
   font-family:"Archivo";font-weight:700;font-size:11px;flex:none;color:var(--ink-2)}
@@ -606,19 +615,43 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .warn.mid{background:rgba(217,164,65,.13);color:var(--warn)}
 .warn.bad{background:var(--loss-bg);color:var(--loss)}
 
-.seesaw{position:relative;height:150px;display:grid;place-items:center;overflow:hidden}
-.seesaw .beamwrap{position:relative;width:min(100%,340px)}
-.seesaw .beam{width:100%;height:9px;border-radius:100px;background:var(--rule-2);position:relative;
-  transform-origin:50% 50%;transition:transform 1s cubic-bezier(.3,.9,.3,1)}
-.seesaw .side{position:absolute;top:-52px;width:104px;text-align:center}
-.seesaw .side.l{left:-10px} .seesaw .side.r{right:-10px}
-.seesaw .side b{display:block;font-family:"Archivo";font-weight:800;font-size:15px;letter-spacing:-.02em}
-.seesaw .side s{text-decoration:none;display:block;font-family:"JetBrains Mono",monospace;font-size:10px;
-  color:var(--ink-3);margin-top:2px}
-.seesaw .pivot{position:absolute;left:50%;top:8px;transform:translateX(-50%);
-  width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;
-  border-top:26px solid var(--surface-3)}
+.seesaw{position:relative;height:212px;display:grid;place-items:center;overflow:hidden;
+  cursor:grab;touch-action:none;user-select:none}
+.seesaw:active{cursor:grabbing}
+.seesaw .beamwrap{position:relative;width:min(100%,340px);height:140px}
+.seesaw .beam{position:absolute;left:0;right:0;top:64px;height:10px;border-radius:100px;
+  background:linear-gradient(90deg,var(--rule-2),var(--ink-3),var(--rule-2));
+  transform-origin:50% 50%;will-change:transform}
+.seesaw .beam::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:14px;height:14px;border-radius:50%;background:var(--ink-3);opacity:.6}
+.seesaw .pan{position:absolute;display:block;top:6px;width:112px;margin-left:-56px;
+  transform-origin:50% 0;will-change:transform}
+.seesaw .pan .rope{display:block;width:1.5px;height:24px;margin:0 auto;background:var(--rule-2)}
+.seesaw .plate{display:block;border-radius:12px;border:1px solid var(--rule);background:var(--surface-2);
+  padding:9px 6px;text-align:center;box-shadow:var(--shadow-1)}
+.seesaw .plate b{display:block;font-family:"Archivo";font-weight:800;font-size:14.5px;letter-spacing:-.02em}
+.seesaw .plate s{text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px;
+  font-family:"JetBrains Mono",monospace;font-size:9.5px;margin-top:3px;letter-spacing:.06em}
+.seesaw .plate s svg{width:11px;height:11px}
+.seesaw .pivot{position:absolute;left:50%;top:72px;transform:translateX(-50%);
+  width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;
+  border-top:34px solid var(--surface-3);z-index:-1}
+.seesaw .hintline{position:absolute;bottom:0;left:0;right:0;text-align:center;
+  font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);opacity:.7;pointer-events:none}
 
+.fundrows{display:flex;flex-direction:column;gap:1px;border-radius:14px;overflow:hidden;
+  border:1px solid var(--rule);margin-top:16px}
+.fundrow{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--surface-2);
+  transition:background .22s}
+.fundrow:hover{background:var(--surface-3)}
+.fundrow .fi{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;
+  background:var(--surface-3)}
+.fundrow .fi svg{width:15px;height:15px}
+.fundrow .ft{flex:1;min-width:0;font-size:13.5px;color:var(--ink-2);line-height:1.35}
+.fundrow .ft b{color:var(--ink);font-weight:600}
+.fundrow .fv{font-family:"Archivo";font-weight:800;font-size:16px;letter-spacing:-.025em;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
 .clocks{display:grid;gap:14px}
 .clockcard{border-radius:16px;border:1px solid var(--rule);padding:17px;background:var(--surface-2);
   display:flex;align-items:center;gap:14px;transition:border-color .3s,transform .3s}
@@ -1113,7 +1146,13 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .lab .lh{padding:16px 16px 0;gap:11px}
   .lab .lb2{padding:16px}
   .pgout{padding:16px}
-  .seesaw{height:136px}
+  .seesaw{height:196px}
+  .seesaw .pan{width:92px;margin-left:-46px}
+  .seesaw .plate{padding:8px 4px}
+  .seesaw .plate b{font-size:13px}
+  .fundrow{padding:11px 12px;gap:10px}
+  .fundrow .ft{font-size:12.5px}
+  .fundrow .fv{font-size:14.5px}
   .castgrid{grid-template-columns:repeat(4,1fr);gap:8px}
   .castcell{border-radius:13px;padding:5px}
   .castbig{padding:22px 16px;border-radius:20px}
@@ -1830,6 +1869,17 @@ function dur(ms){
 }
 function dstr(ms){return new Date(ms).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});}
 const isAddr = s => /^0x[0-9a-fA-F]{40}$/.test((s||"").trim());
+/* every coin on the site links straight to its Arcus trade page */
+const ARCUS_TRADE="https://app.arcus.xyz/trade/perpetuals/";
+const arcusUrl = m => ARCUS_TRADE+encodeURIComponent(m);
+function openArcus(market){ window.open(arcusUrl(market),"_blank","noopener"); }
+/* one delegated handler: anything carrying data-coin opens Arcus in a new tab */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-coin]");
+  if(!t) return;
+  if(e.target.closest("[data-chart],[data-tip]")) return;   /* the chart icon and tooltips keep their own jobs */
+  e.preventDefault(); openArcus(t.dataset.coin);
+});
 
 /* ---------- toast ---------- */
 let toastT;
@@ -1860,7 +1910,7 @@ const TIPS={
   winrate:["Win rate","Of the trades this wallet has closed, the share that came out in profit. Open positions don't count."],
   hold:["Typical hold","The median time between opening a position and closing it flat again."],
   cancels:["Orders cancelled","Orders pulled before they filled. A high share usually means someone working limit orders by hand rather than a bot."],
-  traders:["Active traders","Distinct wallets that appear in the last 24 hours of the trade tape on the three busiest markets. Sampled, not venue-wide — a full count would take hundreds of requests."],
+  traders:["Traders seen","Distinct wallets in the last 24 hours of the trade tape. The quick scan reads part of the tape, so the number is a floor — press <b>Count every trader</b> for the full walk. Note this counts people who <i>traded perps</i>; chain explorers count every address that sent any transaction, including deposits, so their figure is higher."],
   newwallets:["New wallets","Of the traders we sampled, the share whose 24-hour volume is essentially their entire lifetime volume — meaning Arcus is new to them."],
   flow:["Buy pressure","Across the scanned markets, the share of aggressive (taker) volume that hit the ask rather than the bid. Above 50% means buyers are the impatient side."],
   oi:["Open interest","Money currently sitting in open positions across every market. Unlike volume it doesn't reset — it's what's still at risk."],
@@ -2156,6 +2206,7 @@ function show(p){
   if(!PAGES.includes(p)) p="home";
   if(current==="run"&&p!=="run"&&typeof stopRun==="function") stopRun();
   if(current==="wallet"&&p!=="wallet"&&typeof stopCast==="function") stopCast();
+  if(current==="learn"&&p!=="learn"&&ssRaf){ cancelAnimationFrame(ssRaf); ssRaf=null; }
   current=p;
   PAGES.forEach(x=>$("#p-"+x).classList.toggle("on",x===p));
   setNav(p);
@@ -2265,7 +2316,7 @@ function maxLev(imf){ return imf>0? Math.round(1/imf) : 1; }
 
 function mktRow(m,i){
   const up=m.chg>=0;
-  return `<tr data-mkt="${m.name}">
+  return `<tr data-coin="${m.name}" title="Open ${m.name} on Arcus">
     <td><div class="mktname"><span class="tk">${m.base.slice(0,4)}</span>
       <span class="nm"><b>${m.name}</b><s>${m.full}</s></span></div></td>
     <td><span class="pill ${CATCLS[m.cat]||"o"}">${CATLAB[m.cat]||m.cat}</span></td>
@@ -2275,11 +2326,12 @@ function mktRow(m,i){
     <td class="r mono">${usd(m.oi)}</td>
     <td class="r mono">${num(m.trades)}</td>
     <td class="r mono ${m.fr>=0?"dim":"gain"}">${(m.fr*100).toFixed(4)}%</td>
+    <td class="r"><button class="chartbtn" data-chart="${m.name}" aria-label="Chart and tape">${ic("act")}</button></td>
   </tr>`;
 }
 function mktCard(m){
   const up=m.chg>=0;
-  return `<div class="mcard" data-mkt="${m.name}">
+  return `<div class="mcard" data-coin="${m.name}">
     <span class="tk" style="width:34px;height:34px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;font-family:Archivo;font-weight:700;font-size:11px;color:var(--ink-2);flex:none">${m.base.slice(0,4)}</span>
     <div style="min-width:0">
       <div style="display:flex;align-items:center;gap:7px"><b style="font-size:14px">${m.name}</b>
@@ -2287,6 +2339,7 @@ function mktCard(m){
       <div class="mono" style="font-size:11.5px;color:var(--ink-3);margin-top:2px">${usd(m.vol)} vol · ${usd(m.oi)} OI</div>
     </div>
     <div class="rt"><b>${usd(m.mark)}</b><s class="${up?"gain":"loss"}">${pct(m.chg)}</s></div>
+    <button class="chartbtn" data-chart="${m.name}" aria-label="Chart and tape">${ic("act")}</button>
   </div>`;
 }
 function mktList(arr,mount){
@@ -2297,7 +2350,7 @@ function mktList(arr,mount){
         <th class="r" data-s="mark">Price</th><th class="r" data-s="chg">24h</th>
         <th class="r srt" data-s="vol">24h volume <span class="ar">▼</span></th>
         <th class="r" data-s="oi">Open interest</th><th class="r" data-s="trades">Trades</th>
-        <th class="r" data-s="fr">Funding /hr</th>
+        <th class="r" data-s="fr">Funding /hr</th><th></th>
       </tr></thead><tbody>${arr.map(mktRow).join("")}</tbody></table></div>
     <div class="mcards">${arr.map(mktCard).join("")}</div>`;
 }
@@ -2555,6 +2608,7 @@ async function renderHome(){
     });
     const list=$("#homeMktList");
     mktList(ms.slice().sort((a,b)=>b.vol-a.vol).slice(0,6),list);
+    list.addEventListener("click",e=>{ const ch=e.target.closest("[data-chart]"); if(ch) openMarket(ch.dataset.chart); });
     paintTicker(ms);
     const cc=$("#closerChar");
     if(cc){ const pool=["diamond","whale","scalp","rwa","surfer","sniper"];
@@ -2641,8 +2695,8 @@ async function renderMarkets(){
       <s style="margin-top:5px">24h volume · ${usd(m.vol)}</s>
       <s>Open interest · ${usd(m.oi)}</s>
       <s>Trades · ${num(m.trades)}</s>
-      <s style="margin-top:5px;color:var(--brand)">Click to open</s>`,
-    click:m=>openMarket(m.name)
+      <s style="margin-top:5px;color:var(--brand)">Click to trade on Arcus</s>`,
+    click:m=>openArcus(m.name)
   });
   $("#mField .hud").addEventListener("click",e=>{
     const b2=e.target.closest("[data-w]"); if(!b2) return;
@@ -2668,7 +2722,7 @@ async function renderMarkets(){
   $("#mlist").addEventListener("click",e=>{
     const th=e.target.closest("th[data-s]");
     if(th){ const k=th.dataset.s; mktSort = mktSort.k===k?{k,d:-mktSort.d}:{k,d:-1}; paint(); return; }
-    const row=e.target.closest("[data-mkt]"); if(row) openMarket(row.dataset.mkt);
+    const ch=e.target.closest("[data-chart]"); if(ch) openMarket(ch.dataset.chart);
   });
   $("#mView").addEventListener("click",e=>{
     const b2=e.target.closest("[data-v]"); if(!b2) return;
@@ -2685,7 +2739,12 @@ async function renderMarkets(){
    LEADERBOARD — an arena that re-racks, and the table underneath
    ============================================================ */
 let lbW="30d", lbS="volume", lbView="arena", lbData=[];
-const LBM={volume:["Volume",e=>Q(e.volume),usd],pnl:["Profit",e=>Q(e.pnl),v=>usd(v,{plus:true})],fees:["Fees paid",e=>Q(e.feesPaid),usd]};
+const LBM={
+  volume:{n:"Volume", get:e=>Q(e.volume),    fmt:usd,                  dir:-1, sort:"volume"},
+  pnl:   {n:"Profit", get:e=>Q(e.pnl),       fmt:v=>usd(v,{plus:true}),dir:-1, sort:"pnl"},
+  losers:{n:"Losses", get:e=>Q(e.pnl),       fmt:v=>usd(v,{plus:true}),dir:1,  sort:"volume"},
+  fees:  {n:"Fees paid",get:e=>Q(e.feesPaid),fmt:usd,                  dir:-1, sort:"fees"}
+};
 
 function renderLeaders(){
   const root=$("#leadersRoot");
@@ -2698,7 +2757,7 @@ function renderLeaders(){
         <button data-v="table">${ic("act")}Table</button>
       </div>
       <div class="seg" id="lbWin">${[["24h","24h"],["30d","30d"],["all","All time"]].map(w=>`<button data-w="${w[0]}" class="${w[0]===lbW?"on":""}">${w[1]}</button>`).join("")}</div>
-      <div class="seg" id="lbSort">${Object.keys(LBM).map(k=>`<button data-s="${k}" class="${k===lbS?"on":""}">${LBM[k][0]}</button>`).join("")}</div>
+      <div class="seg" id="lbSort">${Object.keys(LBM).map(k=>`<button data-s="${k}" class="${k===lbS?"on":""}">${LBM[k].n}</button>`).join("")}</div>
     </div>
     <div id="lbArena"></div>
     <div id="lbList" hidden></div>
@@ -2722,7 +2781,7 @@ function renderLeaders(){
     const box=$("#lbArena");
     box.innerHTML=`<div class="podium">${Array(3).fill('<div class="sk" style="height:150px;border-radius:18px"></div>').join("")}</div>
       <div class="race">${Array(8).fill('<div class="sk" style="height:44px;border-radius:12px;margin-bottom:5px"></div>').join("")}</div>`;
-    const r=await safe(api(`/v1/leaderboard?window=${lbW}&sortBy=${lbS}&limit=100`,60000),null);
+    const r=await safe(api(`/v1/leaderboard?window=${lbW}&sortBy=${LBM[lbS].sort}&limit=100`,60000),null);
     lbData=(r&&r.entries)||[];
     if(!lbData.length){ box.innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div><h3>Nothing to rank</h3><p>The leaderboard came back empty for this window.</p></div>`; $("#lbList").innerHTML=""; return; }
     paintArena(false); paintTable();
@@ -2731,6 +2790,7 @@ function renderLeaders(){
   function explain(){
     const t={volume:["Ranked by total dollar value traded","Biggest turnover first — how much money each wallet pushed through Arcus in this window. Not profit."],
              pnl:["Ranked by realised profit","Profit actually banked on closed trades in this window. A wallet sitting on a big open winner will look flat here."],
+             losers:["Ranked by realised loss","Deepest losses first. Arcus only ranks downward, so this is the worst result among the 100 highest-volume wallets — not necessarily the worst on the whole exchange."],
              fees:["Ranked by fees paid","Who has paid Arcus the most in trading fees. Usually a proxy for heavy, taker-side activity."]}[lbS];
     const win={"24h":"the last 24 hours","30d":"the last 30 days","all":"all time"}[lbW];
     const e=$("#lbExplain");
@@ -2739,11 +2799,11 @@ function renderLeaders(){
   function paintArena(reflow){
     const box=$("#lbArena");
     explain();
-    const get=LBM[lbS][1], fmt=LBM[lbS][2];
-    const rows=lbData.map((e,i)=>({e,v:get(e),i})).sort((x,y)=>y.v-x.v);
+    const get=LBM[lbS].get, fmt=LBM[lbS].fmt, dir=LBM[lbS].dir;
+    const rows=lbData.map((e,i)=>({e,v:get(e),i})).sort((x,y)=>(y.v-x.v)*(dir<0?1:-1));
     const top=rows.slice(0,3), rest=rows.slice(3,40);
     const mx=Math.max.apply(null,rows.map(r2=>Math.abs(r2.v)))||1;
-    const MED=["1st","2nd","3rd"], GL=["rgba(228,200,120,.22)","rgba(196,206,214,.18)","rgba(201,138,75,.20)"];
+    const MED=lbS==="losers"?["Worst","2nd","3rd"]:["1st","2nd","3rd"], GL=["rgba(228,200,120,.22)","rgba(196,206,214,.18)","rgba(201,138,75,.20)"];
 
     /* FLIP: remember where each row is before the DOM changes */
     const before={};
@@ -2755,21 +2815,19 @@ function renderLeaders(){
           <div class="in"><span class="medal">${MED[i]}</span>
             <canvas class="av" data-a="${r2.e.address}"></canvas>
             <span class="ad">${shortA(r2.e.address)}</span>
-            <span class="big ${lbS==="pnl"?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span>
+            <span class="big ${(lbS==="pnl"||lbS==="losers")?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span>
             <span class="sub">${lbS==="volume"?usd(Q(r2.e.pnl),{plus:true})+" profit":usd(Q(r2.e.volume))+" traded"}</span>
           </div></div>`).join("")}</div>
       <div class="race">${rest.map((r2,i)=>{
-        const other = lbS==="volume"
-          ? `${usd(Q(r2.e.pnl),{plus:true})} profit`
-          : lbS==="pnl" ? `${usd(Q(r2.e.volume))} traded`
-          : `${usd(Q(r2.e.volume))} traded`;
+        const other = lbS==="volume" ? `${usd(Q(r2.e.pnl),{plus:true})} profit`
+                                      : `${usd(Q(r2.e.volume))} traded`;
         return `<div class="rrow" data-a="${r2.e.address}">
           <span class="rk">${i+4}</span>
           <div class="rbody">
             <div class="rtop"><span class="rad">${shortA(r2.e.address)}</span>
-              <span class="rval ${lbS==="pnl"?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span></div>
+              <span class="rval ${(lbS==="pnl"||lbS==="losers")?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span></div>
             <div class="rbar${r2.v<0?" neg":""}"><i data-w="${clamp(Math.abs(r2.v)/mx*100,1.5,100).toFixed(1)}"></i></div>
-            <div class="rsub"><span>${LBM[lbS][0]}</span><span>${other}</span></div>
+            <div class="rsub"><span>${LBM[lbS].n}</span><span>${other}</span></div>
           </div></div>`;}).join("")}</div>`;
     $$(".av",box).forEach((cn,i)=>seal(cn,cn.dataset.a,62, Q(top[i]?top[i].e.volume:0)>=1e6?"Whale":Q(top[i]?top[i].e.volume:0)>=1e5?"Heavy":"Active"));
     box.onclick=ev=>{ const t=ev.target.closest("[data-a]"); if(t) go("wallet",t.dataset.a); };
@@ -2908,14 +2966,16 @@ function renderLearn(){
           <p>A perp never expires, so something has to keep its price glued to the real asset.
             Every hour the crowded side pays the other. This is live, right now, on Arcus.</p></div></div>
       <div class="lb2">
-        <div class="seesaw"><div class="beamwrap">
+        <div class="seesaw" id="ssStage"><div class="beamwrap">
           <div class="beam" id="ssBeam">
-            <div class="side l"><b id="ssL">Longs</b><s id="ssLs">—</s></div>
-            <div class="side r"><b id="ssR">Shorts</b><s id="ssRs">—</s></div>
+            <span class="pan" id="ssPanL"><span class="rope"></span>
+              <span class="plate"><b>Longs</b><s id="ssLs">—</s></span></span>
+            <span class="pan" id="ssPanR"><span class="rope"></span>
+              <span class="plate"><b>Shorts</b><s id="ssRs">—</s></span></span>
           </div>
           <div class="pivot"></div>
-        </div></div>
-        <p class="dim" style="font-size:14px;text-align:center;margin-top:6px" id="ssSay">Reading the funding rate…</p>
+        </div><span class="hintline" id="ssHint">Push it — it settles back to the real rate</span></div>
+        <div class="fundrows" id="fundRows"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px" id="ssPick"></div>
       </div>
     </div>
@@ -3025,34 +3085,107 @@ function wirePlayground(){
   paint();
 }
 
-/* ---------- 2. funding see-saw, on live rates ---------- */
+/* ---------- 2. funding see-saw: a real spring you can shove ---------- */
+let ssRaf=null;
 async function wireSeesaw(){
-  const beam=$("#ssBeam"); if(!beam) return;
+  const beam=$("#ssBeam"), stage=$("#ssStage"); if(!beam) return;
   const ms=await markets().catch(()=>[]);
-  if(!ms.length){ $("#ssSay").textContent="Couldn't reach Arcus for live funding just now."; return; }
-  const pick=ms.slice().sort((a,b)=>b.vol-a.vol).slice(0,5);
+  if(!ms.length){ const fr=$("#fundRows"); if(fr) fr.innerHTML=`<div class="fundrow"><div class="ft">Couldn't reach Arcus for live funding just now.</div></div>`; return; }
+  const pick=ms.slice().sort((x,y)=>y.vol-x.vol).slice(0,5);
   let cur=pick[0];
+
+  /* --- spring state --- */
+  let ang=0, vel=0, target=0;
+  const panL=$("#ssPanL"), panR=$("#ssPanR");
+  let swingL=0, svL=0, swingR=0, svR=0;
+  const ptr={x:null,px:null,vx:0,down:false};
+
+  function frame(){
+    /* the beam is a torsional spring pulled toward the true funding tilt */
+    const k=0.017, damp=0.935;
+    vel += (target-ang)*k;
+    if(ptr.x!=null){
+      const r=stage.getBoundingClientRect();
+      const dx=clamp((ptr.x-(r.left+r.width/2))/(r.width/2),-1,1);   /* -1 … 1 */
+      /* torque = force × distance from the pivot, so the ends have real leverage */
+      const push=(ptr.down?0.80:0.26)*dx*(0.25+0.75*Math.abs(dx));
+      vel += push + ptr.vx*0.02;
+    }
+    vel*=damp; ang=clamp(ang+vel,-26,26);
+    if(Math.abs(ang)>=26) vel*=-0.35;
+    beam.style.transform=`rotate(${ang.toFixed(2)}deg)`;
+
+    /* the pans hang: they counter-rotate and swing with their own inertia */
+    const rad=ang*Math.PI/180;
+    const beamW=(beam.getBoundingClientRect().width||320);
+    const half=beamW*0.46;                       /* the arm, not the whole panel */
+    /* keep the pans inside the beam no matter how narrow the screen gets */
+    const panW=(panL&&panL.offsetWidth)||112;
+    const off=clamp((beamW/2-panW/2-4)/Math.max(1,beamW/2),0,0.46);
+    [[panL,-1],[panR,1]].forEach(([pan,dir])=>{
+      if(!pan) return;
+      const sw = dir<0? swingL : swingR;
+      pan.style.left=(50+dir*off*100)+"%";
+      pan.style.transform=`translateY(${(Math.sin(rad)*dir*half).toFixed(1)}px) rotate(${(-ang+sw).toFixed(2)}deg)`;
+    });
+    svL += (-swingL)*0.12 - vel*0.9; svL*=0.90; swingL=clamp(swingL+svL,-11,11);
+    svR += (-swingR)*0.12 + vel*0.9; svR*=0.90; swingR=clamp(swingR+svR,-11,11);
+
+    ptr.vx*=0.85;
+    ssRaf=requestAnimationFrame(frame);
+  }
+  if(ssRaf) cancelAnimationFrame(ssRaf);
+  if(!REDUCED) ssRaf=requestAnimationFrame(frame);
+
+  stage.addEventListener("pointermove",e=>{
+    if(ptr.px!=null) ptr.vx=e.clientX-ptr.px;
+    ptr.px=e.clientX; ptr.x=e.clientX;
+    const h=$("#ssHint"); if(h) h.style.opacity="0";
+  },{passive:true});
+  stage.addEventListener("pointerleave",()=>{ ptr.x=null; ptr.px=null; ptr.vx=0; ptr.down=false;
+    const h=$("#ssHint"); if(h) h.style.opacity=""; });
+  stage.addEventListener("pointerdown",e=>{ ptr.down=true; ptr.x=e.clientX; ptr.px=e.clientX; });
+  window.addEventListener("pointerup",()=>{ ptr.down=false; });
+
   $("#ssPick").innerHTML=pick.map((m,i)=>`<button class="chip" data-ss="${m.name}"
     style="${i===0?"border-color:var(--brand);color:var(--brand)":""}">${m.name}</button>`).join("");
+
   function show(m){
     cur=m;
-    const rate=m.fr, longsPay=rate>=0;
-    const mag=clamp(Math.abs(rate)*100/0.01,0.12,1);      /* 0.01%/hr reads as a full tilt */
-    beam.style.transform=`rotate(${(longsPay?1:-1)*mag*9}deg)`;
-    $("#ssL").textContent="Longs"; $("#ssR").textContent="Shorts";
-    $("#ssLs").textContent=longsPay?"paying":"collecting";
-    $("#ssRs").textContent=longsPay?"collecting":"paying";
+    const rate=m.fr, longsPay=rate>=0, mag=clamp(Math.abs(rate)*100/0.01,0.14,1);
+    target=(longsPay?1:-1)*mag*13;
+    if(REDUCED){ ang=target; beam.style.transform=`rotate(${ang}deg)`; }
+    const payIcon=`<svg viewBox="0 0 24 24" style="color:var(--loss)"><use href="#i-down"/></svg>`;
+    const getIcon=`<svg viewBox="0 0 24 24" style="color:var(--gain)"><use href="#i-up"/></svg>`;
+    $("#ssLs").innerHTML=(longsPay?payIcon:getIcon)+(longsPay?"paying":"earning");
     $("#ssLs").style.color=longsPay?"var(--loss)":"var(--gain)";
+    $("#ssRs").innerHTML=(longsPay?getIcon:payIcon)+(longsPay?"earning":"paying");
     $("#ssRs").style.color=longsPay?"var(--gain)":"var(--loss)";
-    const perDay=Math.abs(rate)*24*100;
-    $("#ssSay").innerHTML=`On <b style="color:var(--ink)">${m.name}</b> the rate is <b style="color:var(--ink)">${(rate*100).toFixed(4)}% an hour</b> —
-      ${longsPay?"people betting the price rises are paying those betting it falls":"people betting the price falls are paying those betting it rises"}.
-      Hold $10,000 on the paying side for a day and it costs about <b style="color:var(--ink)">${usd(10000*perDay/100)}</b>.`;
+
+    const perHr=Math.abs(rate)*100;
+    const day=10000*perHr/100*24, month=day*30;
+    const payer=longsPay?"Longs":"Shorts", earner=longsPay?"Shorts":"Longs";
+    $("#fundRows").innerHTML=`
+      <div class="fundrow">
+        <span class="fi">${ic("scale","color:var(--brand)")}</span>
+        <span class="ft">Right now on <b>${m.name}</b>, <b>${payer.toLowerCase()} pay ${earner.toLowerCase()}</b></span>
+        <span class="fv" style="color:${longsPay?"var(--loss)":"var(--gain)"}">${(rate*100).toFixed(4)}%<span style="font-size:11px;color:var(--ink-3)">/hr</span></span>
+      </div>
+      <div class="fundrow">
+        <span class="fi">${ic("clock","color:var(--copper)")}</span>
+        <span class="ft">Hold <b>$10,000</b> on the paying side for <b>a day</b></span>
+        <span class="fv" style="color:var(--loss)">−${usd(day)}</span>
+      </div>
+      <div class="fundrow">
+        <span class="fi">${ic("flame","color:var(--copper)")}</span>
+        <span class="ft">Same position, <b>a month</b>, if the rate holds</span>
+        <span class="fv" style="color:var(--loss)">−${usd(month)}</span>
+      </div>`;
     $$("#ssPick .chip").forEach(c=>{ const on=c.dataset.ss===m.name;
       c.style.borderColor=on?"var(--brand)":""; c.style.color=on?"var(--brand)":""; });
   }
-  $("#ssPick").addEventListener("click",e=>{ const b=e.target.closest("[data-ss]"); if(!b) return;
-    const m=ms.find(x=>x.name===b.dataset.ss); if(m) show(m); });
+  $("#ssPick").addEventListener("click",e=>{ const b2=e.target.closest("[data-ss]"); if(!b2) return;
+    const m=ms.find(x=>x.name===b2.dataset.ss); if(m) show(m); });
   show(cur);
 }
 
@@ -3488,7 +3621,7 @@ function paintWallet(){
       <div class="ic" style="background:${p.side==="LONG"?"var(--gain-bg)":"var(--loss-bg)"};color:${p.side==="LONG"?"var(--gain)":"var(--loss)"}">${ic(p.side==="LONG"?"up":"down")}</div>
       <div class="tx" style="flex:1">
         <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
-          <b>${p.market}</b><span class="mono ${p.upnl>=0?"gain":"loss"}">${usd(p.upnl,{plus:true})}</span></div>
+          <b class="coinlink" data-coin="${p.market}">${p.market}</b><span class="mono ${p.upnl>=0?"gain":"loss"}">${usd(p.upnl,{plus:true})}</span></div>
         <div class="dim3" style="font-size:12.5px;margin-top:2px">
           ${p.side==="LONG"?"Betting up":"Betting down"} · ${num(p.size,4)} @ ${usd(p.entry)} → now ${usd(p.mark)} · ${usd(p.notional)} position${p.lev?` · ${p.lev}× set`:""}</div>
       </div></div>`).join("") : `<div class="dim3" style="padding:6px 2px;font-size:13.5px">No open positions — this wallet is flat right now.</div>`;
@@ -3497,7 +3630,7 @@ function paintWallet(){
   const mixHTML = w.mktRank.slice(0,6).map((m,i)=>{
     const share=m.vol/totVol*100;
     return `<div class="bar ${share>=50?"hi":share>=15?"mid":"lo"}">
-      <span class="lb">${m.m}</span>
+      <span class="lb coinlink" data-coin="${m.m}">${m.m}</span>
       <span class="tr"><i class="fl" style="width:0" data-w="${share.toFixed(1)}"></i></span>
       <span class="nm">${share>=1?Math.round(share)+"%":"<1%"}</span></div>`;}).join("");
 
@@ -5133,6 +5266,7 @@ function shareRun(p){
    exchange serves: no opinions are stored, no numbers invented.
    ============================================================ */
 let radarData=null, radarBusy=false, radarSort="move";
+const sparkCache={};
 
 /* ---------- indicators ---------- */
 function sma(a,n){ if(a.length<n) return null; let s=0; for(let i=a.length-n;i<a.length;i++) s+=a[i]; return s/n; }
@@ -5243,12 +5377,14 @@ async function radarScan(onStep){
   /* venue heartbeat — sampled, and labelled as such */
   onStep&&onStep("reading the tape", ++done, scan.length+2);
   const dayAgo=now-86400e6;
-  const tapeMkts=live.slice(0,3);
+  /* the busiest 8 markets carry ~93% of all trades, so sample there */
+  const tapeMkts=live.slice().sort((a,b)=>b.trades-a.trades).slice(0,8);
   const takers=new Set(), makers=new Set();
   let tapeTrades=0, biggest=null;
   for(const m of tapeMkts){
     let to=now;
-    for(let i=0;i<4;i++){
+    const cap=Math.min(6,Math.max(1,Math.ceil(m.trades/1000)));
+    for(let i=0;i<cap;i++){
       const r=await safe(api(`/v1/trades?market=${m.name}&limit=1000&from=${dayAgo}&to=${to}`,120000),null);
       const t=(r&&r.trades)||[]; if(!t.length) break;
       t.forEach(x=>{
@@ -5276,12 +5412,15 @@ async function radarScan(onStep){
     checked++; if(d1/life>=0.92) fresh++;
   });
 
+  const venueTrades=ms.reduce((s,m)=>s+m.trades,0);
+  const coverage=venueTrades? tapeTrades/venueTrades : 0;
   const totalVol=ms.reduce((s,m)=>s+m.vol,0);
   const totalOI=ms.reduce((s,m)=>s+m.oi,0);
   const flow=results.length? mean(results.map(r=>r.buyRatio)) : 0.5;
   return {results, live, ms,
     pulse:{ traders:takers.size, makers:makers.size, tapeMkts:tapeMkts.map(m=>m.name),
-            tapeTrades, biggest, freshRate: checked? fresh/checked : null, checked,
+            tapeTrades, venueTrades, coverage, biggest, full:false,
+            freshRate: checked? fresh/checked : null, checked,
             totalVol, totalOI, flow },
     at:Date.now()};
 }
@@ -5393,7 +5532,9 @@ function paintRadar(){
 
   <div class="tiles t4 rv" id="pulseRow">
     ${[
-      ["Active traders","users",num(P.traders),`across ${P.tapeMkts.length} busiest markets, 24h`,"traders"],
+      ["Traders seen","users",num(P.traders)+(P.full?"":"+"),
+        P.full?`complete count across ${P.tapeMkts.length} markets, 24h`
+              :`from ${Math.round(P.coverage*100)}% of the day's tape — a floor, not the total`,"traders"],
       ["New wallets","zap",P.freshRate!=null?Math.round(P.freshRate*100)+"%":"—",
         P.freshRate!=null?`of ${P.checked} sampled traders are first-timers`:"not enough data","newwallets"],
       ["Buy pressure","act",flowPct+"%",flowPct>52?"buyers are the impatient side":flowPct<48?"sellers are the impatient side":"evenly matched","flow"],
@@ -5402,6 +5543,11 @@ function paintRadar(){
         <div class="k">${ic(t[1],"width:14px;height:14px;color:var(--brand)")}<span>${t[0]}</span>
           <button class="info" data-tip="${t[4]}" aria-label="What this means">?</button></div>
         <div class="v">${t[2]}</div><div class="sub">${t[3]}</div></div>`).join("")}
+  </div>
+  <div class="rv" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px">
+    ${P.full?`<span class="dim3" style="font-size:12.5px">Counted every trade in the last 24 hours across the ${P.tapeMkts.length} markets that carry ${Math.round(P.coverage*100)}% of activity.</span>`
+      :`<button class="btn ghost" id="fullCount">${ic("users")}Count every trader</button>
+        <span class="dim3" style="font-size:12.5px">Walks the whole 24h tape — about two minutes.</span>`}
   </div>
   ${P.biggest?`<p class="dim3 rv" style="font-size:12.5px;margin-top:10px">
     Biggest single trade in the sample: <b style="color:var(--ink)">${usd(P.biggest.n)}</b> ${P.biggest.side.toLowerCase()}
@@ -5422,7 +5568,7 @@ function paintRadar(){
       ${scored.map((s,i)=>{
         const lean=s.b.score;
         const col = lean>0.18?"up":lean<-0.18?"dn":"nu";
-        return `<button class="heat ${col}" data-heat="${i}" style="--d:${Math.min(i,14)*35}ms">
+        return `<button class="heat ${col}" data-coin="${s.a.m.name}" data-heat="${i}" style="--d:${Math.min(i,14)*35}ms">
           <span class="hm">${s.a.m.base}</span>
           <span class="hv">${pct(s.a.m.chg)}</span>
           <span class="hb"><i style="width:${clamp(s.heat/12*100,8,100)}%"></i></span>
@@ -5436,7 +5582,7 @@ function paintRadar(){
     <div class="setups" id="setupsBox">
       ${setups.map((s,i)=>{
         const lean=s.b.score, dir=lean>0.18?["Leaning up","up","up"]:lean<-0.18?["Leaning down","dn","down"]:["No clear lean","nu","target"];
-        return `<div class="setup ${dir[1]}" data-setup="${i}" style="--d:${Math.min(i,6)*60}ms">
+        return `<div class="setup ${dir[1]}" data-coin="${s.a.m.name}" data-setup="${i}" style="--d:${Math.min(i,6)*60}ms">
           <div class="stop">
             <div class="sname"><span class="tk">${s.a.m.base.slice(0,4)}</span>
               <span><b>${s.a.m.name}</b><s>${s.a.m.full}</s></span></div>
@@ -5449,7 +5595,9 @@ function paintRadar(){
           <div class="spark" data-spark="${i}"></div>
           <div class="sfoot">
             <span class="mono dim3">${usd(s.a.m.mark)} · ${usd(s.a.m.vol)} 24h</span>
-            <span class="go">${ic("act")}Open market</span>
+            <span style="display:flex;gap:10px;align-items:center">
+              <button class="chartbtn" data-chart="${s.a.m.name}" aria-label="Chart and tape">${ic("act")}</button>
+              <span class="go">${ic("ext")}Trade on Arcus</span></span>
           </div>
         </div>`;}).join("")}
     </div>
@@ -5476,23 +5624,37 @@ function paintRadar(){
     const arr=mv==="up"?gainers:losers;
     $("#moversBox").innerHTML=arr.map((m,i)=>{
       const a=D.results.find(r=>r.m.name===m.name);
-      return `<div class="mover ${m.chg>=0?"up":"dn"}" data-mkt="${m.name}" style="--d:${i*55}ms">
+      return `<div class="mover ${m.chg>=0?"up":"dn"}" data-coin="${m.name}" style="--d:${i*55}ms">
         <span class="rk">${i+1}</span>
         <div class="mi"><b>${m.name}</b><s>${m.full}</s></div>
         <div class="msp" data-msp="${m.name}"></div>
         <div class="mr"><b>${pct(m.chg)}</b><s>${usd(m.mark)}</s></div>
       </div>`;}).join("");
+    /* movers can fall outside the scanned set — fetch those candles on demand
+       so every row gets a chart, not just the busiest markets */
+    const missing=[];
     $$("#moversBox .msp").forEach(n=>{
-      const a=D.results.find(r=>r.m.name===n.dataset.msp);
-      const m=D.live.find(x=>x.name===n.dataset.msp);
-      if(a&&a.spark.length>3) n.innerHTML=spark(a.spark,120,34,m.chg>=0?"var(--gain)":"var(--loss)");
+      const name=n.dataset.msp;
+      const m=D.live.find(x=>x.name===name);
+      const cached=sparkCache[name] || (D.results.find(r=>r.m.name===name)||{}).spark;
+      if(cached&&cached.length>3) n.innerHTML=spark(cached,120,34,m.chg>=0?"var(--gain)":"var(--loss)");
+      else { n.innerHTML=`<div class="sk" style="height:34px;border-radius:6px"></div>`; missing.push({n,name,m}); }
+    });
+    missing.forEach(async o=>{
+      const to=Date.now()*1000;
+      const c=await safe(api(`/v1/candles?market=${o.name}&timeframe=1h&countback=48&to=${to}`,300000),null);
+      const closes=((c&&c.candles)||[]).map(x=>N(x.close)).filter(v=>v>0);
+      if(closes.length>3){
+        sparkCache[o.name]=closes;
+        if(o.n.isConnected) o.n.innerHTML=spark(closes,120,34,o.m.chg>=0?"var(--gain)":"var(--loss)");
+      } else if(o.n.isConnected) o.n.innerHTML="";
     });
     magnetise($("#moversBox"),".mover");
   }
   paintMovers();
   $("#moveSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-mv]"); if(!b)return;
     mv=b.dataset.mv; $$("#moveSeg button").forEach(x=>x.classList.toggle("on",x.dataset.mv===mv)); paintMovers(); });
-  $("#moversBox").addEventListener("click",e=>{ const r=e.target.closest("[data-mkt]"); if(r) openMarket(r.dataset.mkt); });
+
 
   /* setup sparklines */
   $$("#setupsBox .spark").forEach(n=>{
@@ -5501,12 +5663,11 @@ function paintRadar(){
       n.innerHTML=spark(s.a.spark,220,52, s.b.score>0.18?"var(--gain)":s.b.score<-0.18?"var(--loss)":"var(--copper)");
   });
   $("#setupsBox").addEventListener("click",e=>{
-    if(e.target.closest("[data-tip]")) return;
-    const c2=e.target.closest("[data-setup]"); if(c2) openMarket(setups[+c2.dataset.setup].a.m.name); });
+    const ch=e.target.closest("[data-chart]"); if(ch) openMarket(ch.dataset.chart); });
   magnetise($("#setupsBox"),".setup");
 
   /* heat map */
-  $("#heatGrid").addEventListener("click",e=>{ const b=e.target.closest("[data-heat]"); if(b) openMarket(scored[+b.dataset.heat].a.m.name); });
+
   $$("#heatGrid .heat").forEach((n,i)=>{
     const s=scored[i];
     n.dataset.tip=""; n.dataset.tipText=`<b>${s.a.m.name} · ${s.ttl[0]}</b>${s.rs.slice(0,3).map(r=>r.t).join(" · ")||"Nothing unusual."}`;
@@ -5517,7 +5678,56 @@ function paintRadar(){
   if(rc&&window.ArcChars){ const pool=ArcChars.ids.filter(x=>x!=="ghost");
     character(rc,pool[Math.floor(Math.random()*pool.length)],88); }
   $("#radarRf").addEventListener("click",()=>{ cache.clear(); renderRadar(true); });
+  const fc=$("#fullCount"); if(fc) fc.addEventListener("click",fullTraderCount);
   reveal(root); glow(root);
+}
+
+/* the honest, slow version: walk the entire 24h tape on the markets that matter */
+async function fullTraderCount(){
+  const btn=$("#fullCount"); if(!btn||radarBusy) return;
+  radarBusy=true;
+  const D=radarData, now=Date.now()*1000, dayAgo=now-86400e6;
+  const mkts=D.live.slice().sort((a,b)=>b.trades-a.trades).slice(0,20);
+  const totalPages=Math.max(1,Math.ceil(mkts.reduce((s,m)=>s+m.trades,0)/1000));
+  const takers=new Set(), makers=new Set();
+  let pages=0, trades=0, stop=false;
+  btn.outerHTML=`<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%">
+    <div class="rlbar" style="position:relative;flex:1;min-width:160px;height:6px;border-radius:100px;overflow:hidden">
+      <i id="fcBar" style="width:0"></i></div>
+    <span class="mono dim3" style="font-size:12px" id="fcTxt">starting…</span>
+    <button class="btn ghost" id="fcStop">Stop</button></div>`;
+  $("#fcStop").addEventListener("click",()=>{ stop=true; });
+  try{
+    for(const m of mkts){
+      if(stop) break;
+      let to=now;
+      for(let i=0;i<200;i++){
+        if(stop) break;
+        const r=await safe(api(`/v1/trades?market=${m.name}&limit=1000&from=${dayAgo}&to=${to}`,600000),null);
+        const t=(r&&r.trades)||[];
+        if(!t.length) break;
+        t.forEach(x=>{ takers.add((x.takerAddress||"").toLowerCase()); makers.add((x.makerAddress||"").toLowerCase()); });
+        trades+=t.length; pages++;
+        const pc=clamp(pages/totalPages*100,0,99);
+        const bar=$("#fcBar"), tx=$("#fcTxt");
+        if(bar) bar.style.width=pc.toFixed(1)+"%";
+        if(tx) tx.textContent=`${m.name} · ${num(takers.size)} traders · ${num(trades)} trades`;
+        if(t.length<1000) break;
+        to=t[t.length-1].timestamp-1;
+        await new Promise(r2=>setTimeout(r2,220));      /* stay well inside the rate limit */
+      }
+    }
+    takers.delete(""); makers.delete("");
+    radarData.pulse.traders=takers.size;
+    radarData.pulse.makers=makers.size;
+    radarData.pulse.tapeTrades=trades;
+    radarData.pulse.tapeMkts=mkts.map(m=>m.name);
+    radarData.pulse.coverage=D.pulse.venueTrades? trades/D.pulse.venueTrades : 0;
+    radarData.pulse.full=!stop;
+  }catch(e){}
+  radarBusy=false;
+  paintRadar();
+  toast(stop?"Stopped — showing what was counted":"Counted every trader in the tape");
 }
 
 /* elements lean toward the cursor — cheap, and it makes a grid feel alive */
