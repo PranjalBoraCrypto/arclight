@@ -172,13 +172,13 @@ ul{margin:0;padding:0;list-style:none}
 #topbar .logo{width:30px;height:30px;border-radius:9px;background:#234728;display:grid;place-items:center;flex:none}
 #topbar .name{font-family:"Archivo";font-weight:700;font-size:16px;letter-spacing:-.02em}
 #topbar .grow{flex:1}
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(6,1fr);
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(7,1fr);
   background:color-mix(in srgb,var(--ground) 93%,transparent);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;color:var(--ink-3);
-  font-size:9.5px;font-weight:500;transition:color .2s;position:relative}
-.tab svg{width:21px;height:21px;transition:transform .34s cubic-bezier(.2,1.5,.4,1)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 7px;color:var(--ink-3);
+  font-size:8.5px;letter-spacing:-.01em;font-weight:500;transition:color .2s;position:relative}
+.tab svg{width:19px;height:19px;transition:transform .34s cubic-bezier(.2,1.5,.4,1)}
 .tab.on{color:var(--brand)}
 .tab.on svg{transform:translateY(-2px) scale(1.12)}
 .tab.on::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:20px;height:2px;border-radius:0 0 3px 3px;background:var(--brand)}
@@ -808,6 +808,103 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .castcell.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-glow)}
 .castcell:not(.on) canvas{filter:saturate(.55) brightness(.82)}
 
+/* ================= RADAR ================= */
+.rload{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--rule);height:210px;
+  background:linear-gradient(160deg,var(--surface-2),var(--surface))}
+.rload canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.75}
+.rlmid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.rlpct{font-family:"Archivo";font-weight:800;font-size:44px;letter-spacing:-.04em;
+  text-shadow:0 4px 24px rgba(0,0,0,.7)}
+.rlwhat{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);min-height:1.2em}
+.rlbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--surface-3)}
+.rlbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand-dim),var(--brand));
+  transition:width .4s ease;box-shadow:0 0 12px var(--brand)}
+
+.movers{display:flex;flex-direction:column;gap:9px}
+.mover{display:grid;grid-template-columns:26px 1fr 130px auto;gap:14px;align-items:center;
+  padding:13px 15px;border-radius:15px;border:1px solid var(--rule);background:var(--surface);cursor:pointer;
+  transition:transform .2s ease-out,border-color .3s,box-shadow .3s;
+  animation:moveIn .5s cubic-bezier(.2,.9,.3,1) backwards;animation-delay:var(--d,0ms)}
+@keyframes moveIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.mover:hover{border-color:var(--rule-2);box-shadow:var(--shadow-2)}
+.mover .rk{font-family:"Archivo";font-weight:800;font-size:14px;color:var(--ink-3);text-align:center}
+.mover .mi b{display:block;font-size:14.5px;font-weight:600}
+.mover .mi s{text-decoration:none;font-size:11.5px;color:var(--ink-3)}
+.mover .msp{height:34px}
+.mover .mr{text-align:right}
+.mover .mr b{display:block;font-family:"Archivo";font-weight:800;font-size:17px;letter-spacing:-.03em}
+.mover .mr s{text-decoration:none;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-3)}
+.mover.up .mr b{color:var(--gain)} .mover.dn .mr b{color:var(--loss)}
+.mover.up:hover{border-color:color-mix(in srgb,var(--gain) 45%,transparent)}
+.mover.dn:hover{border-color:color-mix(in srgb,var(--loss) 45%,transparent)}
+
+.heatgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:9px}
+.heat{position:relative;border-radius:14px;padding:13px 11px;border:1px solid var(--rule);overflow:hidden;
+  display:flex;flex-direction:column;gap:5px;align-items:flex-start;cursor:pointer;text-align:left;
+  transition:transform .2s ease-out,border-color .3s,box-shadow .3s;
+  animation:heatIn .5s cubic-bezier(.2,1.1,.3,1) backwards;animation-delay:var(--d,0ms)}
+@keyframes heatIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+.heat::before{content:"";position:absolute;inset:0;opacity:.55;transition:opacity .3s}
+.heat.up{background:var(--surface)} .heat.up::before{background:radial-gradient(150px circle at 50% 0%,var(--gain-bg),transparent 70%)}
+.heat.dn{background:var(--surface)} .heat.dn::before{background:radial-gradient(150px circle at 50% 0%,var(--loss-bg),transparent 70%)}
+.heat.nu{background:var(--surface)} .heat.nu::before{background:radial-gradient(150px circle at 50% 0%,rgba(201,138,75,.10),transparent 70%)}
+.heat:hover{box-shadow:var(--shadow-2)}
+.heat:hover::before{opacity:1}
+.heat.up:hover{border-color:color-mix(in srgb,var(--gain) 50%,transparent)}
+.heat.dn:hover{border-color:color-mix(in srgb,var(--loss) 50%,transparent)}
+.heat.nu:hover{border-color:var(--copper-dim)}
+.heat>*{position:relative}
+.heat .hm{font-family:"Archivo";font-weight:700;font-size:14px;letter-spacing:-.02em}
+.heat .hv{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-2)}
+.heat.up .hv{color:var(--gain)} .heat.dn .hv{color:var(--loss)}
+.heat .hb{display:block;width:100%;height:4px;border-radius:100px;background:var(--surface-3);overflow:hidden;margin-top:2px}
+.heat .hb i{display:block;height:100%;border-radius:100px;background:var(--brand);
+  animation:hbGrow .9s cubic-bezier(.2,.85,.3,1) backwards;animation-delay:var(--d,0ms)}
+.heat.up .hb i{background:var(--gain)} .heat.dn .hb i{background:var(--loss)} .heat.nu .hb i{background:var(--copper)}
+@keyframes hbGrow{from{width:0!important}}
+
+.setups{display:grid;gap:14px}
+.setup{position:relative;border-radius:18px;border:1px solid var(--rule);background:var(--surface);
+  padding:17px;display:flex;flex-direction:column;gap:11px;cursor:pointer;overflow:hidden;
+  transition:transform .2s ease-out,border-color .3s,box-shadow .3s;
+  animation:setIn .55s cubic-bezier(.2,.9,.3,1) backwards;animation-delay:var(--d,0ms)}
+@keyframes setIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.setup::before{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none}
+.setup.up::before{background:radial-gradient(380px circle at 100% 0%,var(--gain-bg),transparent 60%)}
+.setup.dn::before{background:radial-gradient(380px circle at 100% 0%,var(--loss-bg),transparent 60%)}
+.setup.nu::before{background:radial-gradient(380px circle at 100% 0%,rgba(201,138,75,.10),transparent 60%)}
+.setup:hover{box-shadow:var(--shadow-2);border-color:var(--rule-2)}
+.setup>*{position:relative}
+.stop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sname{display:flex;align-items:center;gap:10px}
+.sname .tk{width:34px;height:34px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;
+  font-family:"Archivo";font-weight:700;font-size:11px;color:var(--ink-2);flex:none}
+.sname b{display:block;font-size:14.5px}
+.sname s{text-decoration:none;font-size:11.5px;color:var(--ink-3)}
+.lean{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:10px;
+  letter-spacing:.09em;text-transform:uppercase;font-weight:700;padding:5px 9px;border-radius:100px;white-space:nowrap}
+.lean svg{width:12px;height:12px}
+.lean.up{background:var(--gain-bg);color:var(--gain)}
+.lean.dn{background:var(--loss-bg);color:var(--loss)}
+.lean.nu{background:rgba(201,138,75,.14);color:var(--copper)}
+.sttl{font-family:"Archivo";font-weight:700;font-size:18px;letter-spacing:-.02em}
+.sdesc{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.rchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:100px;cursor:help;
+  font-family:"JetBrains Mono",monospace;font-size:11px;border:1px solid var(--rule);transition:.22s}
+.rchip svg{width:12px;height:12px}
+.rchip.p{color:var(--gain);border-color:color-mix(in srgb,var(--gain) 30%,transparent)}
+.rchip.n{color:var(--loss);border-color:color-mix(in srgb,var(--loss) 30%,transparent)}
+.rchip.z{color:var(--copper);border-color:var(--copper-dim)}
+.rchip:hover{transform:translateY(-2px);background:var(--surface-2)}
+.setup .spark{height:52px}
+.sfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;
+  padding-top:11px;border-top:1px solid var(--rule)}
+.sfoot .go{display:inline-flex;align-items:center;gap:6px;color:var(--brand);font-weight:600;transition:gap .2s}
+.sfoot .go svg{width:13px;height:13px}
+.setup:hover .sfoot .go{gap:9px}
+
 /* ================= WATCHLIST ================= */
 .watch{display:grid;gap:10px}
 .wcard{position:relative;display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:14px;
@@ -972,6 +1069,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .badges{grid-template-columns:repeat(6,1fr)}
   .watch{grid-template-columns:repeat(4,1fr)}
   .cast{grid-template-columns:1fr 1.15fr}
+  .setups{grid-template-columns:1fr 1fr}
   .pg{grid-template-columns:1fr 1fr}
   .clocks{grid-template-columns:1fr 1fr}
   .ehero .searchbox{max-width:600px}
@@ -999,6 +1097,17 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .badges{grid-template-columns:repeat(3,1fr)}
   .watch{grid-template-columns:1fr}
   .cast{grid-template-columns:1fr}
+  .setups{grid-template-columns:1fr}
+  .heatgrid{grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:7px}
+  .heat{padding:10px 9px;border-radius:12px}
+  .heat .hm{font-size:12.5px}
+  .mover{grid-template-columns:22px 1fr auto;gap:10px;padding:11px 12px}
+  .mover .msp{display:none}
+  .mover .mr b{font-size:15px}
+  .rload{height:180px}
+  .rlpct{font-size:34px}
+  .setup{padding:14px}
+  .sttl{font-size:16px}
   .pg{grid-template-columns:1fr}
   .clocks{grid-template-columns:1fr}
   .lab .lh{padding:16px 16px 0;gap:11px}
@@ -1101,6 +1210,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 <g id="i-ext" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-8.5 8.5"/><path d="M18 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></g>
 <g id="i-rf" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L20 15.5"/><path d="M20 20v-4.5h-4.5"/></g>
 <g id="i-coin" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v8.8M14.3 9.6c-.5-.7-1.4-1-2.3-1-1.3 0-2.3.7-2.3 1.8 0 2.4 4.6 1.3 4.6 3.7 0 1.1-1 1.9-2.3 1.9-1 0-1.9-.4-2.4-1.1"/></g>
+<g id="i-radar" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><path d="M12 12l6.4-6.4"/><circle cx="16.4" cy="7.6" r="1.5" fill="currentColor" stroke="none"/></g>
 <g id="i-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-6 7 6 7"/><path d="M20 4v16"/></g>
 <g id="i-star" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1L3.4 9.9l6-.8z"/></g>
 <g id="i-starf" fill="currentColor"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1L3.4 9.9l6-.8z"/></g>
@@ -1119,6 +1229,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   <button class="railbtn" data-go="home"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg><span class="lb">Search</span></button>
   <button class="railbtn" data-go="wallet"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg><span class="lb">Wallet</span></button>
   <button class="railbtn" data-go="run"><svg viewBox="0 0 24 24"><use href="#i-film"/></svg><span class="lb">History run</span></button>
+  <button class="railbtn" data-go="radar"><svg viewBox="0 0 24 24"><use href="#i-radar"/></svg><span class="lb">Radar</span></button>
   <button class="railbtn" data-go="markets"><svg viewBox="0 0 24 24"><use href="#i-act"/></svg><span class="lb">Markets</span></button>
   <button class="railbtn" data-go="leaders"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span class="lb">Leaderboard</span></button>
   <button class="railbtn" data-go="learn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><span class="lb">What is Arcus?</span></button>
@@ -1216,6 +1327,9 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 <!-- ================= WALLET ================= -->
 <div class="page" id="p-wallet"><div class="wrap" id="walletRoot"></div></div>
 
+<!-- ================= RADAR ================= -->
+<div class="page" id="p-radar"><div class="wrap" id="radarRoot"></div></div>
+
 <!-- ================= HISTORY RUN ================= -->
 <div class="page" id="p-run"><div class="wrap" id="runRoot"></div></div>
 
@@ -1246,6 +1360,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
       </div>
       <div class="fcol"><h4>Explore</h4>
         <a href="#/" data-go="home">Search a wallet</a>
+        <a href="#/radar" data-go="radar">Radar</a>
         <a href="#/run" data-go="run">History run</a>
         <a href="#/markets" data-go="markets">Perps activity</a>
         <a href="#/leaders" data-go="leaders">Leaderboard</a>
@@ -1275,6 +1390,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   <button class="tab" data-go="home"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg>Search</button>
   <button class="tab" data-go="wallet"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg>Wallet</button>
   <button class="tab" data-go="run"><svg viewBox="0 0 24 24"><use href="#i-film"/></svg>Replay</button>
+  <button class="tab" data-go="radar"><svg viewBox="0 0 24 24"><use href="#i-radar"/></svg>Radar</button>
   <button class="tab" data-go="markets"><svg viewBox="0 0 24 24"><use href="#i-act"/></svg>Markets</button>
   <button class="tab" data-go="leaders"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg>Ranks</button>
   <button class="tab" data-go="learn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg>Learn</button>
@@ -1744,6 +1860,10 @@ const TIPS={
   winrate:["Win rate","Of the trades this wallet has closed, the share that came out in profit. Open positions don't count."],
   hold:["Typical hold","The median time between opening a position and closing it flat again."],
   cancels:["Orders cancelled","Orders pulled before they filled. A high share usually means someone working limit orders by hand rather than a bot."],
+  traders:["Active traders","Distinct wallets that appear in the last 24 hours of the trade tape on the three busiest markets. Sampled, not venue-wide — a full count would take hundreds of requests."],
+  newwallets:["New wallets","Of the traders we sampled, the share whose 24-hour volume is essentially their entire lifetime volume — meaning Arcus is new to them."],
+  flow:["Buy pressure","Across the scanned markets, the share of aggressive (taker) volume that hit the ask rather than the bid. Above 50% means buyers are the impatient side."],
+  oi:["Open interest","Money currently sitting in open positions across every market. Unlike volume it doesn't reset — it's what's still at risk."],
   peak:["Best it ever was","The most this trade was ever worth, at any point while it was open — before it was closed."]
 };
 let tipNode=null, tipAnchor=null, tipHideT=null;
@@ -2027,7 +2147,7 @@ function spark(vals,w,h,color,fill){
 /* ============================================================
    ROUTER
    ============================================================ */
-const PAGES=["home","wallet","run","markets","leaders","learn"];
+const PAGES=["home","wallet","radar","run","markets","leaders","learn"];
 let current="home", loaded={};
 function setNav(p){
   $$("[data-go]").forEach(b=>{ const on=b.dataset.go===p; b.classList.toggle("on",on); });
@@ -2040,6 +2160,7 @@ function show(p){
   PAGES.forEach(x=>$("#p-"+x).classList.toggle("on",x===p));
   setNav(p);
   window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"});
+  if(p==="radar"&&!loaded.radar){loaded.radar=1;renderRadar();}
   if(p==="markets"&&!loaded.markets){loaded.markets=1;renderMarkets();}
   if(p==="leaders"&&!loaded.leaders){loaded.leaders=1;renderLeaders();}
   if(p==="learn"&&!loaded.learn){loaded.learn=1;renderLearn();}
@@ -5004,6 +5125,417 @@ function shareRun(p){
   const verb = p.total>=0 ? "banked" : "torched";
   const txt=`${who} ${verb} ${usdExact(Math.abs(p.total))} ${p.open?"and is still holding":"on one"} ${p.m} ${p.dir.toLowerCase()} on Arcus.\n\nWatch it play out 👇`;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(SITE_URL||REF_LINK)}`,"_blank","noopener");
+}
+
+/* ============================================================
+   RADAR — what the venue is doing, and where the action is.
+   Everything here is computed in the browser from candles the
+   exchange serves: no opinions are stored, no numbers invented.
+   ============================================================ */
+let radarData=null, radarBusy=false, radarSort="move";
+
+/* ---------- indicators ---------- */
+function sma(a,n){ if(a.length<n) return null; let s=0; for(let i=a.length-n;i<a.length;i++) s+=a[i]; return s/n; }
+function rsi(closes,n){
+  if(closes.length<n+1) return null;
+  let g=0,l=0;
+  for(let i=closes.length-n;i<closes.length;i++){ const d=closes[i]-closes[i-1]; d>=0?g+=d:l-=d; }
+  g/=n; l/=n;
+  if(l===0) return 100;
+  return 100-100/(1+g/l);
+}
+function atrPct(bars,n){
+  if(bars.length<n+1) return null;
+  let s=0;
+  for(let i=bars.length-n;i<bars.length;i++){
+    const p=bars[i-1].c;
+    s+=Math.max(bars[i].h-bars[i].l, Math.abs(bars[i].h-p), Math.abs(bars[i].l-p));
+  }
+  const last=bars[bars.length-1].c||1;
+  return (s/n)/last*100;
+}
+function mean(a){ return a.length? a.reduce((x,y)=>x+y,0)/a.length : 0; }
+
+function analyseMarket(m,raw){
+  const bars=(raw||[]).map(x=>({t:N(x.openTime)/1000,o:N(x.open),h:N(x.high),l:N(x.low),c:N(x.close),
+      v:N(x.notionalVolume),tb:N(x.takerBuyNotionalVolume)}))
+    .filter(b=>b.c>0).sort((a,b)=>a.t-b.t);
+  if(bars.length<30) return null;
+  const closes=bars.map(b=>b.c);
+  const r=rsi(closes,14), s20=sma(closes,20), s50=sma(closes,50)||sma(closes,Math.min(40,bars.length-1));
+  const atr=atrPct(bars,14);
+  const recent=bars.slice(-6), base=bars.slice(-72,-6);
+  const surge = base.length? mean(recent.map(b=>b.v))/Math.max(1e-9,mean(base.map(b=>b.v))) : 1;
+  const last24=bars.slice(-24);
+  const totV=last24.reduce((s,b)=>s+b.v,0), totB=last24.reduce((s,b)=>s+b.tb,0);
+  const buyRatio = totV>0? totB/totV : 0.5;
+  const atrHist=[];
+  for(let i=30;i<bars.length;i+=6) atrHist.push(atrPct(bars.slice(0,i),14)||0);
+  const atrMean=mean(atrHist.filter(Boolean))||atr;
+  const compression = atrMean>0? atr/atrMean : 1;
+  const rangePos = (m.hi24>m.lo24) ? clamp((m.mark-m.lo24)/(m.hi24-m.lo24),0,1) : 0.5;
+  const spark=closes.slice(-48);
+  return {m, bars, rsi:r, sma20:s20, sma50:s50, atr, surge, buyRatio, compression, rangePos, spark,
+          above20:s20!=null&&m.mark>s20, above50:s50!=null&&m.mark>s50};
+}
+
+/* ---------- readings → plain-English observations ---------- */
+function readings(a){
+  if(!a) return [];
+  const out=[], m=a.m;
+  if(a.rsi!=null){
+    if(a.rsi>=72) out.push({k:"hot",  i:"flame", t:"RSI "+a.rsi.toFixed(0), d:"Bought hard for hours. Historically where moves pause or snap back.",bias:-1,w:2});
+    else if(a.rsi<=28) out.push({k:"cold", i:"gem", t:"RSI "+a.rsi.toFixed(0), d:"Sold hard for hours. The zone bounces tend to start from — and where knives keep falling.",bias:1,w:2});
+  }
+  if(a.surge>=2.2) out.push({k:"vol", i:"zap", t:(a.surge).toFixed(1)+"× volume", d:"Trading far above its own recent pace. Something is happening here.",bias:0,w:2});
+  else if(a.surge<=0.45) out.push({k:"quiet", i:"moon", t:"Volume "+(a.surge*100).toFixed(0)+"% of normal", d:"Unusually quiet against its own baseline.",bias:0,w:1});
+  if(a.buyRatio>=0.58) out.push({k:"buy", i:"up", t:(a.buyRatio*100).toFixed(0)+"% taker buys", d:"Aggressive orders are mostly hitting the ask — buyers are the impatient side.",bias:1,w:2});
+  else if(a.buyRatio<=0.42) out.push({k:"sell", i:"down", t:(a.buyRatio*100).toFixed(0)+"% taker buys", d:"Aggressive orders are mostly hitting the bid — sellers are the impatient side.",bias:-1,w:2});
+  if(a.compression<=0.62) out.push({k:"coil", i:"target", t:"Range compressed", d:"Volatility is well below its own average. Quiet stretches like this usually end with a move.",bias:0,w:2});
+  else if(a.compression>=1.7) out.push({k:"wild", i:"alert", t:"Volatility "+a.compression.toFixed(1)+"× normal", d:"Swinging much harder than usual. Position sizes that felt fine last week don't now.",bias:0,w:1});
+  if(a.above20&&a.above50) out.push({k:"up", i:"act", t:"Above both averages", d:"Trading above its 20 and 50 hour averages — an uptrend by the simplest definition.",bias:1,w:1});
+  else if(!a.above20&&a.sma50!=null&&!a.above50) out.push({k:"dn", i:"act", t:"Below both averages", d:"Trading below its 20 and 50 hour averages — a downtrend by the simplest definition.",bias:-1,w:1});
+  const fr=m.fr*100;
+  if(Math.abs(fr)>=0.004) out.push({k:"fund", i:"clock", t:"Funding "+fr.toFixed(4)+"%/hr",
+    d:(fr>0?"Longs are paying an unusually high rate — a crowded bet costs money to hold.":"Shorts are paying to hold — unusual, and expensive for them."),bias:fr>0?-1:1,w:2});
+  if(a.rangePos>=0.95) out.push({k:"high", i:"up", t:"At the day's high", d:"Sitting at the top of its 24h range.",bias:1,w:1});
+  else if(a.rangePos<=0.05) out.push({k:"low", i:"down", t:"At the day's low", d:"Sitting at the bottom of its 24h range.",bias:-1,w:1});
+  return out;
+}
+function biasOf(rs){
+  let n=0,w=0; rs.forEach(r=>{ n+=r.bias*r.w; w+=r.w; });
+  return {score:w? n/w : 0, weight:w};
+}
+function setupTitle(rs,b){
+  const has=k=>rs.some(r=>r.k===k);
+  if(has("coil")&&has("vol")) return ["Coiled and waking up","A quiet range with volume arriving — the setup that usually precedes a move, direction unknown."];
+  if(has("coil")) return ["Coiled","Volatility squeezed well below normal. These stretches rarely last."];
+  if(has("hot")&&has("fund")) return ["Crowded long","Overbought and longs are paying up to stay in. Both sides of a crowded trade."];
+  if(has("cold")&&has("buy")) return ["Sold off, buyers stepping in","Deeply oversold while aggressive orders turn to the bid."];
+  if(has("vol")&&b.score>0.2) return ["Volume with buyers","Trading well above its normal pace, and the aggression is on the buy side."];
+  if(has("vol")&&b.score<-0.2) return ["Volume with sellers","Trading well above its normal pace, and the aggression is on the sell side."];
+  if(has("wild")) return ["Unusually volatile","Swinging much harder than its own average."];
+  if(b.score>0.25) return ["Leaning up","Most readings point the same way."];
+  if(b.score<-0.25) return ["Leaning down","Most readings point the same way."];
+  return ["Mixed","The readings disagree with each other."];
+}
+
+/* ---------- the scan ---------- */
+async function radarScan(onStep){
+  const ms=await markets();
+  const live=ms.filter(m=>m.vol>0).sort((a,b)=>b.vol-a.vol);
+  const scan=live.slice(0,22);
+  const now=Date.now()*1000;
+  const results=[];
+  let done=0;
+  const queue=scan.slice();
+  async function worker(){
+    while(queue.length){
+      const m=queue.shift();
+      onStep&&onStep(m.name, ++done, scan.length+2);
+      const c=await safe(api(`/v1/candles?market=${m.name}&timeframe=1h&countback=96&to=${now}`,180000),null);
+      const a=analyseMarket(m,(c&&c.candles)||[]);
+      if(a) results.push(a);
+    }
+  }
+  await Promise.all([worker(),worker(),worker()]);
+
+  /* venue heartbeat — sampled, and labelled as such */
+  onStep&&onStep("reading the tape", ++done, scan.length+2);
+  const dayAgo=now-86400e6;
+  const tapeMkts=live.slice(0,3);
+  const takers=new Set(), makers=new Set();
+  let tapeTrades=0, biggest=null;
+  for(const m of tapeMkts){
+    let to=now;
+    for(let i=0;i<4;i++){
+      const r=await safe(api(`/v1/trades?market=${m.name}&limit=1000&from=${dayAgo}&to=${to}`,120000),null);
+      const t=(r&&r.trades)||[]; if(!t.length) break;
+      t.forEach(x=>{
+        takers.add((x.takerAddress||"").toLowerCase());
+        makers.add((x.makerAddress||"").toLowerCase());
+        const notional=Math.abs(N(x.size)*N(x.price));
+        if(!biggest||notional>biggest.n) biggest={n:notional,m:m.name,side:x.side,a:x.takerAddress,t:x.timestamp/1000};
+      });
+      tapeTrades+=t.length;
+      if(t.length<1000) break;
+      to=t[t.length-1].timestamp-1;
+    }
+  }
+  takers.delete(""); makers.delete("");
+
+  /* which of those are brand new: 24h volume ≈ lifetime volume */
+  onStep&&onStep("checking for new wallets", ++done, scan.length+2);
+  const sample=Array.from(takers).slice(0,34);
+  const stats=await Promise.all(sample.map(a=>safe(api(`/v1/account/stats?address=${a}&windows=24h`,300000),null)));
+  let fresh=0, checked=0;
+  stats.forEach(s=>{
+    if(!s||!s.lifetimeVolume) return;
+    const life=Number(s.lifetimeVolume), d1=Number((s.windowedStats&&s.windowedStats["24h"]&&s.windowedStats["24h"].volume)||0);
+    if(life<=0) return;
+    checked++; if(d1/life>=0.92) fresh++;
+  });
+
+  const totalVol=ms.reduce((s,m)=>s+m.vol,0);
+  const totalOI=ms.reduce((s,m)=>s+m.oi,0);
+  const flow=results.length? mean(results.map(r=>r.buyRatio)) : 0.5;
+  return {results, live, ms,
+    pulse:{ traders:takers.size, makers:makers.size, tapeMkts:tapeMkts.map(m=>m.name),
+            tapeTrades, biggest, freshRate: checked? fresh/checked : null, checked,
+            totalVol, totalOI, flow },
+    at:Date.now()};
+}
+
+/* ---------- the loader: a tape building itself ---------- */
+function radarLoader(host){
+  host.innerHTML=`<div class="rload">
+    <canvas id="rlCanvas"></canvas>
+    <div class="rlmid"><div class="rlpct" id="rlPct">0%</div>
+      <div class="rlwhat" id="rlWhat">warming up</div></div>
+    <div class="rlbar"><i id="rlBar"></i></div></div>`;
+  const cv=$("#rlCanvas"), c=cv.getContext("2d");
+  let W=0,H=0,bars=[],raf=null,seed=7;
+  const rnd=()=>{ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; };
+  function size(){ const r=host.getBoundingClientRect(), dpr=Math.min(2,window.devicePixelRatio||1);
+    W=r.width; H=Math.max(150,r.height); cv.width=W*dpr; cv.height=H*dpr;
+    cv.style.width=W+"px"; cv.style.height=H+"px"; c.setTransform(dpr,0,0,dpr,0,0);
+    bars=[]; let p=H*0.5;
+    const n=Math.floor(W/13);
+    for(let i=0;i<n;i++){ const d=(rnd()-0.48)*H*0.055; const o=p; p=clamp(p+d,H*0.18,H*0.82);
+      bars.push({o,c:p,h:Math.min(o,p)-rnd()*10,l:Math.max(o,p)+rnd()*10}); }
+  }
+  let t0=performance.now();
+  function draw(){
+    const el2=(performance.now()-t0)/1000;
+    c.clearRect(0,0,W,H);
+    const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+    const up=css("--gain"), dn=css("--loss"), br=css("--brand");
+    const head=(el2*26)%(bars.length+18);
+    bars.forEach((b,i)=>{
+      if(i>head) return;
+      const x=8+i*13, w=8, age=clamp(head-i,0,10)/10;
+      const col=b.c<=b.o?up:dn;
+      c.globalAlpha=0.25+0.75*(1-age*0.55);
+      c.strokeStyle=col; c.lineWidth=1.6; c.lineCap="round";
+      c.beginPath(); c.moveTo(x+w/2,b.h); c.lineTo(x+w/2,b.l); c.stroke();
+      c.fillStyle=col;
+      rr(c,x,Math.min(b.o,b.c),w,Math.max(3,Math.abs(b.c-b.o)),2); c.fill();
+      c.globalAlpha=1;
+    });
+    const hx=8+head*13;
+    if(hx<W){
+      const g=c.createLinearGradient(hx-70,0,hx,0);
+      g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(1,hexA(br,.30));
+      c.fillStyle=g; c.fillRect(hx-70,0,70,H);
+      c.strokeStyle=br; c.lineWidth=2; c.globalAlpha=.8;
+      c.beginPath(); c.moveTo(hx,0); c.lineTo(hx,H); c.stroke(); c.globalAlpha=1;
+    }
+    raf=requestAnimationFrame(draw);
+  }
+  size(); if(!REDUCED) raf=requestAnimationFrame(draw); else draw();
+  return {
+    step(name,i,total){
+      const pct2=Math.round(i/total*100);
+      const a=$("#rlPct"), b2=$("#rlWhat"), c2=$("#rlBar");
+      if(a) a.textContent=pct2+"%";
+      if(b2) b2.textContent=name;
+      if(c2) c2.style.width=pct2+"%";
+    },
+    stop(){ if(raf) cancelAnimationFrame(raf); }
+  };
+}
+
+/* ---------- the page ---------- */
+async function renderRadar(force){
+  const root=$("#radarRoot");
+  if(radarBusy) return;
+  if(radarData && !force && Date.now()-radarData.at<180000){ paintRadar(); return; }
+  radarBusy=true;
+  root.innerHTML=`<section style="margin-top:26px">
+    <div class="sechead"><div class="t"><span class="eyebrow">Radar</span>
+      <h2>Reading the whole board</h2>
+      <p>Pulling 96 hours of candles for the busiest markets and walking the live tape.</p></div></div>
+    <div id="rlHost" style="height:210px"></div></section>`;
+  const L=radarLoader($("#rlHost"));
+  try{
+    radarData=await radarScan((n,i,t)=>L.step(n,i,t));
+    L.stop(); paintRadar();
+  }catch(e){
+    L.stop();
+    root.innerHTML=`<div class="empty" style="padding-top:70px"><div class="ei">${ic("alert")}</div>
+      <h3>${e&&e.message==="RATE"?"Arcus is rate-limiting this device":"Couldn't complete the scan"}</h3>
+      <p>${e&&e.message==="RATE"?"The scan makes a lot of requests. Wait a minute and run it again.":"The exchange API didn't answer."}</p>
+      <button class="btn pri" id="radarRetry">${ic("rf")}Scan again</button></div>`;
+    const b=$("#radarRetry"); if(b) b.addEventListener("click",()=>{cache.clear();renderRadar(true);});
+  }
+  radarBusy=false;
+}
+
+function paintRadar(){
+  const D=radarData, root=$("#radarRoot");
+  const P=D.pulse;
+  const byMove=D.live.slice().sort((a,b)=>b.chg-a.chg);
+  const gainers=byMove.filter(m=>m.chg>0).slice(0,5);
+  const losers=byMove.filter(m=>m.chg<0).slice(-5).reverse();
+  const scored=D.results.map(a=>{ const rs=readings(a); const b=biasOf(rs); const ttl=setupTitle(rs,b);
+      return {a,rs,b,ttl,heat:rs.reduce((s,r)=>s+r.w,0)}; })
+    .sort((x,y)=>y.heat-x.heat);
+  const setups=scored.filter(s=>s.rs.length>=2).slice(0,6);
+  const flowPct=Math.round(P.flow*100);
+
+  root.innerHTML=`
+  <div class="sechead" style="margin-top:26px">
+    <div class="t"><span class="eyebrow">Radar · scanned ${ago(D.at)}</span>
+      <h2>Where the action is</h2>
+      <p>Readings computed live from ${D.results.length} markets. These are observations, not advice — nothing here tells you what to do.</p></div>
+    <button class="btn ghost" id="radarRf">${ic("rf")}Scan again</button>
+  </div>
+
+  <div class="tiles t4 rv" id="pulseRow">
+    ${[
+      ["Active traders","users",num(P.traders),`across ${P.tapeMkts.length} busiest markets, 24h`,"traders"],
+      ["New wallets","zap",P.freshRate!=null?Math.round(P.freshRate*100)+"%":"—",
+        P.freshRate!=null?`of ${P.checked} sampled traders are first-timers`:"not enough data","newwallets"],
+      ["Buy pressure","act",flowPct+"%",flowPct>52?"buyers are the impatient side":flowPct<48?"sellers are the impatient side":"evenly matched","flow"],
+      ["Open interest","scale",usd(P.totalOI),`${usd(P.totalVol)} traded in 24h`,"oi"]
+    ].map(t=>`<div class="tile">
+        <div class="k">${ic(t[1],"width:14px;height:14px;color:var(--brand)")}<span>${t[0]}</span>
+          <button class="info" data-tip="${t[4]}" aria-label="What this means">?</button></div>
+        <div class="v">${t[2]}</div><div class="sub">${t[3]}</div></div>`).join("")}
+  </div>
+  ${P.biggest?`<p class="dim3 rv" style="font-size:12.5px;margin-top:10px">
+    Biggest single trade in the sample: <b style="color:var(--ink)">${usd(P.biggest.n)}</b> ${P.biggest.side.toLowerCase()}
+    on ${P.biggest.m}, ${ago(P.biggest.t)} —
+    <a href="#/w/${(P.biggest.a||"").toLowerCase()}" style="color:var(--brand)">read that wallet</a>.</p>`:""}
+
+  <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">24 hours</span><h2>Movers</h2></div>
+      <div class="seg" id="moveSeg">
+        <button data-mv="up" class="on">Gainers</button><button data-mv="dn">Losers</button></div></div>
+    <div class="movers" id="moversBox"></div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">Signal map</span><h2>Where the heat is</h2>
+      <p>Every scanned market, sized by how much is going on and coloured by which way the readings lean. Hover to see why.</p></div></div>
+    <div class="heatgrid" id="heatGrid">
+      ${scored.map((s,i)=>{
+        const lean=s.b.score;
+        const col = lean>0.18?"up":lean<-0.18?"dn":"nu";
+        return `<button class="heat ${col}" data-heat="${i}" style="--d:${Math.min(i,14)*35}ms">
+          <span class="hm">${s.a.m.base}</span>
+          <span class="hv">${pct(s.a.m.chg)}</span>
+          <span class="hb"><i style="width:${clamp(s.heat/12*100,8,100)}%"></i></span>
+        </button>`;}).join("")}
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">Worth a look</span><h2>What the readings are saying</h2>
+      <p>The markets with the most going on right now, and the plain-English version of why.</p></div></div>
+    <div class="setups" id="setupsBox">
+      ${setups.map((s,i)=>{
+        const lean=s.b.score, dir=lean>0.18?["Leaning up","up","up"]:lean<-0.18?["Leaning down","dn","down"]:["No clear lean","nu","target"];
+        return `<div class="setup ${dir[1]}" data-setup="${i}" style="--d:${Math.min(i,6)*60}ms">
+          <div class="stop">
+            <div class="sname"><span class="tk">${s.a.m.base.slice(0,4)}</span>
+              <span><b>${s.a.m.name}</b><s>${s.a.m.full}</s></span></div>
+            <span class="lean ${dir[1]}">${ic(dir[2])}${dir[0]}</span>
+          </div>
+          <div class="sttl">${s.ttl[0]}</div>
+          <p class="sdesc">${s.ttl[1]}</p>
+          <div class="chips">${s.rs.slice(0,4).map(r=>`<span class="rchip ${r.bias>0?"p":r.bias<0?"n":"z"}"
+            data-tip="" data-tip-text="<b>${r.t}</b>${r.d}">${ic(r.i)}${r.t}</span>`).join("")}</div>
+          <div class="spark" data-spark="${i}"></div>
+          <div class="sfoot">
+            <span class="mono dim3">${usd(s.a.m.mark)} · ${usd(s.a.m.vol)} 24h</span>
+            <span class="go">${ic("act")}Open market</span>
+          </div>
+        </div>`;}).join("")}
+    </div>
+    <p class="dim3" style="font-size:12px;margin-top:14px">
+      Every reading above is a number from the exchange — RSI, volume against its own average, which side the
+      aggressive orders hit, funding, volatility. What they mean is up to you. Nothing here is a recommendation,
+      and none of it knows what happens next.</p>
+  </section>
+
+  <div class="closer rv"><div class="ci">
+    <canvas id="radarChar"></canvas>
+    <div><h2>Every market here trades on Arcus</h2>
+      <p>The readings are ours; the markets are theirs. If you want to act on any of it, that's where these
+        contracts live — 51 of them, around the clock.</p></div>
+    <div class="cta">
+      <a class="btn pri" href="${REF_LINK}" target="_blank" rel="noopener">${ic("ext")}Open Arcus</a>
+      <button class="btn ghost" data-go="markets">${ic("layers")}All markets</button>
+    </div>
+  </div></div>`;
+
+  /* movers */
+  let mv="up";
+  function paintMovers(){
+    const arr=mv==="up"?gainers:losers;
+    $("#moversBox").innerHTML=arr.map((m,i)=>{
+      const a=D.results.find(r=>r.m.name===m.name);
+      return `<div class="mover ${m.chg>=0?"up":"dn"}" data-mkt="${m.name}" style="--d:${i*55}ms">
+        <span class="rk">${i+1}</span>
+        <div class="mi"><b>${m.name}</b><s>${m.full}</s></div>
+        <div class="msp" data-msp="${m.name}"></div>
+        <div class="mr"><b>${pct(m.chg)}</b><s>${usd(m.mark)}</s></div>
+      </div>`;}).join("");
+    $$("#moversBox .msp").forEach(n=>{
+      const a=D.results.find(r=>r.m.name===n.dataset.msp);
+      const m=D.live.find(x=>x.name===n.dataset.msp);
+      if(a&&a.spark.length>3) n.innerHTML=spark(a.spark,120,34,m.chg>=0?"var(--gain)":"var(--loss)");
+    });
+    magnetise($("#moversBox"),".mover");
+  }
+  paintMovers();
+  $("#moveSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-mv]"); if(!b)return;
+    mv=b.dataset.mv; $$("#moveSeg button").forEach(x=>x.classList.toggle("on",x.dataset.mv===mv)); paintMovers(); });
+  $("#moversBox").addEventListener("click",e=>{ const r=e.target.closest("[data-mkt]"); if(r) openMarket(r.dataset.mkt); });
+
+  /* setup sparklines */
+  $$("#setupsBox .spark").forEach(n=>{
+    const s=setups[+n.dataset.spark];
+    if(s&&s.spark!==false&&s.a.spark.length>3)
+      n.innerHTML=spark(s.a.spark,220,52, s.b.score>0.18?"var(--gain)":s.b.score<-0.18?"var(--loss)":"var(--copper)");
+  });
+  $("#setupsBox").addEventListener("click",e=>{
+    if(e.target.closest("[data-tip]")) return;
+    const c2=e.target.closest("[data-setup]"); if(c2) openMarket(setups[+c2.dataset.setup].a.m.name); });
+  magnetise($("#setupsBox"),".setup");
+
+  /* heat map */
+  $("#heatGrid").addEventListener("click",e=>{ const b=e.target.closest("[data-heat]"); if(b) openMarket(scored[+b.dataset.heat].a.m.name); });
+  $$("#heatGrid .heat").forEach((n,i)=>{
+    const s=scored[i];
+    n.dataset.tip=""; n.dataset.tipText=`<b>${s.a.m.name} · ${s.ttl[0]}</b>${s.rs.slice(0,3).map(r=>r.t).join(" · ")||"Nothing unusual."}`;
+  });
+  magnetise($("#heatGrid"),".heat",7);
+
+  const rc=$("#radarChar");
+  if(rc&&window.ArcChars){ const pool=ArcChars.ids.filter(x=>x!=="ghost");
+    character(rc,pool[Math.floor(Math.random()*pool.length)],88); }
+  $("#radarRf").addEventListener("click",()=>{ cache.clear(); renderRadar(true); });
+  reveal(root); glow(root);
+}
+
+/* elements lean toward the cursor — cheap, and it makes a grid feel alive */
+function magnetise(scope,sel,strength){
+  if(!FINE||REDUCED||!scope) return;
+  const k=strength||10;
+  $$(sel,scope).forEach(n=>{
+    if(n.__mag) return; n.__mag=1;
+    let raf=null,tx=0,ty=0;
+    n.addEventListener("pointermove",e=>{
+      const r=n.getBoundingClientRect();
+      tx=((e.clientX-r.left)/r.width-0.5)*k;
+      ty=((e.clientY-r.top)/r.height-0.5)*k;
+      if(!raf) raf=requestAnimationFrame(()=>{ raf=null;
+        n.style.transform=`translate(${tx.toFixed(1)}px,${(ty-3).toFixed(1)}px)`; });
+    },{passive:true});
+    n.addEventListener("pointerleave",()=>{ n.style.transform=""; });
+  });
 }
 
 /* ============================================================

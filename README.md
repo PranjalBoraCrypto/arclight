@@ -21,6 +21,10 @@ nothing at any traffic level.
   market mix, win rate and hold times
 - **Characters** — eleven trading personalities, drawn procedurally on
   canvas so they stay crisp from a 28px avatar to a 1080px share card
+- **Radar** — venue pulse (24h active traders, first-time wallets, taker buy
+  pressure, open interest) plus movers, a signal map and setup cards built from
+  RSI, volume-vs-baseline, taker imbalance, volatility compression and funding.
+  Readings, explicitly not recommendations.
 - **History Run** — pick any trade a wallet made (or still holds), watch it
   replay on real candles, export it as video in 16:9 or 9:16
 - **Similar wallets** — sampled from the same market's trade tape
