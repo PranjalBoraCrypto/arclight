@@ -4310,6 +4310,7 @@ function Replay(canvas, play, candles, w){
   const t0=bars.length?bars[0].t:play.t0, t1=bars.length?bars[bars.length-1].t:play.t1;
   const SPAN=Math.max(1,t1-t0);
   const base=play.fills[0]?play.fills[0].p:(bars[0]?bars[0].c:1);
+  const firstFill=play.fills[0]?play.fills[0].t:t0;
 
   /* --- precomputed walk: position, pnl and peak at every bar --- */
   const walk=(function(){
@@ -4335,7 +4336,7 @@ function Replay(canvas, play, candles, w){
   let S=null;
   function reset(){
     S={ last:-1, parts:[], shake:0, flash:0, flashCol:null, fired:{},
-        camLo:0, camHi:1, camInit:false, mood:"calm", moodK:0, bob:0, pod:0,
+        camLo:0, camHi:1, camInit:false, mood:"calm", moodK:0, bob:0, pod:0, revealAt:null,
         headTrail:[], ceilK:0, verdict:0 };
   }
   reset();
@@ -4599,37 +4600,82 @@ function Replay(canvas, play, candles, w){
     c.fillStyle=col; c.fillRect(x-1.5,F.y,3,F.h);
     return {x,y,px};
   }
+  /* small glyphs drawn straight onto the canvas */
+  function glyph(kind,x,y,r,col){
+    c.save(); c.translate(x,y); c.strokeStyle=col; c.fillStyle=col;
+    c.lineWidth=Math.max(1.6,r*0.30); c.lineCap="round"; c.lineJoin="round";
+    if(kind==="up"){ c.beginPath(); c.moveTo(0,-r); c.lineTo(r*0.86,r*0.62); c.lineTo(-r*0.86,r*0.62); c.closePath(); c.fill(); }
+    else if(kind==="down"){ c.beginPath(); c.moveTo(0,r); c.lineTo(r*0.86,-r*0.62); c.lineTo(-r*0.86,-r*0.62); c.closePath(); c.fill(); }
+    else if(kind==="plus"){ c.beginPath(); c.moveTo(0,-r); c.lineTo(0,r); c.moveTo(-r,0); c.lineTo(r,0); c.stroke(); }
+    else if(kind==="check"){ c.beginPath(); c.moveTo(-r*0.8,0); c.lineTo(-r*0.15,r*0.65); c.lineTo(r*0.85,-r*0.7); c.stroke(); }
+    else if(kind==="cross"){ c.beginPath(); c.moveTo(-r*0.7,-r*0.7); c.lineTo(r*0.7,r*0.7); c.moveTo(r*0.7,-r*0.7); c.lineTo(-r*0.7,r*0.7); c.stroke(); }
+    else if(kind==="target"){ c.beginPath(); c.arc(0,0,r*0.9,0,7); c.stroke(); c.beginPath(); c.arc(0,0,r*0.32,0,7); c.fill(); }
+    else if(kind==="bolt"){ c.beginPath(); c.moveTo(r*0.18,-r); c.lineTo(-r*0.62,r*0.16); c.lineTo(-r*0.06,r*0.16);
+      c.lineTo(-r*0.22,r); c.lineTo(r*0.66,-r*0.14); c.lineTo(r*0.06,-r*0.14); c.closePath(); c.fill(); }
+    c.restore();
+  }
+  const KIND_GLYPH={OPEN:null,ADD:"plus",CLOSE:"check",TP:"target",SL:"cross",LIQ:"bolt"};
+  function kindLabel(f){
+    if(f.kind==="OPEN") return (f.side==="BUY"?"OPENED LONG":"OPENED SHORT");
+    if(f.kind==="ADD")  return "ADDED";
+    if(f.kind==="CLOSE")return (play.dir==="LONG"?"CLOSED LONG":"CLOSED SHORT");
+    return KIND_LABEL[f.kind]||f.kind;
+  }
   function markers(P,F,prog){
     const cut=t0+SPAN*prog;
+    const placed=[];
     for(let i=0;i<play.fills.length;i++){
       const f=play.fills[i]; if(f.t>cut) continue;
       const x=X(f.t,F), yTrue=Y(f.p,F);
       const since=(cut-f.t)/Math.max(SPAN*0.02,1);
-      /* drop in from above, land with squash */
       const drop=clamp(since,0,1), ease=1-Math.pow(1-drop,4);
       const y=yTrue-(1-ease)*70;
       const squash=drop<1?1:1+Math.sin(clamp((since-1)*6,0,Math.PI))*0.22;
       const buy=f.side==="BUY", K=f.kind;
       const col = K==="LIQ"?P.dn : K==="TP"?P.gold : K==="SL"?P.dn : (buy?P.up:P.dn);
+      /* the marker itself */
       c.save(); c.translate(x,y); c.scale(1/squash,squash);
       c.shadowColor=col; c.shadowBlur=18;
       c.fillStyle=col; c.strokeStyle=dark()?"rgba(0,0,0,.5)":"rgba(255,255,255,.8)"; c.lineWidth=2.5;
-      const s=13;
+      const sz=13;
       c.beginPath();
-      if(K==="LIQ"){ /* jagged bolt */
-        c.moveTo(2,-s*1.3); c.lineTo(-s*.7,s*.1); c.lineTo(-.5,s*.1); c.lineTo(-2,s*1.3);
-        c.lineTo(s*.75,-s*.15); c.lineTo(.5,-s*.15);
-      } else if(buy){ c.moveTo(0,-s); c.lineTo(s*.92,s*.72); c.lineTo(-s*.92,s*.72); }
-      else { c.moveTo(0,s); c.lineTo(s*.92,-s*.72); c.lineTo(-s*.92,-s*.72); }
+      if(K==="LIQ"){ c.moveTo(2,-sz*1.3); c.lineTo(-sz*0.7,sz*0.1); c.lineTo(-0.5,sz*0.1); c.lineTo(-2,sz*1.3);
+        c.lineTo(sz*0.75,-sz*0.15); c.lineTo(0.5,-sz*0.15); }
+      else if(buy){ c.moveTo(0,-sz); c.lineTo(sz*0.92,sz*0.72); c.lineTo(-sz*0.92,sz*0.72); }
+      else { c.moveTo(0,sz); c.lineTo(sz*0.92,-sz*0.72); c.lineTo(-sz*0.92,-sz*0.72); }
       c.closePath(); c.fill(); c.stroke(); c.restore();
-      /* label for the moments that matter */
-      if((K==="TP"||K==="SL"||K==="LIQ"||K==="OPEN") && since>0.7){
-        const a=clamp((since-0.7)*2,0,1);
-        c.globalAlpha=a*0.95; c.textAlign="center";
-        c.font='700 15px "JetBrains Mono", monospace'; c.fillStyle=col;
-        c.fillText(KIND_LABEL[K], x, y+(buy?38:-30));
-        c.globalAlpha=1;
+
+      /* the label chip — every fill says what it was */
+      if(since<0.55) continue;
+      const alpha=clamp((since-0.55)*2.4,0,1);
+      const txt=kindLabel(f), g=KIND_GLYPH[K];
+      c.font='700 14px "JetBrains Mono", monospace';
+      const tw=c.measureText(txt).width, gw=g?20:0;
+      const cw=tw+gw+22, chH=27;
+      const cx=clamp(x-cw/2, F.x+4, F.x+F.w-cw-4);
+      /* try below the marker, then above, stepping outward until a slot is free;
+         a crowded chart drops the least important labels rather than stacking them */
+      const step=chH+7, cands=[];
+      for(let k2=0;k2<5;k2++){
+        cands.push(buy? y+30+k2*step : y-30-chH-k2*step);
+        cands.push(buy? y-30-chH-k2*step : y+30+k2*step);
       }
+      const free=v=>v>=F.y+4 && v+chH<=F.y+F.h-4 &&
+        !placed.some(r=>!(cx+cw<r.x||cx>r.x+r.w||v+chH<r.y||v>r.y+r.h));
+      let cy=cands.find(free);
+      if(cy==null){ if(K==="ADD") continue; cy=clamp(buy?y+30:y-30-chH,F.y+4,F.y+F.h-chH-4); }
+      placed.push({x:cx,y:cy,w:cw,h:chH});
+      c.globalAlpha=alpha;
+      c.fillStyle=dark()?"rgba(8,14,10,.92)":"rgba(255,255,255,.94)";
+      rr(c,cx,cy,cw,chH,13); c.fill();
+      c.strokeStyle=hexA(col,.75); c.lineWidth=1.5; rr(c,cx,cy,cw,chH,13); c.stroke();
+      if(g) glyph(g,cx+15,cy+chH/2,6.5,col);
+      c.fillStyle=col; c.textAlign="left"; c.textBaseline="middle";
+      c.fillText(txt, cx+11+gw, cy+chH/2+0.5);
+      c.textBaseline="alphabetic"; c.globalAlpha=1;
+      /* a thin leader line back to the marker */
+      c.strokeStyle=hexA(col,.35); c.lineWidth=1;
+      c.beginPath(); c.moveTo(x, buy? y+16 : y-16); c.lineTo(x, buy? cy : cy+chH); c.stroke();
     }
   }
   /* the PnL lane: a liquid ribbon chasing a golden ceiling */
@@ -4782,12 +4828,35 @@ function Replay(canvas, play, candles, w){
     c.fillStyle=P.ink; c.font=`800 ${LL.wide?52:66}px Archivo, sans-serif`;
     c.fillText(play.m, LL.head.x, ty);
     const dw=c.measureText(play.m).width;
-    const badge=(play.open?"HOLDING ":"")+play.dir;
+    const cutNow=t0+SPAN*prog;
+    const opened = cutNow>=firstFill;
+    /* before the entry we say nothing about direction — the viewer reads the
+       chart cold, and the reveal lands when the wallet actually moves */
+    const badge = opened ? ((play.open?"HOLDING ":"")+play.dir) : "NO POSITION YET";
+    const bcol  = opened ? (play.dir==="LONG"?P.up:P.dn) : P.ink3;
     c.font='700 20px "JetBrains Mono", monospace';
     const bw2=c.measureText(badge).width;
-    c.fillStyle=play.dir==="LONG"?hexA(P.up,.16):hexA(P.dn,.16);
+    /* the badge pops when it first appears */
+    const pop = opened && S.revealAt!=null ? 1+Math.max(0,0.34-(prog-S.revealAt)*6)*1.2 : 1;
+    c.save();
+    c.translate(LL.head.x+dw+22+(bw2+30)/2, ty);
+    c.scale(pop,pop); c.translate(-(LL.head.x+dw+22+(bw2+30)/2), -ty);
+    c.fillStyle=opened? hexA(bcol,.16) : hexA(P.ink3,.10);
     rr(c,LL.head.x+dw+22,ty-19,bw2+30,38,19); c.fill();
-    c.fillStyle=play.dir==="LONG"?P.up:P.dn; c.fillText(badge,LL.head.x+dw+37,ty+1);
+    if(!opened){ c.strokeStyle=hexA(P.ink3,.35); c.lineWidth=1.5; c.setLineDash([5,5]);
+      rr(c,LL.head.x+dw+22,ty-19,bw2+30,38,19); c.stroke(); c.setLineDash([]); }
+    c.fillStyle=bcol; c.fillText(badge,LL.head.x+dw+37,ty+1);
+    c.restore();
+
+    /* a prompt while the chart runs with nothing on it */
+    if(!opened){
+      const fade=clamp(Math.sin(prog*26)*0.18+0.72,0,1);
+      c.globalAlpha=fade;
+      c.textAlign="center"; c.fillStyle=P.ink3;
+      c.font=`500 ${LL.wide?21:26}px "Instrument Sans", sans-serif`;
+      c.fillText("Long or short from here?", LL.chart.x+LL.chart.w/2, LL.chart.y+(LL.wide?38:52));
+      c.globalAlpha=1; c.textAlign="left";
+    }
 
     /* clock */
     const cut=t0+SPAN*prog;
@@ -4900,7 +4969,9 @@ function Replay(canvas, play, candles, w){
     /* fire any fill we just passed */
     for(let i=0;i<play.fills.length;i++){
       const f=play.fills[i];
-      if(f.t<=cut && !S.fired[i]){ S.fired[i]=1; if(dtRaw>=0) fire(f,i,F,P); }
+      if(f.t<=cut && !S.fired[i]){ S.fired[i]=1;
+        if(i===0 && S.revealAt==null) S.revealAt=prog;
+        if(dtRaw>=0) fire(f,i,F,P); }
     }
     /* state now */
     let sz=0,cash=0,realized=0;
@@ -5125,14 +5196,16 @@ async function openPlay(idx){
   mount.innerHTML=`<section style="margin-top:34px"><div class="scanner" style="padding:30px">
     <div class="scanline"><i></i></div><div class="st">Loading ${p.m} price history…</div></div></section>`;
   const span=Math.max(p.t1-p.t0, 36e5);
-  const pad=span*0.22;
-  const [tfName,tfMs]=pickTF(span+pad*2);
-  const to=Math.round((p.t1+pad)*1000);
-  const countback=clamp(Math.ceil((span+pad*2)/tfMs)+6, 24, 1400);
+  /* a long run-up before the entry and a short tail after: the viewer gets to
+     read the chart cold before the wallet's hand is shown */
+  const padL=span*0.42, padR=span*0.12;
+  const [tfName,tfMs]=pickTF(span+padL+padR);
+  const to=Math.round((p.t1+padR)*1000);
+  const countback=clamp(Math.ceil((span+padL+padR)/tfMs)+8, 30, 1400);
   const r=await safe(api(`/v1/candles?market=${p.m}&timeframe=${tfName}&countback=${countback}&to=${to}`,300000),null);
   let bars=((r&&r.candles)||[]).map(x=>({t:Math.round(N(x.openTime)/1000),o:N(x.open),h:N(x.high),l:N(x.low),c:N(x.close)}))
     .filter(b=>isFinite(b.t)&&b.h>0).sort((a,b)=>a.t-b.t);
-  bars=bars.filter(b=>b.t>=p.t0-pad && b.t<=p.t1+pad);
+  bars=bars.filter(b=>b.t>=p.t0-padL && b.t<=p.t1+padR);
   if(bars.length<6){
     mount.innerHTML=`<section style="margin-top:34px"><div class="empty"><div class="ei">${ic("alert")}</div>
       <h3>Not enough price history</h3><p>Arcus didn't return candles covering this window for ${p.m}.</p></div></section>`;
