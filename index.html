@@ -670,10 +670,30 @@ td.r,th.r{text-align:right}
 .pcBar i{display:block;height:100%;border-radius:100px;transition:width .9s cubic-bezier(.2,.85,.3,1)}
 .playc.win .pcBar i{background:linear-gradient(90deg,var(--brand-dim),var(--gain))}
 .playc.lose .pcBar i{background:linear-gradient(90deg,color-mix(in srgb,var(--loss) 45%,transparent),var(--loss))}
-.pcGo{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--brand);
-  position:relative;transition:gap .2s}
-.pcGo svg{width:13px;height:13px}
-.playc:hover .pcGo{gap:9px}
+.pcGo{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--brand);
+  position:relative;transition:gap .24s}
+.pcGo svg{width:20px;height:20px;padding:4px;border-radius:50%;background:var(--brand-glow);
+  transition:transform .34s cubic-bezier(.2,1.5,.4,1),background .24s}
+.playc:hover .pcGo{gap:11px}
+.playc:hover .pcGo svg{transform:scale(1.18);background:color-mix(in srgb,var(--brand) 30%,transparent)}
+.pcShine{position:absolute;top:-60%;left:-70%;width:45%;height:220%;transform:rotate(18deg);pointer-events:none;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--ink) 9%,transparent),transparent);opacity:0}
+.playc:hover .pcShine{opacity:1;animation:pcSweep .9s cubic-bezier(.3,.7,.4,1)}
+@keyframes pcSweep{from{left:-70%}to{left:130%}}
+.playc{animation:pcIn .6s cubic-bezier(.2,.9,.3,1) backwards;animation-delay:var(--d,0ms)}
+@keyframes pcIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.ptag{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.09em;font-weight:700;
+  padding:4px 8px;border-radius:100px;white-space:nowrap}
+.ptag.long{background:var(--gain-bg);color:var(--gain)}
+.ptag.short{background:var(--loss-bg);color:var(--loss)}
+.ptag.hold{background:var(--brand-glow);color:var(--brand)}
+.ptag.tp{background:rgba(232,184,75,.16);color:var(--copper)}
+.ptag.sl{background:var(--loss-bg);color:var(--loss)}
+.ptag.liq{background:var(--loss-bg);color:var(--loss);animation:liqPulse 1.9s ease-in-out infinite}
+@keyframes liqPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,105,92,.4)}50%{box-shadow:0 0 0 6px rgba(217,105,92,0)}}
+.stage{transition:box-shadow .4s}
+.stage::after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;
+  box-shadow:inset 0 0 90px -30px rgba(0,0,0,.85)}
 
 .player{display:flex;flex-direction:column;gap:12px}
 .stage{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--rule-2);background:#0A110C;
@@ -2391,7 +2411,7 @@ function analyse(addr,d){
   const catTop = Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
   const rwaShare = (()=>{const t=Object.values(byCat).reduce((s,v)=>s+v,0);return t? ((byCat.EQUITIES||0)+(byCat.COMMODITIES||0)+(byCat.INDICES||0))/t : 0;})();
 
-  return {addr,active,hasAcct,equity,netDep,free,profit,roi,realized,unreal,notional,positions,
+  return {addr,active,hasAcct,equity,netDep,free,profit,roi,realized,unreal,notional,positions,ordersRaw:d.orders,
     fills,fillCount:fills.length,episodes,medHold,longestOpen,holds,
     volLife,feesLife,feesFill,vol24,vol7,vol30,fundNet,orders,cancels,cancelRate:orders?cancels/orders:0,
     deposits,withdrawals,first,last,days,winRate,closes,wins,makerPct,liq,effLev,marginUse,
@@ -3037,16 +3057,32 @@ async function findSimilar(){
 
 
 /* ============================================================
-   HISTORY RUN — replay a real trade on real candles
-   Every play is reconstructed from the wallet's own fills, drawn
-   bar by bar on a canvas that doubles as the video source.
+   HISTORY RUN — the replay engine
+   A stateful cinematic renderer: eased camera, particle physics with
+   gravity and bounce, screen shake, light flares, a peak ceiling the
+   PnL curve chases, and a character who reacts to what's happening.
+   render(prog) is called every frame; it also feeds the video recorder.
    ============================================================ */
 const TFS=[["1m",6e4],["3m",18e4],["5m",3e5],["15m",9e5],["30m",18e5],["1h",36e5],
            ["2h",72e5],["4h",144e5],["8h",288e5],["12h",432e5],["1d",864e5],["3d",2592e5],["1w",6048e5]];
 function pickTF(span){ for(const t of TFS){ if(span/t[1]<=130) return t; } return TFS[TFS.length-1]; }
 
+/* what kind of moment each fill is — from the wallet's own order records */
+function fillKind(f,om){
+  if(f.liq) return "LIQ";
+  const o=om[f.orderId];
+  const tp=o&&(o.tpslType||o.tpSlType||"");
+  if(/TAKE_PROFIT|TAKE-PROFIT|TP/i.test(tp)) return "TP";
+  if(/STOP_LOSS|STOP-LOSS|STOP|SL/i.test(tp)) return "SL";
+  if(/^CLOSE/.test(f.eff)) return "CLOSE";
+  if(/^ADD/.test(f.eff)) return "ADD";
+  return "OPEN";
+}
+const KIND_LABEL={OPEN:"ENTRY",ADD:"ADDED",CLOSE:"EXIT",TP:"TARGET HIT",SL:"STOP HIT",LIQ:"LIQUIDATED"};
+
 function buildPlays(w){
   const byM={}, out=[];
+  const om={}; (w.ordersRaw||[]).forEach(o=>{ if(o&&o.orderId) om[o.orderId]=o; });
   w.fills.forEach(f=>{ (byM[f.marketDisplayName]=byM[f.marketDisplayName]||[]).push(f); });
   const posBy={}; w.positions.forEach(p=>posBy[p.market]=p);
   Object.keys(byM).forEach(m=>{
@@ -3055,8 +3091,10 @@ function buildPlays(w){
     fs.forEach(f=>{
       const mag=Math.abs(N(f.size)), s=(f.side==="BUY"?1:-1)*mag;
       if(Math.abs(sz)<1e-9 && !cur) cur={m,t0:f.createdAt/1000,fills:[],pnl:0,dir:s>0?"LONG":"SHORT",peak:0,notional:0};
-      cur.fills.push({t:f.createdAt/1000,p:N(f.price),s:mag,side:f.side,eff:f.positionEffect||"",
-                      pnl:N(f.closedPnl),liq:!!f.liquidation,role:f.role});
+      const rec={t:f.createdAt/1000,p:N(f.price),s:mag,side:f.side,eff:f.positionEffect||"",
+                 pnl:N(f.closedPnl),liq:!!f.liquidation,role:f.role,orderId:f.orderId};
+      rec.kind=fillKind(rec,om);
+      cur.fills.push(rec);
       cur.pnl+=N(f.closedPnl); cur.notional+=mag*N(f.price);
       sz+=s; cur.peak=Math.max(cur.peak,Math.abs(sz));
       if(Math.abs(sz)<1e-9){ cur.t1=f.createdAt/1000; cur.open=false; out.push(cur); cur=null; }
@@ -3072,205 +3110,606 @@ function buildPlays(w){
 /* ---------- the renderer ---------- */
 function Replay(canvas, play, candles, w){
   const c=canvas.getContext("2d");
-  const CH=(window.ArcChars?ArcChars.get(archetype(w).id):null);
-  let RATIO="wide", Wd=0, Hd=0, dpr=1;
+  const ARC=archetype(w), CH=(window.ArcChars?ArcChars.get(ARC.id):null);
+  let RATIO="wide", Wd=0, Hd=0;
   const dark=()=>document.documentElement.getAttribute("data-theme")!=="light";
   function pal(){ return dark()
-    ? {bg0:"#0A110C",bg1:"#0F1A12",ink:"#F2EEE4",ink2:"#9FB0A4",ink3:"#63736A",grid:"rgba(255,255,255,.045)",
-       rule:"#22301F",up:"#5FB07C",dn:"#D9695C",brand:"#4E9E62",band:"rgba(78,158,98,.10)",bandDn:"rgba(217,105,92,.10)"}
-    : {bg0:"#F1EFE7",bg1:"#FBF9F2",ink:"#14231A",ink2:"#4C5E52",ink3:"#8A968E",grid:"rgba(20,35,26,.06)",
-       rule:"#DCD8CA",up:"#2E7D52",dn:"#B0453A",brand:"#2E6B3C",band:"rgba(46,107,60,.10)",bandDn:"rgba(176,69,58,.10)"}; }
+    ? {bg0:"#080D0A",bg1:"#0E1912",bg2:"#122019",ink:"#F4F1E8",ink2:"#9FB0A4",ink3:"#5E6E65",
+       grid:"rgba(255,255,255,.038)",up:"#5FD08C",dn:"#F0705F",brand:"#4E9E62",gold:"#E8B84B",
+       band:"rgba(95,208,140,.07)",bandDn:"rgba(240,112,95,.07)",pod:"#101A13"}
+    : {bg0:"#EFEDE4",bg1:"#F8F6EE",bg2:"#FFFFFF",ink:"#12201A",ink2:"#4C5E52",ink3:"#8A968E",
+       grid:"rgba(20,35,26,.055)",up:"#2E9160",dn:"#C24B3D",brand:"#2E6B3C",gold:"#B4862A",
+       band:"rgba(46,145,96,.09)",bandDn:"rgba(194,75,61,.09)",pod:"#FFFFFF"}; }
+
+  const bars=candles.slice().sort((a,b)=>a.t-b.t);
+  const t0=bars.length?bars[0].t:play.t0, t1=bars.length?bars[bars.length-1].t:play.t1;
+  const SPAN=Math.max(1,t1-t0);
+  const base=play.fills[0]?play.fills[0].p:(bars[0]?bars[0].c:1);
+
+  /* --- precomputed walk: position, pnl and peak at every bar --- */
+  const walk=(function(){
+    const rows=[]; let sz=0, cash=0, realized=0, fi=0, peak=-Infinity, trough=Infinity;
+    for(const b of bars){
+      while(fi<play.fills.length && play.fills[fi].t<=b.t){
+        const f=play.fills[fi], s=(f.side==="BUY"?1:-1)*f.s;
+        sz+=s; cash-=s*f.p; realized+=f.pnl; fi++;
+      }
+      const unreal=Math.abs(sz)>1e-9 ? sz*b.c+cash : 0;
+      const total=realized+unreal;
+      peak=Math.max(peak,total); trough=Math.min(trough,total);
+      rows.push({t:b.t,sz,total,realized,unreal,px:b.c});
+    }
+    return {rows,peak:isFinite(peak)?peak:0,trough:isFinite(trough)?trough:0};
+  })();
+  const PEAK=Math.max(walk.peak,play.total,0.0001);
+  const PMIN=Math.min(walk.trough,play.total,0);
+  const efficiency = PEAK>0 ? clamp(play.total/PEAK,-1,1) : 0;
+  const peakRow = walk.rows.reduce((a,b)=>b.total>a.total?b:a, walk.rows[0]||{t:t0,total:0});
+
+  /* --- state --- */
+  let S=null;
+  function reset(){
+    S={ last:-1, parts:[], shake:0, flash:0, flashCol:null, fired:{},
+        camLo:0, camHi:1, camInit:false, mood:"calm", moodK:0, bob:0, pod:0,
+        headTrail:[], ceilK:0, verdict:0 };
+  }
+  reset();
 
   function size(ratio){
     RATIO=ratio||RATIO;
     const wide=RATIO==="wide";
     Wd=wide?1600:1080; Hd=wide?900:1920;
     canvas.width=Wd; canvas.height=Hd;
+    reset();
   }
   size("wide");
 
-  const bars=candles.slice().sort((a,b)=>a.t-b.t);
-  const t0=bars.length?bars[0].t:play.t0, t1=bars.length?bars[bars.length-1].t:play.t1;
-  const lo=Math.min.apply(null,bars.map(b=>b.l).concat(play.fills.map(f=>f.p)));
-  const hi=Math.max.apply(null,bars.map(b=>b.h).concat(play.fills.map(f=>f.p)));
-  const padY=(hi-lo)*0.14||1;
-  const YLO=lo-padY, YHI=hi+padY;
-
-  function frame(){
+  /* --- layout --- */
+  function L(){
     const wide=RATIO==="wide";
-    const M=wide?{l:64,r:132,t:150,b:96}:{l:44,r:104,t:280,b:330};
-    return {x:M.l,y:M.t,w:Wd-M.l-M.r,h:Hd-M.t-M.b,M};
-  }
-  const X=(t,F)=>F.x+((t-t0)/Math.max(1,t1-t0))*F.w;
-  const Y=(p,F)=>F.y+F.h-((p-YLO)/Math.max(1e-9,YHI-YLO))*F.h;
-
-  /* position + pnl as of time t */
-  function stateAt(t){
-    let sz=0, cash=0, realized=0, last=null, n=0;
-    for(const f of play.fills){
-      if(f.t>t) break;
-      const s=(f.side==="BUY"?1:-1)*f.s;
-      sz+=s; cash-=s*f.p; realized+=f.pnl; last=f; n++;
+    if(wide){
+      const podW=380;
+      return {wide,
+        chart:{x:70,y:168,w:Wd-70-podW-96,h:452},
+        ribbon:{x:70,y:648,w:Wd-70-podW-96,h:132},
+        pod:{x:Wd-podW-52,y:150,w:podW,h:640},
+        head:{x:70,y:60}};
     }
-    let px=null;
-    for(const b of bars){ if(b.t<=t) px=b.c; else break; }
-    const unreal = (px!=null && Math.abs(sz)>1e-9) ? sz*px+cash : 0;
-    return {sz,realized,unreal,total:realized+unreal,px,last,n};
+    return {wide,
+      chart:{x:56,y:330,w:Wd-112,h:640},
+      ribbon:{x:56,y:1000,w:Wd-112,h:200},
+      pod:{x:56,y:1250,w:Wd-112,h:520},
+      head:{x:56,y:120}};
   }
 
-  function drawBg(P,F){
-    const g=c.createLinearGradient(0,0,0,Hd);
-    g.addColorStop(0,P.bg1); g.addColorStop(1,P.bg0);
+  const X=(t,F)=>F.x+((t-t0)/SPAN)*F.w;
+  const Y=(p,F)=>F.y+F.h-((p-S.camLo)/Math.max(1e-9,S.camHi-S.camLo))*F.h;
+
+  /* --- particles --------------------------------------------------- */
+  function spawn(n,o){
+    for(let i=0;i<n;i++){
+      const a=(o.a0==null?0:o.a0)+Math.random()*((o.a1==null?Math.PI*2:o.a1)-(o.a0==null?0:o.a0));
+      const sp=(o.sp0||2)+Math.random()*((o.sp1||8)-(o.sp0||2));
+      S.parts.push({x:o.x,y:o.y,vx:Math.cos(a)*sp+(o.dx||0),vy:Math.sin(a)*sp+(o.dy||0),
+        g:o.g==null?0.34:o.g, drag:o.drag==null?0.985:o.drag,
+        life:0,max:(o.life||60)*(0.7+Math.random()*0.6),
+        r:(o.r||3)*(0.6+Math.random()*0.9), col:o.col, type:o.type||"spark",
+        rot:Math.random()*6.28, vr:(Math.random()-.5)*0.3, floor:o.floor});
+      if(S.parts.length>420) S.parts.shift();
+    }
+  }
+  function ring(x,y,col,r0,r1,life,wd){ S.parts.push({x,y,type:"ring",col,life:0,max:life||34,r:r0||6,r1:r1||120,wd:wd||6}); }
+  function stepParts(dt){
+    for(let i=S.parts.length-1;i>=0;i--){
+      const p=S.parts[i]; p.life+=dt;
+      if(p.life>=p.max){ S.parts.splice(i,1); continue; }
+      if(p.type==="ring") continue;
+      p.vy+=p.g*dt; p.vx*=Math.pow(p.drag,dt); p.vy*=Math.pow(p.drag,dt);
+      p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt;
+      if(p.floor!=null && p.y>p.floor && p.vy>0){ p.y=p.floor; p.vy*=-0.42; p.vx*=0.7; }
+    }
+  }
+  function drawParts(P){
+    for(const p of S.parts){
+      const k=p.life/p.max, fade=1-k;
+      if(p.type==="ring"){
+        const r=p.r+(p.r1-p.r)*(1-Math.pow(1-k,2.2));
+        c.globalAlpha=fade*0.85; c.strokeStyle=p.col; c.lineWidth=p.wd*fade;
+        c.beginPath(); c.arc(p.x,p.y,r,0,7); c.stroke(); c.globalAlpha=1; continue;
+      }
+      c.globalAlpha=fade;
+      if(p.type==="coin"){
+        c.save(); c.translate(p.x,p.y); c.rotate(p.rot);
+        const sq=Math.abs(Math.cos(p.rot));
+        c.fillStyle=p.col; c.beginPath(); c.ellipse(0,0,p.r,p.r*Math.max(.18,sq),0,0,7); c.fill();
+        c.restore();
+      } else if(p.type==="shard"){
+        c.save(); c.translate(p.x,p.y); c.rotate(p.rot); c.fillStyle=p.col;
+        c.beginPath(); c.moveTo(0,-p.r*1.6); c.lineTo(p.r*.7,p.r); c.lineTo(-p.r*.7,p.r); c.closePath(); c.fill();
+        c.restore();
+      } else {
+        c.fillStyle=p.col;
+        const tail=Math.min(16,Math.hypot(p.vx,p.vy)*1.8);
+        if(tail>3){ c.save(); c.translate(p.x,p.y); c.rotate(Math.atan2(p.vy,p.vx));
+          c.beginPath(); c.moveTo(-tail,0); c.lineTo(0,-p.r*.6); c.lineTo(0,p.r*.6); c.closePath(); c.fill(); c.restore(); }
+        else { c.beginPath(); c.arc(p.x,p.y,p.r,0,7); c.fill(); }
+      }
+      c.globalAlpha=1;
+    }
+  }
+
+  /* --- moods ------------------------------------------------------- */
+  const MOOD={
+    calm:{aura:"#4E9E62",label:"watching"},
+    up:{aura:"#5FD08C",label:"in profit"},
+    euphoric:{aura:"#E8B84B",label:"flying"},
+    tense:{aura:"#D9A441",label:"under water"},
+    pain:{aura:"#F0705F",label:"bleeding"},
+    wrecked:{aura:"#F0705F",label:"wrecked"}
+  };
+  function moodFor(total,peak){
+    if(S.wrecked) return "wrecked";
+    const ref=Math.max(Math.abs(PEAK),Math.abs(PMIN),1);
+    const r=total/ref;
+    if(r>0.72) return "euphoric";
+    if(r>0.12) return "up";
+    if(r<-0.35) return "pain";
+    if(r<-0.03) return "tense";
+    return "calm";
+  }
+
+  /* --- events ------------------------------------------------------ */
+  function fire(f,i,F,P){
+    const x=X(f.t,F), y=Y(f.p,F), win=f.pnl>0;
+    const K=f.kind;
+    if(K==="LIQ"){
+      S.shake=Math.max(S.shake,26); S.flash=1; S.flashCol=P.dn; S.wrecked=true;
+      ring(x,y,P.dn,10,260,42,9);
+      spawn(46,{x,y,col:P.dn,sp0:5,sp1:17,g:0.5,life:70,r:4,type:"shard",floor:F.y+F.h});
+      spawn(24,{x,y,col:"#FFD6CF",sp0:3,sp1:11,g:0.42,life:52,r:2.6});
+    } else if(K==="TP"||(K==="CLOSE"&&win)){
+      S.shake=Math.max(S.shake,K==="TP"?14:9); S.flash=K==="TP"?0.75:0.5; S.flashCol=P.up;
+      ring(x,y,K==="TP"?P.gold:P.up,8,190,36,7);
+      spawn(K==="TP"?34:24,{x,y,col:K==="TP"?P.gold:P.up,a0:-Math.PI*0.92,a1:-Math.PI*0.08,
+        sp0:5,sp1:14,g:0.30,life:74,r:5,type:"coin",floor:F.y+F.h});
+      spawn(18,{x,y,col:"#EAFBEF",sp0:2,sp1:9,g:0.26,life:46,r:2.4});
+    } else if(K==="SL"||(K==="CLOSE"&&!win)){
+      S.shake=Math.max(S.shake,K==="SL"?15:8); S.flash=0.5; S.flashCol=P.dn;
+      ring(x,y,P.dn,8,170,32,6);
+      spawn(26,{x,y,col:P.dn,sp0:3,sp1:11,g:0.46,life:60,r:3.4,type:"shard",floor:F.y+F.h});
+    } else {
+      /* entry / add — lands rather than explodes */
+      S.shake=Math.max(S.shake,K==="OPEN"?7:4);
+      ring(x,y,f.side==="BUY"?P.up:P.dn,6,120,28,5);
+      spawn(K==="OPEN"?20:12,{x,y,col:f.side==="BUY"?P.up:P.dn,
+        a0:-Math.PI*0.85,a1:-Math.PI*0.15,sp0:2,sp1:8,g:0.4,life:52,r:3,floor:F.y+F.h});
+    }
+    S.pod=1;                    /* punch the character pod */
+  }
+
+  /* --- pieces ------------------------------------------------------ */
+  function bg(P,LL){
+    const g=c.createLinearGradient(0,0,Wd*0.4,Hd);
+    g.addColorStop(0,P.bg2); g.addColorStop(.45,P.bg1); g.addColorStop(1,P.bg0);
     c.fillStyle=g; c.fillRect(0,0,Wd,Hd);
+    /* soft key light from the top-left */
+    const k=c.createRadialGradient(Wd*0.18,-Hd*0.1,40,Wd*0.18,-Hd*0.1,Hd*1.05);
+    k.addColorStop(0,dark()?"rgba(78,158,98,.16)":"rgba(46,107,60,.10)"); k.addColorStop(1,"rgba(0,0,0,0)");
+    c.fillStyle=k; c.fillRect(0,0,Wd,Hd);
     c.strokeStyle=P.grid; c.lineWidth=1;
-    for(let i=0;i<=6;i++){ const y=F.y+F.h*i/6; c.beginPath(); c.moveTo(F.x,y); c.lineTo(F.x+F.w,y); c.stroke(); }
-    /* price axis */
-    c.fillStyle=P.ink3; c.font='500 20px "JetBrains Mono", monospace'; c.textAlign="left"; c.textBaseline="middle";
-    for(let i=0;i<=6;i++){ const y=F.y+F.h*i/6, v=YHI-(YHI-YLO)*i/6;
-      c.fillText(usd(v), F.x+F.w+14, y); }
+    for(let x=0;x<Wd;x+=68){ c.beginPath(); c.moveTo(x,0); c.lineTo(x,Hd); c.stroke(); }
+    for(let y=0;y<Hd;y+=68){ c.beginPath(); c.moveTo(0,y); c.lineTo(Wd,y); c.stroke(); }
   }
-  function drawBand(P,F,prog){
-    if(!play.fills.length) return;
-    const a=X(play.t0,F), b=Math.min(X(play.t1,F), F.x+F.w*prog);
+  function panel(P,r,radius){
+    c.save(); c.shadowColor="rgba(0,0,0,.45)"; c.shadowBlur=40; c.shadowOffsetY=14;
+    c.fillStyle=dark()?"rgba(255,255,255,.022)":"rgba(255,255,255,.72)";
+    rr(c,r.x-22,r.y-22,r.w+44,r.h+44,radius||26); c.fill(); c.restore();
+    c.strokeStyle=dark()?"rgba(255,255,255,.055)":"rgba(20,35,26,.08)"; c.lineWidth=1.5;
+    rr(c,r.x-22,r.y-22,r.w+44,r.h+44,radius||26); c.stroke();
+  }
+
+  function camera(prog,F,dt){
+    const cut=t0+SPAN*prog;
+    let lo=Infinity,hi=-Infinity,n=0;
+    for(const b of bars){ if(b.t>cut) break; lo=Math.min(lo,b.l); hi=Math.max(hi,b.h); n++; }
+    for(const f of play.fills){ if(f.t<=cut){ lo=Math.min(lo,f.p); hi=Math.max(hi,f.p); } }
+    if(!isFinite(lo)){ lo=base*0.98; hi=base*1.02; }
+    /* tighten while the position is live, breathe out at the end */
+    const tight = prog>0.9 ? 0.20 : 0.13;
+    const pad=(hi-lo)*tight||base*0.01;
+    const tLo=lo-pad, tHi=hi+pad;
+    if(!S.camInit){ S.camLo=tLo; S.camHi=tHi; S.camInit=true; }
+    const e=1-Math.pow(0.90,dt);
+    S.camLo+=(tLo-S.camLo)*e; S.camHi+=(tHi-S.camHi)*e;
+  }
+
+  function axis(P,F){
+    c.textAlign="left"; c.textBaseline="middle";
+    c.font='500 19px "JetBrains Mono", monospace';
+    for(let i=0;i<=5;i++){
+      const y=F.y+F.h*i/5, v=S.camHi-(S.camHi-S.camLo)*i/5;
+      c.strokeStyle=P.grid; c.lineWidth=1;
+      c.beginPath(); c.moveTo(F.x,y); c.lineTo(F.x+F.w,y); c.stroke();
+      c.fillStyle=P.ink3; c.fillText(usd(v), F.x+F.w+16, y);
+    }
+  }
+  function band(P,F,cut){
+    const a=X(Math.max(play.t0,t0),F), b=Math.min(X(Math.min(play.t1,t1),F), X(cut,F));
     if(b<=a) return;
-    c.fillStyle = play.total>=0?P.band:P.bandDn;
-    c.fillRect(a,F.y,b-a,F.h);
-    c.strokeStyle = (play.total>=0?P.up:P.dn); c.globalAlpha=.35; c.lineWidth=2;
-    c.beginPath(); c.moveTo(a,F.y); c.lineTo(a,F.y+F.h); c.stroke(); c.globalAlpha=1;
+    const win=play.total>=0;
+    const g=c.createLinearGradient(0,F.y,0,F.y+F.h);
+    g.addColorStop(0,win?P.band:P.bandDn); g.addColorStop(1,"rgba(0,0,0,0)");
+    c.fillStyle=g; c.fillRect(a,F.y,b-a,F.h);
+    c.strokeStyle=win?P.up:P.dn; c.globalAlpha=.30; c.lineWidth=2; c.setLineDash([6,8]);
+    c.beginPath(); c.moveTo(a,F.y); c.lineTo(a,F.y+F.h); c.stroke();
+    c.setLineDash([]); c.globalAlpha=1;
   }
-  function drawBars(P,F,prog){
-    const cut=F.x+F.w*prog;
-    const bw=Math.max(3.5,(F.w/Math.max(bars.length,1))*0.72);
+  function drawCandles(P,F,prog,dt){
+    const cut=t0+SPAN*prog;
+    const bw=Math.max(4,(F.w/Math.max(bars.length,1))*0.74);
+    const growMs=SPAN*0.006;
+    let head=null;
     for(const b of bars){
-      const x=X(b.t,F); if(x>cut) break;
-      const up=b.c>=b.o, col=up?P.up:P.dn;
-      c.strokeStyle=col; c.fillStyle=col; c.lineWidth=Math.max(1,bw*0.16);
-      c.beginPath(); c.moveTo(x,Y(b.h,F)); c.lineTo(x,Y(b.l,F)); c.stroke();
-      const yo=Y(b.o,F), yc=Y(b.c,F);
-      c.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(bw*0.5,Math.abs(yc-yo)));
+      if(b.t>cut) break;
+      const x=X(b.t,F), up=b.c>=b.o, col=up?P.up:P.dn;
+      const age=clamp((cut-b.t)/Math.max(growMs,1),0,1);
+      const grow=1-Math.pow(1-age,3);
+      const yo=Y(b.o,F), yc=Y(b.o+(b.c-b.o)*grow,F);
+      const yh=Y(b.o+(b.h-b.o)*grow,F), yl=Y(b.o+(b.l-b.o)*grow,F);
+      /* wick */
+      c.strokeStyle=col; c.globalAlpha=.75; c.lineCap="round";
+      c.lineWidth=Math.max(1.4,bw*0.15);
+      c.beginPath(); c.moveTo(x,yh); c.lineTo(x,yl); c.stroke(); c.globalAlpha=1;
+      /* body with a soft vertical gradient and a top highlight */
+      const top=Math.min(yo,yc), h=Math.max(bw*0.42,Math.abs(yc-yo));
+      const g=c.createLinearGradient(x,top,x,top+h);
+      g.addColorStop(0,col); g.addColorStop(1,dark()?shade(col,-26):shade(col,-12));
+      c.fillStyle=g; rr(c,x-bw/2,top,bw,h,Math.min(bw*0.28,4)); c.fill();
+      c.fillStyle="rgba(255,255,255,.20)"; rr(c,x-bw/2+1,top+1,bw-2,Math.min(3,h*0.3),2); c.fill();
+      head={x,b,col,top,h};
     }
-    /* playhead */
-    const st=stateAt(t0+(t1-t0)*prog);
-    if(st.px!=null && prog>0.002){
-      c.strokeStyle=P.brand; c.globalAlpha=.5; c.lineWidth=2; c.setLineDash([7,7]);
-      c.beginPath(); c.moveTo(cut,F.y); c.lineTo(cut,F.y+F.h); c.stroke();
-      c.setLineDash([]); c.globalAlpha=1;
-      const y=Y(st.px,F);
-      c.fillStyle=P.brand; c.beginPath(); c.arc(cut,y,7,0,7); c.fill();
-      c.globalAlpha=.22; c.beginPath(); c.arc(cut,y,18,0,7); c.fill(); c.globalAlpha=1;
+    /* glow on the freshest bar */
+    if(head){
+      c.save(); c.shadowColor=head.col; c.shadowBlur=26;
+      c.fillStyle=head.col; rr(c,head.x-bw/2,head.top,bw,head.h,Math.min(bw*0.28,4)); c.fill(); c.restore();
     }
-    return st;
+    return head;
   }
-  function drawFills(P,F,prog){
-    const tNow=t0+(t1-t0)*prog;
-    for(const f of play.fills){
-      if(f.t>tNow) continue;
-      const x=X(f.t,F), y=Y(f.p,F), buy=f.side==="BUY";
-      const age=clamp((tNow-f.t)/Math.max(1,(t1-t0)*0.035),0,1);
-      const pop=1+(1-age)*1.4;
-      const col=f.liq?P.dn:(buy?P.up:P.dn);
-      if(age<1){ c.globalAlpha=(1-age)*0.5; c.fillStyle=col;
-        c.beginPath(); c.arc(x,y,26*pop,0,7); c.fill(); c.globalAlpha=1; }
-      c.fillStyle=col; c.strokeStyle=dark()?"rgba(0,0,0,.55)":"rgba(255,255,255,.7)"; c.lineWidth=2;
-      const s=10*pop;
+  function priceHead(P,F,prog,dt){
+    const cut=t0+SPAN*prog;
+    let px=null; for(const b of bars){ if(b.t<=cut) px=b.c; else break; }
+    if(px==null) return null;
+    const x=X(cut,F), y=Y(px,F);
+    S.headTrail.push({x,y}); if(S.headTrail.length>26) S.headTrail.shift();
+    /* comet trail */
+    for(let i=0;i<S.headTrail.length-1;i++){
+      const a=S.headTrail[i], b=S.headTrail[i+1], k=i/S.headTrail.length;
+      c.strokeStyle=P.brand; c.globalAlpha=k*0.5; c.lineWidth=1+k*5; c.lineCap="round";
+      c.beginPath(); c.moveTo(a.x,a.y); c.lineTo(b.x,b.y); c.stroke();
+    }
+    c.globalAlpha=1;
+    /* light beam across the frame at the live price */
+    const beam=c.createLinearGradient(F.x,0,F.x+F.w,0);
+    beam.addColorStop(0,"rgba(0,0,0,0)"); beam.addColorStop(1,dark()?"rgba(78,158,98,.30)":"rgba(46,107,60,.22)");
+    c.strokeStyle=beam; c.lineWidth=2; c.setLineDash([3,9]);
+    c.beginPath(); c.moveTo(F.x,y); c.lineTo(x,y); c.stroke(); c.setLineDash([]);
+    /* orb */
+    const pulse=1+Math.sin(prog*140)*0.10;
+    c.save(); c.shadowColor=P.brand; c.shadowBlur=34;
+    c.fillStyle=P.brand; c.beginPath(); c.arc(x,y,8*pulse,0,7); c.fill(); c.restore();
+    c.globalAlpha=.18; c.fillStyle=P.brand; c.beginPath(); c.arc(x,y,26*pulse,0,7); c.fill(); c.globalAlpha=1;
+    /* playhead column */
+    const col=c.createLinearGradient(0,F.y,0,F.y+F.h);
+    col.addColorStop(0,"rgba(255,255,255,0)"); col.addColorStop(.5,dark()?"rgba(255,255,255,.10)":"rgba(20,35,26,.08)");
+    col.addColorStop(1,"rgba(255,255,255,0)");
+    c.fillStyle=col; c.fillRect(x-1.5,F.y,3,F.h);
+    return {x,y,px};
+  }
+  function markers(P,F,prog){
+    const cut=t0+SPAN*prog;
+    for(let i=0;i<play.fills.length;i++){
+      const f=play.fills[i]; if(f.t>cut) continue;
+      const x=X(f.t,F), yTrue=Y(f.p,F);
+      const since=(cut-f.t)/Math.max(SPAN*0.02,1);
+      /* drop in from above, land with squash */
+      const drop=clamp(since,0,1), ease=1-Math.pow(1-drop,4);
+      const y=yTrue-(1-ease)*70;
+      const squash=drop<1?1:1+Math.sin(clamp((since-1)*6,0,Math.PI))*0.22;
+      const buy=f.side==="BUY", K=f.kind;
+      const col = K==="LIQ"?P.dn : K==="TP"?P.gold : K==="SL"?P.dn : (buy?P.up:P.dn);
+      c.save(); c.translate(x,y); c.scale(1/squash,squash);
+      c.shadowColor=col; c.shadowBlur=18;
+      c.fillStyle=col; c.strokeStyle=dark()?"rgba(0,0,0,.5)":"rgba(255,255,255,.8)"; c.lineWidth=2.5;
+      const s=13;
       c.beginPath();
-      if(buy){ c.moveTo(x,y-s); c.lineTo(x+s,y+s*0.8); c.lineTo(x-s,y+s*0.8); }
-      else   { c.moveTo(x,y+s); c.lineTo(x+s,y-s*0.8); c.lineTo(x-s,y-s*0.8); }
-      c.closePath(); c.fill(); c.stroke();
-      if(f.liq){ c.strokeStyle=P.dn; c.lineWidth=3; c.beginPath(); c.arc(x,y,s*1.9,0,7); c.stroke(); }
+      if(K==="LIQ"){ /* jagged bolt */
+        c.moveTo(2,-s*1.3); c.lineTo(-s*.7,s*.1); c.lineTo(-.5,s*.1); c.lineTo(-2,s*1.3);
+        c.lineTo(s*.75,-s*.15); c.lineTo(.5,-s*.15);
+      } else if(buy){ c.moveTo(0,-s); c.lineTo(s*.92,s*.72); c.lineTo(-s*.92,s*.72); }
+      else { c.moveTo(0,s); c.lineTo(s*.92,-s*.72); c.lineTo(-s*.92,-s*.72); }
+      c.closePath(); c.fill(); c.stroke(); c.restore();
+      /* label for the moments that matter */
+      if((K==="TP"||K==="SL"||K==="LIQ"||K==="OPEN") && since>0.7){
+        const a=clamp((since-0.7)*2,0,1);
+        c.globalAlpha=a*0.95; c.textAlign="center";
+        c.font='700 15px "JetBrains Mono", monospace'; c.fillStyle=col;
+        c.fillText(KIND_LABEL[K], x, y+(buy?38:-30));
+        c.globalAlpha=1;
+      }
     }
   }
-  function drawHud(P,F,prog,st){
-    const wide=RATIO==="wide";
-    const tNow=t0+(t1-t0)*prog;
-    /* brand */
-    c.fillStyle="#234728"; rr(c,F.M.l,wide?44:64,56,56,17); c.fill();
-    c.save(); c.translate(F.M.l+8,(wide?44:64)+8); c.scale(1.38,1.38); c.fillStyle="#F7F2EA";
+  /* the PnL lane: a liquid ribbon chasing a golden ceiling */
+  function ribbon(P,R,prog){
+    const cut=t0+SPAN*prog;
+    c.fillStyle=P.ink3; c.font='500 15px "JetBrains Mono", monospace'; c.textAlign="left";
+    c.textBaseline="alphabetic";
+    c.fillText("PROFIT ON THIS TRADE", R.x+4, R.y-6);
+    const rows=walk.rows.filter(r=>r.t<=cut);
+    const hi=Math.max(PEAK,0.0001)*1.18, lo=Math.min(PMIN,0)*1.18-Math.abs(PEAK)*0.05;
+    const yy=v=>R.y+R.h-((v-lo)/Math.max(1e-9,hi-lo))*R.h;
+    const zero=yy(0);
+    /* zero line */
+    c.strokeStyle=P.grid; c.lineWidth=1.5; c.setLineDash([4,7]);
+    c.beginPath(); c.moveTo(R.x,zero); c.lineTo(R.x+R.w,zero); c.stroke(); c.setLineDash([]);
+    /* the ceiling the run is chasing */
+    if(PEAK>0){
+      const py=yy(PEAK);
+      S.ceilK=Math.min(1,S.ceilK+0.02);
+      c.strokeStyle=P.gold; c.globalAlpha=.30+Math.sin(prog*60)*0.08;
+      c.lineWidth=2; c.setLineDash([10,8]);
+      c.beginPath(); c.moveTo(R.x,py); c.lineTo(R.x+R.w,py); c.stroke();
+      c.setLineDash([]); c.globalAlpha=1;
+      c.fillStyle=P.gold; c.font='700 15px "JetBrains Mono", monospace'; c.textAlign="right";
+      c.fillText("BEST IT EVER WAS  "+usd(PEAK,{plus:true}), R.x+R.w-6, py-13);
+      c.textAlign="left";
+    }
+    if(rows.length<2) return;
+    const pts=rows.map(r=>[X(r.t,R),yy(r.total)]);
+    /* filled body */
+    c.beginPath(); c.moveTo(pts[0][0],zero);
+    pts.forEach(p=>c.lineTo(p[0],p[1]));
+    c.lineTo(pts[pts.length-1][0],zero); c.closePath();
+    const last=rows[rows.length-1].total;
+    const g=c.createLinearGradient(0,R.y,0,R.y+R.h);
+    g.addColorStop(0,last>=0?(dark()?"rgba(95,208,140,.42)":"rgba(46,145,96,.34)"):"rgba(240,112,95,.10)");
+    g.addColorStop(1,last>=0?"rgba(95,208,140,.02)":(dark()?"rgba(240,112,95,.40)":"rgba(194,75,61,.32)"));
+    c.fillStyle=g; c.fill();
+    /* stroke with glow */
+    c.save(); c.shadowColor=last>=0?P.up:P.dn; c.shadowBlur=18;
+    c.strokeStyle=last>=0?P.up:P.dn; c.lineWidth=3.5; c.lineJoin="round"; c.lineCap="round";
+    c.beginPath(); pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.stroke(); c.restore();
+    /* head dot */
+    const h=pts[pts.length-1];
+    c.fillStyle=last>=0?P.up:P.dn; c.beginPath(); c.arc(h[0],h[1],6.5,0,7); c.fill();
+    c.fillStyle="rgba(255,255,255,.85)"; c.beginPath(); c.arc(h[0]-1.6,h[1]-1.6,2.2,0,7); c.fill();
+
+  }
+
+  /* the character, reacting */
+  function podDraw(P,B,prog,st,dt){
+    const M=MOOD[S.mood]||MOOD.calm;
+    /* pod plate */
+    c.save(); c.shadowColor="rgba(0,0,0,.5)"; c.shadowBlur=44; c.shadowOffsetY=16;
+    c.fillStyle=dark()?"rgba(255,255,255,.03)":"rgba(255,255,255,.8)";
+    rr(c,B.x,B.y,B.w,B.h,30); c.fill(); c.restore();
+    c.strokeStyle=dark()?"rgba(255,255,255,.06)":"rgba(20,35,26,.08)"; c.lineWidth=1.5;
+    rr(c,B.x,B.y,B.w,B.h,30); c.stroke();
+
+    const cx=B.x+B.w/2, R=Math.min(B.w*0.34, L().wide?122:158);
+    const cy=B.y+ (L().wide? 168 : 190);
+    /* aura, pulsing with the mood */
+    const puls=1+Math.sin(prog*90)*0.05+S.pod*0.22;
+    const ag=c.createRadialGradient(cx,cy,R*0.6,cx,cy,R*2.1*puls);
+    ag.addColorStop(0,hexA(M.aura,dark()?0.40:0.26)); ag.addColorStop(1,"rgba(0,0,0,0)");
+    c.fillStyle=ag; c.fillRect(B.x,B.y,B.w,B.h);
+    /* the character bobs, and flinches when something lands */
+    const bob=Math.sin(prog*40)*5*(S.mood==="euphoric"?2.2:1);
+    const kick=S.pod*18;
+    c.save();
+    c.translate(cx,cy+bob-kick*0.4);
+    const sc=1+S.pod*0.10+(S.mood==="euphoric"?Math.sin(prog*70)*0.03:0);
+    c.rotate(S.mood==="wrecked"?Math.sin(prog*180)*0.05*S.pod:0);
+    c.scale(sc,sc*(1-S.pod*0.06));
+    if(window.ArcChars){
+      c.save(); c.beginPath(); c.arc(0,0,R,0,7); c.clip();
+      ArcChars.draw(c,ARC.id,-R,-R,R*2); c.restore();
+    }
+    c.strokeStyle=hexA(M.aura,.75); c.lineWidth=4; c.beginPath(); c.arc(0,0,R,0,7); c.stroke();
+    /* euphoria sparks / pain cracks around the ring */
+    if(S.mood==="euphoric"){
+      for(let i=0;i<10;i++){ const a=prog*4+i*0.628, rr2=R+16+Math.sin(prog*50+i)*8;
+        c.globalAlpha=.8; c.fillStyle=P.gold;
+        c.beginPath(); c.arc(Math.cos(a)*rr2,Math.sin(a)*rr2,3.2,0,7); c.fill(); c.globalAlpha=1; }
+    } else if(S.mood==="wrecked"||S.mood==="pain"){
+      c.strokeStyle=hexA(P.dn,.7); c.lineWidth=2.4;
+      for(let i=0;i<5;i++){ const a=i*1.25+0.4;
+        c.beginPath(); c.moveTo(Math.cos(a)*R,Math.sin(a)*R);
+        c.lineTo(Math.cos(a+0.12)*(R+16),Math.sin(a+0.12)*(R+16)); c.stroke(); }
+    }
+    c.restore();
+
+    /* name + mood */
+    c.textAlign="center"; c.textBaseline="alphabetic";
+    c.fillStyle=P.ink; c.font=`800 ${L().wide?34:44}px Archivo, sans-serif`;
+    c.fillText(CH?CH.name:"", cx, cy+R+56);
+    c.fillStyle=hexA(M.aura,.95); c.font='700 17px "JetBrains Mono", monospace';
+    c.fillText(M.label.toUpperCase(), cx, cy+R+84);
+
+    /* the running number */
+    const y2=cy+R+ (L().wide?170:200);
+    c.fillStyle=P.ink3; c.font='500 17px "JetBrains Mono", monospace';
+    c.fillText(play.open?"PROFIT SO FAR":"PROFIT ON THIS TRADE", cx, y2-46);
+    c.fillStyle=st.total>=0?P.up:P.dn;
+    c.font=`800 ${L().wide?62:78}px Archivo, sans-serif`;
+    c.save(); c.shadowColor=hexA(st.total>=0?P.up:P.dn,.5); c.shadowBlur=26;
+    c.fillText(usd(st.total,{plus:true}), cx, y2); c.restore();
+    /* position ribbon */
+    c.fillStyle=P.ink3; c.font='500 16px "JetBrains Mono", monospace';
+    const pos=Math.abs(st.sz)>1e-9? num(Math.abs(st.sz),4)+" "+play.m.split("-")[0]+" held" : "flat";
+    c.fillText(pos.toUpperCase(), cx, y2+34);
+  }
+
+  function chrome(P,LL,prog){
+    /* brand + market */
+    c.textAlign="left"; c.textBaseline="middle";
+    c.fillStyle="#234728"; rr(c,LL.head.x,LL.head.y-6,52,52,16); c.fill();
+    c.save(); c.translate(LL.head.x+7,LL.head.y+1); c.scale(1.3,1.3); c.fillStyle="#F7F2EA";
     c.fill(new Path2D("M6 5h7.5A10.5 10.5 0 0 1 24 15.5V23a1 1 0 0 1-1 1h-3.6a1 1 0 0 1-1-1v-7.5A5.9 5.9 0 0 0 12.5 9.6H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"));
     c.fill(new Path2D("M6 11.6h6.2a1 1 0 0 1 .72 1.7l-6.2 6.2A1 1 0 0 1 5 18.8v-6.2a1 1 0 0 1 1-1z"));
     c.fill(new Path2D("M18.4 17.5v6.2a1 1 0 0 1-1 1h-6.2a1 1 0 0 1-.7-1.7l6.2-6.2a1 1 0 0 1 1.7.7z"));
     c.restore();
-    c.textAlign="left"; c.textBaseline="middle";
-    c.fillStyle=P.ink; c.font='700 32px Archivo, sans-serif';
-    c.fillText(SITE_NAME, F.M.l+70, (wide?44:64)+28);
+    c.fillStyle=P.ink; c.font='700 30px Archivo, sans-serif';
+    c.fillText(SITE_NAME, LL.head.x+66, LL.head.y+20);
 
-    /* market + direction */
-    const ty=wide?128:190;
-    c.fillStyle=P.ink; c.font=`800 ${wide?54:64}px Archivo, sans-serif`;
-    c.fillText(play.m, F.M.l, ty);
-    const dirw=c.measureText(play.m).width;
+    const ty=LL.head.y+ (LL.wide?76:120);
+    c.fillStyle=P.ink; c.font=`800 ${LL.wide?52:66}px Archivo, sans-serif`;
+    c.fillText(play.m, LL.head.x, ty);
+    const dw=c.measureText(play.m).width;
     const badge=(play.open?"HOLDING ":"")+play.dir;
-    c.font='700 22px "JetBrains Mono", monospace';
+    c.font='700 20px "JetBrains Mono", monospace';
     const bw2=c.measureText(badge).width;
-    c.fillStyle=play.dir==="LONG"?P.band:P.bandDn;
-    rr(c,F.M.l+dirw+22,ty-20,bw2+30,40,20); c.fill();
-    c.fillStyle=play.dir==="LONG"?P.up:P.dn;
-    c.fillText(badge,F.M.l+dirw+37,ty+1);
+    c.fillStyle=play.dir==="LONG"?hexA(P.up,.16):hexA(P.dn,.16);
+    rr(c,LL.head.x+dw+22,ty-19,bw2+30,38,19); c.fill();
+    c.fillStyle=play.dir==="LONG"?P.up:P.dn; c.fillText(badge,LL.head.x+dw+37,ty+1);
 
-    /* running PnL, right aligned */
-    c.textAlign="right";
-    const pnl=st.total;
-    c.fillStyle=P.ink3; c.font='500 22px "JetBrains Mono", monospace';
-    c.fillText(play.open?"PROFIT SO FAR":"PROFIT ON THIS TRADE", Wd-F.M.r+108, wide?60:80);
-    c.fillStyle=pnl>=0?P.up:P.dn; c.font=`800 ${wide?68:76}px Archivo, sans-serif`;
-    c.fillText(usd(pnl,{plus:true}), Wd-F.M.r+108, wide?116:150);
-
-    /* clock under the playhead */
-    c.textAlign="center"; c.fillStyle=P.ink2; c.font='500 22px "JetBrains Mono", monospace';
-    const cut=F.x+F.w*prog;
-    c.fillText(new Date(tNow).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"}),
-      clamp(cut,F.x+60,F.x+F.w-60), F.y+F.h+40);
-
-    /* position size ribbon */
-    c.textAlign="left"; c.fillStyle=P.ink3; c.font='500 20px "JetBrains Mono", monospace';
-    const sizeTxt = Math.abs(st.sz)>1e-9 ? `POSITION ${num(Math.abs(st.sz),4)} ${play.m.split("-")[0]}` : "FLAT";
-    c.fillText(sizeTxt, F.M.l, F.y+F.h+40);
+    /* clock */
+    const cut=t0+SPAN*prog;
+    c.textAlign="right"; c.fillStyle=P.ink2; c.font='500 20px "JetBrains Mono", monospace';
+    c.fillText(new Date(cut).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"}),
+      Wd-(LL.wide?52:56), LL.head.y+20);
 
     /* footer */
-    c.fillStyle=P.ink3; c.font='400 20px "Instrument Sans", sans-serif';
-    c.fillText(shortA(w.addr)+"  ·  built by "+BUILDER.name+" "+BUILDER.handle, F.M.l, Hd-34);
-    c.textAlign="right"; c.fillStyle=P.brand; c.font='700 22px Archivo, sans-serif';
-    c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), Wd-F.M.r+108, Hd-34);
+    c.textAlign="left"; c.fillStyle=P.ink3; c.font='400 18px "Instrument Sans", sans-serif';
+    c.fillText(shortA(w.addr)+"  ·  built by "+BUILDER.name+" "+BUILDER.handle, LL.head.x, Hd-30);
+    c.textAlign="right"; c.fillStyle=P.brand; c.font='700 20px Archivo, sans-serif';
+    c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), Wd-(LL.wide?52:56), Hd-30);
   }
-  function drawOutro(P,F,k){
-    /* k 0..1 — the closing card fades over the chart */
-    c.fillStyle = dark()?`rgba(9,15,11,${0.955*k})`:`rgba(243,241,233,${0.96*k})`;
+
+  /* the closing verdict */
+  function outro(P,LL,k){
+    const e=1-Math.pow(1-k,3);
+    c.fillStyle = dark()?`rgba(7,12,9,${0.955*e})`:`rgba(243,241,233,${0.96*e})`;
     c.fillRect(0,0,Wd,Hd);
-    const cx=Wd/2, cy=Hd*0.42, R=RATIO==="wide"?128:170;
-    c.globalAlpha=k;
+    const cx=Wd/2, cy=Hd*(LL.wide?0.40:0.42), R=LL.wide?150:190;
+    c.globalAlpha=e;
+    const win=play.total>=0;
+    const glow=c.createRadialGradient(cx,cy,R*0.5,cx,cy,R*2.6);
+    glow.addColorStop(0,hexA(win?P.up:P.dn,.30)); glow.addColorStop(1,"rgba(0,0,0,0)");
+    c.fillStyle=glow; c.fillRect(0,0,Wd,Hd);
     if(window.ArcChars){
-      c.save(); c.beginPath(); c.arc(cx,cy,R,0,7); c.clip();
-      ArcChars.draw(c,archetype(w).id,cx-R,cy-R,R*2); c.restore();
-      c.strokeStyle=dark()?"rgba(255,255,255,.16)":"rgba(20,35,26,.16)"; c.lineWidth=3;
-      c.beginPath(); c.arc(cx,cy,R,0,7); c.stroke();
+      const sc=0.86+0.14*e;
+      c.save(); c.translate(cx,cy); c.scale(sc,sc);
+      c.beginPath(); c.arc(0,0,R,0,7); c.clip();
+      ArcChars.draw(c,ARC.id,-R,-R,R*2); c.restore();
+      c.strokeStyle=hexA(win?P.up:P.dn,.8); c.lineWidth=5;
+      c.beginPath(); c.arc(cx,cy,R*sc,0,7); c.stroke();
     }
-    c.textAlign="center"; c.textBaseline="middle";
-    c.fillStyle=P.ink; c.font=`800 ${RATIO==="wide"?56:64}px Archivo, sans-serif`;
-    c.fillText(CH?CH.name:"", cx, cy+R+62);
-    c.fillStyle=P.ink3; c.font='500 24px "JetBrains Mono", monospace';
-    c.fillText(play.m+" · "+(play.open?"still holding":"closed "+dstr(play.t1)), cx, cy+R+108);
-    const pnl=play.total;
-    c.fillStyle=pnl>=0?P.up:P.dn; c.font=`800 ${RATIO==="wide"?120:132}px Archivo, sans-serif`;
-    c.fillText(usd(pnl,{plus:true}), cx, cy+R+206);
-    c.fillStyle=P.ink2; c.font='400 26px "Instrument Sans", sans-serif';
-    c.fillText("Replay any Arcus wallet · "+(SITE_URL||"arclight").replace(/^https?:\/\//,""), cx, cy+R+272);
+    c.textAlign="center"; c.textBaseline="alphabetic";
+    c.fillStyle=P.ink; c.font=`800 ${LL.wide?54:66}px Archivo, sans-serif`;
+    c.fillText(CH?CH.name:"", cx, cy+R+64);
+    c.fillStyle=P.ink3; c.font='500 22px "JetBrains Mono", monospace';
+    c.fillText(play.m+" · "+(play.open?"still holding":"closed "+dstr(play.t1)), cx, cy+R+102);
+    c.fillStyle=win?P.up:P.dn; c.font=`800 ${LL.wide?116:132}px Archivo, sans-serif`;
+    c.save(); c.shadowColor=hexA(win?P.up:P.dn,.55); c.shadowBlur=40;
+    c.fillText(usd(play.total,{plus:true}), cx, cy+R+206); c.restore();
+
+    /* the honest line — what this run was really worth */
+    if(PEAK>0.01 && k>0.35){
+      const a=clamp((k-0.35)/0.5,0,1); c.globalAlpha=e*a;
+      const pctOf=Math.round(efficiency*100);
+      c.fillStyle=P.gold; c.font='700 24px "JetBrains Mono", monospace';
+      c.fillText("BEST IT EVER WAS  "+usd(PEAK,{plus:true}), cx, cy+R+256);
+      c.fillStyle=P.ink2; c.font='400 24px "Instrument Sans", sans-serif';
+      const line = play.open
+        ? (pctOf>=95?"Sitting right at the highs.":`Currently holding ${pctOf}% of the best it showed.`)
+        : (pctOf>=90?"Got out within a whisker of the top."
+          :pctOf>=60?`Took ${pctOf}% of the move. Most people take less.`
+          :pctOf>0?`Took ${pctOf}% of it — the rest went back.`
+          :"Gave the whole thing back.");
+      c.fillText(line, cx, cy+R+294);
+      c.globalAlpha=e;
+    }
+    c.fillStyle=P.ink3; c.font='400 22px "Instrument Sans", sans-serif';
+    c.fillText("Replay any Arcus wallet · "+(SITE_URL||"arclight").replace(/^https?:\/\//,""), cx, cy+R+(LL.wide?350:360));
     c.globalAlpha=1;
   }
 
+  /* --- the frame --------------------------------------------------- */
   function render(prog){
-    const P=pal(), F=frame();
     prog=clamp(prog,0,1);
-    const chartProg=clamp(prog/0.86,0,1);
-    drawBg(P,F);
-    drawBand(P,F,chartProg);
-    const st=drawBars(P,F,chartProg);
-    drawFills(P,F,chartProg);
-    drawHud(P,F,chartProg,st);
-    if(prog>0.88) drawOutro(P,F,clamp((prog-0.88)/0.12,0,1));
-  }
-  return {render,size,get ratio(){return RATIO;},get dims(){return [Wd,Hd];},bars};
-}
+    if(S.last<0 || prog<S.last-0.001){ const keep=S.mood; reset(); S.mood=keep; S.last=prog; }
+    const dtRaw=(prog-S.last)*RUN_SECONDS*60;      /* frames at 60fps */
+    const dt=clamp(dtRaw,0,4);
+    S.last=prog;
 
+    const P=pal(), LL=L(), F=LL.chart, R=LL.ribbon;
+    const chartProg=clamp(prog/0.86,0,1);
+    const cut=t0+SPAN*chartProg;
+
+    camera(chartProg,F,Math.max(dt,0.35));
+
+    /* fire any fill we just passed */
+    for(let i=0;i<play.fills.length;i++){
+      const f=play.fills[i];
+      if(f.t<=cut && !S.fired[i]){ S.fired[i]=1; if(dtRaw>=0) fire(f,i,F,P); }
+    }
+    /* state now */
+    let sz=0,cash=0,realized=0;
+    for(const f of play.fills){ if(f.t>cut) break;
+      const s=(f.side==="BUY"?1:-1)*f.s; sz+=s; cash-=s*f.p; realized+=f.pnl; }
+    let px=null; for(const b of bars){ if(b.t<=cut) px=b.c; else break; }
+    const st={sz,total:realized+(Math.abs(sz)>1e-9&&px!=null?sz*px+cash:0)};
+    S.mood=moodFor(st.total);
+
+    /* decay */
+    S.shake*=Math.pow(0.86,dt); S.flash*=Math.pow(0.80,dt); S.pod*=Math.pow(0.88,dt);
+    stepParts(dt);
+
+    /* ---- paint ---- */
+    c.setTransform(1,0,0,1,0,0);
+    bg(P,LL);
+    const sh=S.shake;
+    c.save();
+    if(sh>0.4) c.translate((Math.random()-.5)*sh,(Math.random()-.5)*sh);
+    panel(P,F,26); panel(P,R,22);
+    axis(P,F);
+    c.save();                                   /* the chart is a viewport — nothing escapes it */
+    rr(c,F.x-10,F.y-10,F.w+20,F.h+20,18); c.clip();
+    band(P,F,cut);
+    drawCandles(P,F,chartProg,dt);
+    markers(P,F,chartProg);
+    priceHead(P,F,chartProg,dt);
+    drawParts(P);
+    c.restore();
+    c.save(); rr(c,R.x-10,R.y-10,R.w+20,R.h+20,16); c.clip();
+    ribbon(P,R,chartProg);
+    c.restore();
+    c.restore();
+    podDraw(P,LL.pod,prog,st,dt);
+    chrome(P,LL,chartProg);
+
+    if(S.flash>0.01){
+      c.fillStyle=hexA(S.flashCol||"#ffffff",S.flash*0.30);
+      c.fillRect(0,0,Wd,Hd);
+    }
+    if(prog>0.86) outro(P,LL,clamp((prog-0.86)/0.14,0,1));
+  }
+  return {render,size,reset,get ratio(){return RATIO;},get dims(){return [Wd,Hd];},
+          bars,peak:PEAK,efficiency};
+}
+/* colour helpers used by the renderer */
+function hexA(hex,a){
+  if(!hex) return `rgba(255,255,255,${a})`;
+  if(hex[0]!=="#") return hex;
+  const n=parseInt(hex.slice(1),16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+function shade(hex,amt){
+  if(!hex||hex[0]!=="#") return hex;
+  const n=parseInt(hex.slice(1),16);
+  const cl=v=>clamp(Math.round(v),0,255);
+  return `rgb(${cl(((n>>16)&255)+amt)},${cl(((n>>8)&255)+amt)},${cl((n&255)+amt)})`;
+}
 
 /* ---------- History Run page ---------- */
 let runAddr=null, runW=null, runPlays=[], RP=null, runRatio="wide",
@@ -3332,17 +3771,21 @@ async function loadRun(addr){
 
 function playCard(p,i){
   const win=p.total>=0, span=p.t1-p.t0;
-  return `<div class="playc ${win?"win":"lose"}" data-play="${i}">
+  const liq=p.fills.some(f=>f.kind==="LIQ"), tp=p.fills.some(f=>f.kind==="TP"), sl=p.fills.some(f=>f.kind==="SL");
+  const tag = liq?["LIQUIDATED","liq"] : tp?["TARGET HIT","tp"] : sl?["STOPPED OUT","sl"]
+            : p.open?["HOLDING","hold"] : [p.dir,p.dir==="LONG"?"long":"short"];
+  return `<div class="playc ${win?"win":"lose"}" data-play="${i}" style="--d:${Math.min(i,11)*45}ms">
+    <span class="pcShine"></span>
     <div class="pcTop">
       <span class="pcMkt">${p.m}</span>
-      <span class="pill ${p.dir==="LONG"?"c":"e"}">${p.open?"HOLDING":p.dir}</span>
+      <span class="ptag ${tag[1]}">${tag[0]}</span>
     </div>
     <div class="pcPnl ${win?"gain":"loss"}">${usd(p.total,{plus:true})}</div>
     <div class="pcMeta">
       <span>${dstr(p.t0)}</span><i></i><span>${durTxt(span)}</span><i></i><span>${p.fills.length} fill${p.fills.length===1?"":"s"}</span>
     </div>
     <div class="pcBar"><i style="width:0" data-w="${clamp(Math.abs(p.total)/maxAbs()*100,4,100).toFixed(1)}"></i></div>
-    <button class="pcGo">${ic("play")}Replay</button>
+    <span class="pcGo">${ic("play")}<span>Replay this</span></span>
   </div>`;
 }
 function durTxt(ms){ return dur(ms); }
@@ -3366,7 +3809,10 @@ function paintPlays(){
   </div>
   <section style="margin-top:20px">
     <div class="sechead"><div class="t"><span class="eyebrow">Pick a play</span><h2>Biggest moves first</h2>
-      <p>Open positions are included — you can replay a trade that hasn't finished yet.</p></div></div>
+      <p>Open positions are included — you can replay a trade that hasn't finished yet.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn pri" id="bestPlay">${ic("play")}Play the biggest</button>
+        <button class="btn ghost" id="randPlay">${ic("rf")}Surprise me</button></div></div>
     ${runPlays.length?`<div class="plays" id="playsGrid">${runPlays.slice(0,24).map(playCard).join("")}</div>`
       :`<div class="empty"><div class="ei">${ic("search")}</div><h3>No trades to replay</h3>
         <p>This wallet hasn't filled any orders on Arcus yet.</p></div>`}
@@ -3377,6 +3823,8 @@ function paintPlays(){
   $("#runBack").addEventListener("click",()=>{ location.hash="#/run"; });
   const grid=$("#playsGrid");
   if(grid) grid.addEventListener("click",e=>{ const c2=e.target.closest("[data-play]"); if(c2) openPlay(+c2.dataset.play); });
+  const bp=$("#bestPlay"); if(bp) bp.addEventListener("click",()=>openPlay(0));
+  const rp=$("#randPlay"); if(rp) rp.addEventListener("click",()=>openPlay(Math.floor(Math.random()*Math.min(runPlays.length,12))));
   reveal($("#runRoot")); glow($("#runRoot"));
 }
 
@@ -3384,8 +3832,7 @@ async function openPlay(idx){
   const p=runPlays[idx]; if(!p) return;
   const mount=$("#playerMount");
   mount.innerHTML=`<section style="margin-top:34px"><div class="scanner" style="padding:30px">
-    <div class="scanline"><i></i></div><div class="st">Fetching ${p.m} candles for this window…</div></div></section>`;
-  mount.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"});
+    <div class="scanline"><i></i></div><div class="st">Loading ${p.m} price history…</div></div></section>`;
   const span=Math.max(p.t1-p.t0, 36e5);
   const pad=span*0.22;
   const [tfName,tfMs]=pickTF(span+pad*2);
@@ -3417,6 +3864,7 @@ async function openPlay(idx){
         <button class="btn pri" id="rVideo">${ic("film")}Download video</button>
         <button class="btn ghost" id="rFrame">${ic("dl")}Save frame</button>
         <button class="btn ghost" id="rShare">${ic("xlogo")}Share on X</button>
+        <button class="btn ghost" id="rAgain">${ic("rf")}Replay</button>
       </div>
       <p class="dim3" style="font-size:12px">Rendering records in real time — about ${RUN_SECONDS} seconds. Keep this tab in front while it runs.</p>
     </div></section>`;
@@ -3424,13 +3872,19 @@ async function openPlay(idx){
   RP=Replay(cv,p,bars,runW);
   RP.size(runRatio);
   $("#stage").dataset.ratio=runRatio;
-  runT=0; startRun();
+  runT=0; RP.render(0);
+  /* bring the stage into view, then start once it is actually on screen */
+  const sec=$("#playerSec");
+  const top=sec.getBoundingClientRect().top+window.scrollY-(isMobile()?70:40);
+  window.scrollTo({top,behavior:REDUCED?"auto":"smooth"});
+  setTimeout(()=>startRun(), REDUCED?0:520);
 
   $("#rPlay").addEventListener("click",()=>{ runPlaying?stopRun():startRun(); });
   $("#rScrub").addEventListener("input",e=>{ stopRun(); runT=+e.target.value/1000; RP.render(runT); });
   $("#rRatio").addEventListener("click",e=>{ const b=e.target.closest("[data-r]"); if(!b) return;
     $$("#rRatio button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
     runRatio=b.dataset.r; RP.size(runRatio); $("#stage").dataset.ratio=runRatio; RP.render(runT); });
+  $("#rAgain").addEventListener("click",()=>{ runT=0; RP.reset(); startRun(); });
   $("#rVideo").addEventListener("click",()=>exportVideo(p));
   $("#rFrame").addEventListener("click",()=>saveFrame(p));
   $("#rShare").addEventListener("click",()=>shareRun(p));
