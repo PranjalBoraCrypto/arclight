@@ -3168,20 +3168,20 @@ function Replay(canvas, play, candles, w){
   function L(){
     const wide=RATIO==="wide";
     if(wide){
-      const podW=380;
-      return {wide,
-        chart:{x:70,y:168,w:Wd-70-podW-96,h:452},
-        ribbon:{x:70,y:648,w:Wd-70-podW-96,h:132},
-        pod:{x:Wd-podW-52,y:150,w:podW,h:640},
-        head:{x:70,y:60}};
+      const podW=372, podX=Wd-podW-46, gut=104;      /* gut = room for the price axis */
+      return {wide, gut,
+        chart:{x:70,y:172,w:podX-gut-70,h:436},
+        ribbon:{x:70,y:668,w:podX-gut-70,h:126},
+        pod:{x:podX,y:150,w:podW,h:648},
+        head:{x:70,y:58}};
     }
-    return {wide,
-      chart:{x:56,y:330,w:Wd-112,h:640},
-      ribbon:{x:56,y:1000,w:Wd-112,h:200},
-      pod:{x:56,y:1250,w:Wd-112,h:520},
-      head:{x:56,y:120}};
+    const gut=104;
+    return {wide, gut,
+      chart:{x:56,y:300,w:Wd-56-gut,h:600},
+      ribbon:{x:56,y:962,w:Wd-56-gut,h:180},
+      pod:{x:56,y:1216,w:Wd-112,h:592},
+      head:{x:56,y:112}};
   }
-
   const X=(t,F)=>F.x+((t-t0)/SPAN)*F.w;
   const Y=(p,F)=>F.y+F.h-((p-S.camLo)/Math.max(1e-9,S.camHi-S.camLo))*F.h;
 
@@ -3323,15 +3323,17 @@ function Replay(canvas, play, candles, w){
     S.camLo+=(tLo-S.camLo)*e; S.camHi+=(tHi-S.camHi)*e;
   }
 
-  function axis(P,F){
-    c.textAlign="left"; c.textBaseline="middle";
-    c.font='500 19px "JetBrains Mono", monospace';
+  function axis(P,F,LL){
+    c.textAlign="right"; c.textBaseline="middle";
+    c.font='500 18px "JetBrains Mono", monospace';
+    const ax=F.x+F.w+LL.gut-26;                 /* right edge of the gutter */
     for(let i=0;i<=5;i++){
       const y=F.y+F.h*i/5, v=S.camHi-(S.camHi-S.camLo)*i/5;
       c.strokeStyle=P.grid; c.lineWidth=1;
       c.beginPath(); c.moveTo(F.x,y); c.lineTo(F.x+F.w,y); c.stroke();
-      c.fillStyle=P.ink3; c.fillText(usd(v), F.x+F.w+16, y);
+      c.fillStyle=P.ink3; c.fillText(usd(v), ax, y);
     }
+    c.textAlign="left";
   }
   function band(P,F,cut){
     const a=X(Math.max(play.t0,t0),F), b=Math.min(X(Math.min(play.t1,t1),F), X(cut,F));
@@ -3380,10 +3382,17 @@ function Replay(canvas, play, candles, w){
     let px=null; for(const b of bars){ if(b.t<=cut) px=b.c; else break; }
     if(px==null) return null;
     const x=X(cut,F), y=Y(px,F);
-    S.headTrail.push({x,y}); if(S.headTrail.length>26) S.headTrail.shift();
+    S.headTrail.push({t:cut,p:px});
+    /* keep the tail short in TIME, not frames, so a fast run doesn't smear a line
+       right across the chart */
+    const tailWin=SPAN*0.03;
+    while(S.headTrail.length>2 && cut-S.headTrail[0].t>tailWin) S.headTrail.shift();
+    if(S.headTrail.length>30) S.headTrail.shift();
     /* comet trail */
     for(let i=0;i<S.headTrail.length-1;i++){
-      const a=S.headTrail[i], b=S.headTrail[i+1], k=i/S.headTrail.length;
+      const a={x:X(S.headTrail[i].t,F),y:Y(S.headTrail[i].p,F)},
+            b={x:X(S.headTrail[i+1].t,F),y:Y(S.headTrail[i+1].p,F)},
+            k=i/S.headTrail.length;
       c.strokeStyle=P.brand; c.globalAlpha=k*0.5; c.lineWidth=1+k*5; c.lineCap="round";
       c.beginPath(); c.moveTo(a.x,a.y); c.lineTo(b.x,b.y); c.stroke();
     }
@@ -3441,9 +3450,6 @@ function Replay(canvas, play, candles, w){
   /* the PnL lane: a liquid ribbon chasing a golden ceiling */
   function ribbon(P,R,prog){
     const cut=t0+SPAN*prog;
-    c.fillStyle=P.ink3; c.font='500 15px "JetBrains Mono", monospace'; c.textAlign="left";
-    c.textBaseline="alphabetic";
-    c.fillText("PROFIT ON THIS TRADE", R.x+4, R.y-6);
     const rows=walk.rows.filter(r=>r.t<=cut);
     const hi=Math.max(PEAK,0.0001)*1.18, lo=Math.min(PMIN,0)*1.18-Math.abs(PEAK)*0.05;
     const yy=v=>R.y+R.h-((v-lo)/Math.max(1e-9,hi-lo))*R.h;
@@ -3485,68 +3491,94 @@ function Replay(canvas, play, candles, w){
 
   }
 
-  /* the character, reacting */
-  function podDraw(P,B,prog,st,dt){
-    const M=MOOD[S.mood]||MOOD.calm;
-    /* pod plate */
+  /* the character, reacting — laid out as a measured vertical stack */
+  function podDraw(P,B,prog,st,dt,LL){
+    const M=MOOD[S.mood]||MOOD.calm, wide=LL.wide;
     c.save(); c.shadowColor="rgba(0,0,0,.5)"; c.shadowBlur=44; c.shadowOffsetY=16;
     c.fillStyle=dark()?"rgba(255,255,255,.03)":"rgba(255,255,255,.8)";
     rr(c,B.x,B.y,B.w,B.h,30); c.fill(); c.restore();
     c.strokeStyle=dark()?"rgba(255,255,255,.06)":"rgba(20,35,26,.08)"; c.lineWidth=1.5;
     rr(c,B.x,B.y,B.w,B.h,30); c.stroke();
 
-    const cx=B.x+B.w/2, R=Math.min(B.w*0.34, L().wide?122:158);
-    const cy=B.y+ (L().wide? 168 : 190);
-    /* aura, pulsing with the mood */
+    c.save(); rr(c,B.x,B.y,B.w,B.h,30); c.clip();   /* nothing leaves the pod */
+
+    const R=Math.min(B.w*0.31, wide?118:136);
+    const cx=B.x+B.w/2;
+    const S1=wide?{pad:32,name:34,gap1:46,mood:17,gap2:44,lab:16,gap3:56,num:58,gap4:32,pos:15}
+                 :{pad:28,name:40,gap1:50,mood:19,gap2:46,lab:17,gap4:34,gap3:60,num:70,pos:17};
+    const cy=B.y+S1.pad+R;
+    const nameY=cy+R+S1.gap1;
+    const moodY=nameY+S1.mood+12;
+    const labY =moodY+S1.gap2;
+    const numY =labY+S1.gap3;
+    const posY =numY+S1.gap4;
+
+    /* aura */
     const puls=1+Math.sin(prog*90)*0.05+S.pod*0.22;
     const ag=c.createRadialGradient(cx,cy,R*0.6,cx,cy,R*2.1*puls);
-    ag.addColorStop(0,hexA(M.aura,dark()?0.40:0.26)); ag.addColorStop(1,"rgba(0,0,0,0)");
+    ag.addColorStop(0,hexA(M.aura,dark()?0.40:0.24)); ag.addColorStop(1,"rgba(0,0,0,0)");
     c.fillStyle=ag; c.fillRect(B.x,B.y,B.w,B.h);
-    /* the character bobs, and flinches when something lands */
+
     const bob=Math.sin(prog*40)*5*(S.mood==="euphoric"?2.2:1);
-    const kick=S.pod*18;
+    const kick=S.pod*16;
     c.save();
     c.translate(cx,cy+bob-kick*0.4);
-    const sc=1+S.pod*0.10+(S.mood==="euphoric"?Math.sin(prog*70)*0.03:0);
+    const sc=1+S.pod*0.09+(S.mood==="euphoric"?Math.sin(prog*70)*0.03:0);
     c.rotate(S.mood==="wrecked"?Math.sin(prog*180)*0.05*S.pod:0);
-    c.scale(sc,sc*(1-S.pod*0.06));
+    c.scale(sc,sc*(1-S.pod*0.05));
     if(window.ArcChars){
       c.save(); c.beginPath(); c.arc(0,0,R,0,7); c.clip();
       ArcChars.draw(c,ARC.id,-R,-R,R*2); c.restore();
     }
     c.strokeStyle=hexA(M.aura,.75); c.lineWidth=4; c.beginPath(); c.arc(0,0,R,0,7); c.stroke();
-    /* euphoria sparks / pain cracks around the ring */
     if(S.mood==="euphoric"){
-      for(let i=0;i<10;i++){ const a=prog*4+i*0.628, rr2=R+16+Math.sin(prog*50+i)*8;
+      for(let i=0;i<10;i++){ const a2=prog*4+i*0.628, rr2=R+14+Math.sin(prog*50+i)*7;
         c.globalAlpha=.8; c.fillStyle=P.gold;
-        c.beginPath(); c.arc(Math.cos(a)*rr2,Math.sin(a)*rr2,3.2,0,7); c.fill(); c.globalAlpha=1; }
+        c.beginPath(); c.arc(Math.cos(a2)*rr2,Math.sin(a2)*rr2,3,0,7); c.fill(); c.globalAlpha=1; }
     } else if(S.mood==="wrecked"||S.mood==="pain"){
       c.strokeStyle=hexA(P.dn,.7); c.lineWidth=2.4;
-      for(let i=0;i<5;i++){ const a=i*1.25+0.4;
-        c.beginPath(); c.moveTo(Math.cos(a)*R,Math.sin(a)*R);
-        c.lineTo(Math.cos(a+0.12)*(R+16),Math.sin(a+0.12)*(R+16)); c.stroke(); }
+      for(let i=0;i<5;i++){ const a2=i*1.25+0.4;
+        c.beginPath(); c.moveTo(Math.cos(a2)*R,Math.sin(a2)*R);
+        c.lineTo(Math.cos(a2+0.12)*(R+13),Math.sin(a2+0.12)*(R+13)); c.stroke(); }
     }
     c.restore();
 
-    /* name + mood */
     c.textAlign="center"; c.textBaseline="alphabetic";
-    c.fillStyle=P.ink; c.font=`800 ${L().wide?34:44}px Archivo, sans-serif`;
-    c.fillText(CH?CH.name:"", cx, cy+R+56);
-    c.fillStyle=hexA(M.aura,.95); c.font='700 17px "JetBrains Mono", monospace';
-    c.fillText(M.label.toUpperCase(), cx, cy+R+84);
+    c.fillStyle=P.ink; c.font=`800 ${S1.name}px Archivo, sans-serif`;
+    c.fillText(CH?CH.name:"", cx, nameY);
+    c.fillStyle=hexA(M.aura,.95); c.font=`700 ${S1.mood-2}px "JetBrains Mono", monospace`;
+    c.fillText(M.label.toUpperCase(), cx, moodY);
 
-    /* the running number */
-    const y2=cy+R+ (L().wide?170:200);
-    c.fillStyle=P.ink3; c.font='500 17px "JetBrains Mono", monospace';
-    c.fillText(play.open?"PROFIT SO FAR":"PROFIT ON THIS TRADE", cx, y2-46);
+    c.fillStyle=P.ink3; c.font=`500 ${S1.lab-1}px "JetBrains Mono", monospace`;
+    c.fillText(play.open?"PROFIT SO FAR":"PROFIT ON THIS TRADE", cx, labY);
     c.fillStyle=st.total>=0?P.up:P.dn;
-    c.font=`800 ${L().wide?62:78}px Archivo, sans-serif`;
+    c.font=`800 ${S1.num}px Archivo, sans-serif`;
     c.save(); c.shadowColor=hexA(st.total>=0?P.up:P.dn,.5); c.shadowBlur=26;
-    c.fillText(usd(st.total,{plus:true}), cx, y2); c.restore();
-    /* position ribbon */
-    c.fillStyle=P.ink3; c.font='500 16px "JetBrains Mono", monospace';
-    const pos=Math.abs(st.sz)>1e-9? num(Math.abs(st.sz),4)+" "+play.m.split("-")[0]+" held" : "flat";
-    c.fillText(pos.toUpperCase(), cx, y2+34);
+    c.fillText(usd(st.total,{plus:true}), cx, numY); c.restore();
+    c.fillStyle=P.ink3; c.font=`500 ${S1.pos-1}px "JetBrains Mono", monospace`;
+    const pos=Math.abs(st.sz)>1e-9? num(Math.abs(st.sz),4)+" "+play.m.split("-")[0]+" HELD" : "FLAT";
+    c.fillText(pos, cx, posY);
+    c.restore();
+  }
+
+  /* the pause before the verdict — let the chart land, then tell them something is coming */
+  function holdRing(P,LL,k){
+    const F=LL.chart;
+    const cx=F.x+F.w/2, cy=F.y+F.h/2;
+    c.fillStyle=dark()?`rgba(7,12,9,${0.42*k})`:`rgba(243,241,233,${0.5*k})`;
+    c.fillRect(0,0,Wd,Hd);
+    const R=LL.wide?46:58;
+    c.save(); c.globalAlpha=clamp(k*1.4,0,1);
+    c.strokeStyle=dark()?"rgba(255,255,255,.14)":"rgba(20,35,26,.14)"; c.lineWidth=5;
+    c.beginPath(); c.arc(cx,cy,R,0,7); c.stroke();
+    c.strokeStyle=P.gold; c.lineWidth=5; c.lineCap="round";
+    c.beginPath(); c.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*k); c.stroke();
+    c.save(); c.shadowColor=P.gold; c.shadowBlur=22;
+    c.beginPath(); c.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*k); c.stroke(); c.restore();
+    c.fillStyle=P.gold; c.textAlign="center"; c.textBaseline="middle";
+    c.font=`700 ${LL.wide?15:18}px "JetBrains Mono", monospace`;
+    c.fillText("SUMMING UP", cx, cy+R+34);
+    c.textBaseline="alphabetic"; c.restore();
   }
 
   function chrome(P,LL,prog){
@@ -3585,52 +3617,81 @@ function Replay(canvas, play, candles, w){
     c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), Wd-(LL.wide?52:56), Hd-30);
   }
 
-  /* the closing verdict */
+  /* the closing verdict — composed as a centred stack, not a wall of lines */
   function outro(P,LL,k){
-    const e=1-Math.pow(1-k,3);
-    c.fillStyle = dark()?`rgba(7,12,9,${0.955*e})`:`rgba(243,241,233,${0.96*e})`;
+    const e=1-Math.pow(1-k,3), wide=LL.wide;
+    c.fillStyle = dark()?`rgba(7,12,9,${0.97*e})`:`rgba(243,241,233,${0.97*e})`;
     c.fillRect(0,0,Wd,Hd);
-    const cx=Wd/2, cy=Hd*(LL.wide?0.40:0.42), R=LL.wide?150:190;
-    c.globalAlpha=e;
     const win=play.total>=0;
-    const glow=c.createRadialGradient(cx,cy,R*0.5,cx,cy,R*2.6);
-    glow.addColorStop(0,hexA(win?P.up:P.dn,.30)); glow.addColorStop(1,"rgba(0,0,0,0)");
+    const R      = wide?132:172;
+    const nameSz = wide?52:66;
+    const subSz  = wide?20:25;
+    const pnlSz  = wide?104:126;
+    const chipH  = wide?60:76;
+    const verdSz = wide?23:29;
+    /* measure the whole composition, then centre it */
+    const H = R*2 + 52 + nameSz + 26 + subSz + 46 + pnlSz + 40 + chipH + 34 + verdSz;
+    let y = (Hd-H)/2 + R;            /* y is the character's centre */
+    const cx=Wd/2;
+
+    c.globalAlpha=e;
+    const glow=c.createRadialGradient(cx,y,R*0.5,cx,y,R*2.8);
+    glow.addColorStop(0,hexA(win?P.up:P.dn,.28)); glow.addColorStop(1,"rgba(0,0,0,0)");
     c.fillStyle=glow; c.fillRect(0,0,Wd,Hd);
     if(window.ArcChars){
-      const sc=0.86+0.14*e;
-      c.save(); c.translate(cx,cy); c.scale(sc,sc);
+      const sc=0.88+0.12*e;
+      c.save(); c.translate(cx,y); c.scale(sc,sc);
       c.beginPath(); c.arc(0,0,R,0,7); c.clip();
       ArcChars.draw(c,ARC.id,-R,-R,R*2); c.restore();
-      c.strokeStyle=hexA(win?P.up:P.dn,.8); c.lineWidth=5;
-      c.beginPath(); c.arc(cx,cy,R*sc,0,7); c.stroke();
+      c.strokeStyle=hexA(win?P.up:P.dn,.85); c.lineWidth=5;
+      c.beginPath(); c.arc(cx,y,R*sc,0,7); c.stroke();
     }
     c.textAlign="center"; c.textBaseline="alphabetic";
-    c.fillStyle=P.ink; c.font=`800 ${LL.wide?54:66}px Archivo, sans-serif`;
-    c.fillText(CH?CH.name:"", cx, cy+R+64);
-    c.fillStyle=P.ink3; c.font='500 22px "JetBrains Mono", monospace';
-    c.fillText(play.m+" · "+(play.open?"still holding":"closed "+dstr(play.t1)), cx, cy+R+102);
-    c.fillStyle=win?P.up:P.dn; c.font=`800 ${LL.wide?116:132}px Archivo, sans-serif`;
-    c.save(); c.shadowColor=hexA(win?P.up:P.dn,.55); c.shadowBlur=40;
-    c.fillText(usd(play.total,{plus:true}), cx, cy+R+206); c.restore();
+    y += R + 52;
+    c.fillStyle=P.ink; c.font=`800 ${nameSz}px Archivo, sans-serif`;
+    c.fillText(CH?CH.name:"", cx, y);
+    y += 26 + subSz;
+    c.fillStyle=P.ink3; c.font=`500 ${subSz}px "JetBrains Mono", monospace`;
+    c.fillText(play.m+"  ·  "+(play.open?"still holding":"closed "+dstr(play.t1)), cx, y);
+    y += 46 + pnlSz*0.78;
+    c.fillStyle=win?P.up:P.dn; c.font=`800 ${pnlSz}px Archivo, sans-serif`;
+    c.save(); c.shadowColor=hexA(win?P.up:P.dn,.5); c.shadowBlur=40;
+    c.fillText(usd(play.total,{plus:true}), cx, y); c.restore();
 
-    /* the honest line — what this run was really worth */
-    if(PEAK>0.01 && k>0.35){
-      const a=clamp((k-0.35)/0.5,0,1); c.globalAlpha=e*a;
+    /* two compact chips instead of two more sentences */
+    y += 40;
+    if(PEAK>0.01){
       const pctOf=Math.round(efficiency*100);
-      c.fillStyle=P.gold; c.font='700 24px "JetBrains Mono", monospace';
-      c.fillText("BEST IT EVER WAS  "+usd(PEAK,{plus:true}), cx, cy+R+256);
-      c.fillStyle=P.ink2; c.font='400 24px "Instrument Sans", sans-serif';
+      const chips = play.total>0
+        ? [["PEAK", usd(PEAK,{plus:true}), P.gold],
+           ["CAPTURED", pctOf+"%", pctOf>=70?P.up:pctOf>=40?P.gold:P.dn]]
+        : [["PEAK", usd(PEAK,{plus:true}), P.gold],
+           ["GAVE BACK", usd(play.total-PEAK), P.dn]];
+      const cw=wide?214:268, gap=wide?16:20;
+      let x0=cx-(chips.length*cw+(chips.length-1)*gap)/2;
+      chips.forEach(ch2=>{
+        c.fillStyle=dark()?"rgba(255,255,255,.045)":"rgba(20,35,26,.05)";
+        rr(c,x0,y,cw,chipH,chipH/2); c.fill();
+        c.strokeStyle=hexA(ch2[2],.35); c.lineWidth=1.5; rr(c,x0,y,cw,chipH,chipH/2); c.stroke();
+        c.fillStyle=P.ink3; c.font=`500 ${wide?13:16}px "JetBrains Mono", monospace`;
+        c.fillText(ch2[0], x0+cw/2, y+chipH*0.40);
+        c.fillStyle=ch2[2]; c.font=`800 ${wide?27:33}px Archivo, sans-serif`;
+        c.fillText(ch2[1], x0+cw/2, y+chipH*0.84);
+        x0+=cw+gap;
+      });
+      y += chipH + 34 + verdSz*0.8;
+      const pctOf2=pctOf;
       const line = play.open
-        ? (pctOf>=95?"Sitting right at the highs.":`Currently holding ${pctOf}% of the best it showed.`)
-        : (pctOf>=90?"Got out within a whisker of the top."
-          :pctOf>=60?`Took ${pctOf}% of the move. Most people take less.`
-          :pctOf>0?`Took ${pctOf}% of it — the rest went back.`
+        ? (pctOf2>=95?"Sitting right at the highs.":"Still holding, "+pctOf2+"% of the best it showed.")
+        : (pctOf2>=90?"Out within a whisker of the top."
+          :pctOf2>=60?"Most people take less than this."
+          :pctOf2>0?"The rest went back."
           :"Gave the whole thing back.");
-      c.fillText(line, cx, cy+R+294);
-      c.globalAlpha=e;
+      c.fillStyle=P.ink2; c.font=`400 ${verdSz}px "Instrument Sans", sans-serif`;
+      c.fillText(line, cx, y);
     }
-    c.fillStyle=P.ink3; c.font='400 22px "Instrument Sans", sans-serif';
-    c.fillText("Replay any Arcus wallet · "+(SITE_URL||"arclight").replace(/^https?:\/\//,""), cx, cy+R+(LL.wide?350:360));
+    c.fillStyle=P.ink3; c.font=`400 ${wide?19:23}px "Instrument Sans", sans-serif`;
+    c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), cx, Hd-(wide?42:66));
     c.globalAlpha=1;
   }
 
@@ -3643,7 +3704,8 @@ function Replay(canvas, play, candles, w){
     S.last=prog;
 
     const P=pal(), LL=L(), F=LL.chart, R=LL.ribbon;
-    const chartProg=clamp(prog/0.86,0,1);
+    const CHART_END=0.70, HOLD_END=0.86;
+    const chartProg=clamp(prog/CHART_END,0,1);
     const cut=t0+SPAN*chartProg;
 
     camera(chartProg,F,Math.max(dt,0.35));
@@ -3672,7 +3734,7 @@ function Replay(canvas, play, candles, w){
     c.save();
     if(sh>0.4) c.translate((Math.random()-.5)*sh,(Math.random()-.5)*sh);
     panel(P,F,26); panel(P,R,22);
-    axis(P,F);
+    axis(P,F,LL);
     c.save();                                   /* the chart is a viewport — nothing escapes it */
     rr(c,F.x-10,F.y-10,F.w+20,F.h+20,18); c.clip();
     band(P,F,cut);
@@ -3685,14 +3747,15 @@ function Replay(canvas, play, candles, w){
     ribbon(P,R,chartProg);
     c.restore();
     c.restore();
-    podDraw(P,LL.pod,prog,st,dt);
+    podDraw(P,LL.pod,prog,st,dt,LL);
     chrome(P,LL,chartProg);
 
     if(S.flash>0.01){
       c.fillStyle=hexA(S.flashCol||"#ffffff",S.flash*0.30);
       c.fillRect(0,0,Wd,Hd);
     }
-    if(prog>0.86) outro(P,LL,clamp((prog-0.86)/0.14,0,1));
+    if(prog>CHART_END && prog<=HOLD_END) holdRing(P,LL,clamp((prog-CHART_END)/(HOLD_END-CHART_END),0,1));
+    if(prog>HOLD_END) outro(P,LL,clamp((prog-HOLD_END)/(1-HOLD_END),0,1));
   }
   return {render,size,reset,get ratio(){return RATIO;},get dims(){return [Wd,Hd];},
           bars,peak:PEAK,efficiency};
