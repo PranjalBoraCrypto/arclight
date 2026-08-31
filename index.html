@@ -93,6 +93,7 @@
 
 /* ============ BASE ============ */
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
 body{
   margin:0;background:var(--ground);color:var(--ink);
   font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -162,12 +163,12 @@ ul{margin:0;padding:0;list-style:none}
 #topbar .logo{width:30px;height:30px;border-radius:9px;background:#234728;display:grid;place-items:center;flex:none}
 #topbar .name{font-family:"Archivo";font-weight:700;font-size:16px;letter-spacing:-.02em}
 #topbar .grow{flex:1}
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(5,1fr);
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(6,1fr);
   background:color-mix(in srgb,var(--ground) 93%,transparent);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;color:var(--ink-3);
-  font-size:10px;font-weight:500;transition:color .2s;position:relative}
+  font-size:9.5px;font-weight:500;transition:color .2s;position:relative}
 .tab svg{width:21px;height:21px;transition:transform .34s cubic-bezier(.2,1.5,.4,1)}
 .tab.on{color:var(--brand)}
 .tab.on svg{transform:translateY(-2px) scale(1.12)}
@@ -313,9 +314,11 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .arche::before{content:"";position:absolute;inset:0;opacity:.5;
   background:radial-gradient(600px circle at 12% 0%,var(--brand-glow),transparent 58%)}
 .arche .in{position:relative;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-.arche .em{width:54px;height:54px;border-radius:16px;flex:none;display:grid;place-items:center;
-  background:var(--surface-3);border:1px solid var(--rule-2);color:var(--brand)}
-.arche .em svg{width:26px;height:26px}
+.arche .em{width:76px;height:76px;border-radius:50%;flex:none;position:relative}
+.arche .em canvas{width:100%;height:100%;border-radius:50%;display:block;box-shadow:0 0 0 1px var(--rule-2),0 8px 24px -10px rgba(0,0,0,.8)}
+.arche .em::after{content:"";position:absolute;inset:-9px;border-radius:50%;
+  background:radial-gradient(circle,var(--brand-glow),transparent 70%);z-index:-1}
+.arche .tagline{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--brand);margin-top:3px}
 .arche h2{font-size:clamp(20px,3vw,26px)}
 .arche .desc{color:var(--ink-2);font-size:14px;margin-top:5px;max-width:62ch;line-height:1.5}
 .arche .lvl{margin-left:auto;text-align:right;flex:none}
@@ -394,18 +397,24 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .ctop .brandmark span{font-family:"Archivo";font-weight:700;font-size:13.5px;letter-spacing:-.02em}
 .ctag{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--brand);border:1px solid var(--brand-dim);padding:4px 8px;border-radius:100px}
-.cbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:14px 0}
+.chero{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 0 10px;position:relative}
+.chero .ring{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:132px;height:132px;border-radius:50%;
+  background:radial-gradient(circle,var(--brand-glow),transparent 68%);filter:blur(4px)}
+.chero canvas{position:relative;border-radius:50%;box-shadow:0 10px 30px -12px rgba(0,0,0,.9),0 0 0 1px var(--rule-2)}
+.chero .cname{position:relative;font-family:"Archivo";font-weight:800;font-size:21px;letter-spacing:-.03em;line-height:1.1}
+.chero .ctag2{position:relative;font-size:11.5px;color:var(--ink-3);text-align:center;max-width:26ch;line-height:1.35}
+.cbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px 0}
 .cbody .lab{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3)}
-.cbody .big{font-family:"Archivo";font-weight:800;font-size:clamp(34px,10vw,46px);letter-spacing:-.05em;line-height:1;
+.cbody .big{font-family:"Archivo";font-weight:800;font-size:clamp(30px,9vw,42px);letter-spacing:-.05em;line-height:1;
   font-variant-numeric:tabular-nums}
 .cbody .roi{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:5px 10px;border-radius:100px;
   font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;align-self:flex-start}
 .cbody .roi.up{background:var(--gain-bg);color:var(--gain)}
 .cbody .roi.dn{background:var(--loss-bg);color:var(--loss)}
-.cmini{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;align-content:start}
-.cmini>div{background:color-mix(in srgb,var(--ground) 55%,transparent);border:1px solid var(--rule);border-radius:11px;padding:9px 11px}
-.cmini .k{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-.cmini .v{font-family:"Archivo";font-weight:700;font-size:15px;letter-spacing:-.025em;margin-top:2px;font-variant-numeric:tabular-nums}
+.cmini{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px;align-content:start}
+.cmini>div{background:color-mix(in srgb,var(--ground) 55%,transparent);border:1px solid var(--rule);border-radius:10px;padding:7px 8px;text-align:center}
+.cmini .k{font-family:"JetBrains Mono",monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmini .v{font-family:"Archivo";font-weight:700;font-size:14px;letter-spacing:-.03em;margin-top:2px;font-variant-numeric:tabular-nums}
 .cfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:13px;border-top:1px solid var(--rule)}
 .cfoot .ad{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-2);transition:filter .4s}
 .cfoot.blur .ad{filter:blur(6px)}
@@ -492,6 +501,95 @@ td.r,th.r{text-align:right}
 .refblk p{color:var(--ink-2);font-size:14px;margin-top:6px;max-width:46ch}
 .refblk .rr{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
 
+/* ================= VIEW SWITCH ================= */
+.viewbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.vswitch{display:inline-flex;background:var(--surface-2);border:1px solid var(--rule);border-radius:13px;padding:3px;gap:2px}
+.vswitch button{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13.5px;
+  font-weight:600;color:var(--ink-3);transition:.24s cubic-bezier(.2,1.2,.4,1)}
+.vswitch button svg{width:15px;height:15px}
+.vswitch button.on{background:var(--brand);color:var(--on-brand)}
+.vswitch button:not(.on):hover{color:var(--ink);background:var(--surface-3)}
+
+/* ================= PHYSICS FIELD ================= */
+.pfield{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--rule);
+  background:linear-gradient(160deg,var(--surface-2),var(--surface));touch-action:none}
+.pfield canvas{display:block;width:100%;height:100%}
+.pfield .hud{position:absolute;left:14px;top:12px;display:flex;gap:7px;flex-wrap:wrap;pointer-events:auto}
+.fchip{padding:5px 11px;border-radius:100px;border:1px solid var(--rule-2);background:color-mix(in srgb,var(--ground) 74%,transparent);
+  backdrop-filter:blur(8px);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-2);transition:.2s}
+.fchip.on{border-color:var(--brand);color:var(--brand)}
+.fchip:hover{color:var(--ink)}
+.pfield .tip{position:absolute;pointer-events:none;padding:9px 12px;border-radius:12px;opacity:0;transform:translateY(6px);
+  background:color-mix(in srgb,var(--ground) 90%,transparent);border:1px solid var(--rule-2);backdrop-filter:blur(10px);
+  box-shadow:var(--shadow-2);transition:opacity .18s,transform .18s;z-index:3;min-width:150px}
+.pfield .tip.on{opacity:1;transform:translateY(0)}
+.pfield .tip b{font-family:"Archivo";font-weight:700;font-size:14px;display:block}
+.pfield .tip s{text-decoration:none;display:block;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-3);margin-top:3px}
+.pfield .legend{position:absolute;right:14px;bottom:12px;display:flex;gap:12px;font-family:"JetBrains Mono",monospace;
+  font-size:10px;color:var(--ink-3);pointer-events:none;letter-spacing:.06em}
+.pfield .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
+/* ================= TICKER ================= */
+.ticker{position:relative;overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  padding:11px 0;margin-top:24px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.ticker .track{display:flex;gap:30px;width:max-content;animation:tick 44s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk-item{display:flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-size:12.5px;white-space:nowrap}
+.tk-item b{font-weight:500;color:var(--ink-2)}
+.tk-item span{font-weight:700}
+
+/* ================= ARENA (leaderboard) ================= */
+.podium{display:grid;gap:12px;margin-bottom:16px}
+.pod{position:relative;border-radius:18px;border:1px solid var(--rule);padding:18px 16px;text-align:center;overflow:hidden;
+  background:linear-gradient(165deg,var(--surface-2),var(--surface));cursor:pointer;
+  transition:transform .35s cubic-bezier(.2,1.2,.4,1),border-color .3s,box-shadow .35s}
+.pod:hover{transform:translateY(-6px);border-color:var(--brand-dim);box-shadow:var(--shadow-2)}
+.pod::before{content:"";position:absolute;inset:0;opacity:.55;
+  background:radial-gradient(420px circle at 50% -20%,var(--glowc,var(--brand-glow)),transparent 62%)}
+.pod .in{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pod canvas{width:60px;height:60px;border-radius:50%;box-shadow:0 0 0 1px var(--rule-2)}
+.pod .medal{font-family:"Archivo";font-weight:800;font-size:12px;letter-spacing:.08em;padding:3px 10px;border-radius:100px;
+  text-transform:uppercase}
+.pod.g1 .medal{background:rgba(228,200,120,.18);color:#E4C878}
+.pod.g2 .medal{background:rgba(196,206,214,.16);color:#C4CED6}
+.pod.g3 .medal{background:rgba(201,138,75,.18);color:var(--copper)}
+.pod .ad{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-2)}
+.pod .big{font-family:"Archivo";font-weight:800;font-size:26px;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.pod .sub{font-size:11.5px;color:var(--ink-3)}
+
+.race{display:flex;flex-direction:column;gap:5px;position:relative}
+.rrow{position:relative;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;padding:7px 10px;
+  border-radius:12px;cursor:pointer;transition:background .22s,transform .3s cubic-bezier(.2,1.1,.4,1)}
+.rrow:hover{background:var(--surface-2)}
+.rrow:hover .rbar i{filter:brightness(1.18)}
+.rrow .rk{font-family:"Archivo";font-weight:800;font-size:13px;color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
+.rrow .rbody{min-width:0}
+.rrow .rtop{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:4px}
+.rrow .rad{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-2)}
+.rrow .rv{font-family:"Archivo";font-weight:700;font-size:13.5px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.rbar{height:8px;border-radius:100px;background:var(--surface-3);overflow:hidden}
+.rbar i{display:block;height:100%;border-radius:100px;width:0;
+  background:linear-gradient(90deg,var(--brand-dim),var(--brand));transition:width .85s cubic-bezier(.2,.85,.3,1)}
+.rbar.neg i{background:linear-gradient(90deg,color-mix(in srgb,var(--loss) 55%,transparent),var(--loss))}
+
+/* ================= REFERRAL MOMENTS ================= */
+.refline{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--ink-3)}
+.refline a{display:inline-flex;align-items:center;gap:6px;color:var(--brand);font-weight:600;
+  border-bottom:1px solid transparent;transition:.2s}
+.refline a:hover{border-color:var(--brand);gap:9px}
+.refline a svg{width:13px;height:13px}
+.closer{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--rule-2);margin-top:30px;
+  background:linear-gradient(150deg,var(--surface-2),var(--surface))}
+.closer::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(620px circle at 88% -10%,var(--brand-glow),transparent 62%)}
+.closer .ci{position:relative;padding:30px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.closer canvas{width:88px;height:88px;border-radius:50%;flex:none;box-shadow:0 0 0 1px var(--rule-2)}
+.closer h2{font-size:clamp(20px,3vw,27px)}
+.closer p{color:var(--ink-2);font-size:14.5px;margin-top:7px;max-width:44ch}
+.closer .cta{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
+
 /* ================= WATCHLIST ================= */
 .watch{display:grid;gap:10px}
 .wcard{position:relative;display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:14px;
@@ -552,6 +650,48 @@ td.r,th.r{text-align:right}
 .simc .si s{text-decoration:none;font-size:11px;color:var(--ink-3)}
 .simc .sv{font-family:"Archivo";font-weight:700;font-size:14px;letter-spacing:-.02em;flex:none}
 
+/* ================= HISTORY RUN ================= */
+.plays{display:grid;gap:12px}
+.playc{position:relative;border-radius:16px;border:1px solid var(--rule);background:var(--surface);padding:15px;
+  cursor:pointer;overflow:hidden;transition:transform .3s cubic-bezier(.2,1.15,.4,1),border-color .3s,box-shadow .3s}
+.playc::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s;pointer-events:none;
+  background:radial-gradient(320px circle at 50% 0%,var(--glow2),transparent 65%)}
+.playc.win{--glow2:rgba(95,176,124,.16)} .playc.lose{--glow2:rgba(217,105,92,.16)}
+.playc:hover{transform:translateY(-4px);border-color:var(--rule-2);box-shadow:var(--shadow-2)}
+.playc:hover::after{opacity:1}
+.playc:active{transform:scale(.99)}
+.pcTop{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative}
+.pcMkt{font-family:"Archivo";font-weight:700;font-size:15px;letter-spacing:-.02em}
+.pcPnl{font-family:"Archivo";font-weight:800;font-size:28px;letter-spacing:-.04em;margin-top:9px;
+  font-variant-numeric:tabular-nums;position:relative}
+.pcMeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px;font-size:11.5px;color:var(--ink-3);position:relative}
+.pcMeta i{width:3px;height:3px;border-radius:50%;background:var(--rule-2)}
+.pcBar{height:5px;border-radius:100px;background:var(--surface-3);overflow:hidden;margin-top:12px;position:relative}
+.pcBar i{display:block;height:100%;border-radius:100px;transition:width .9s cubic-bezier(.2,.85,.3,1)}
+.playc.win .pcBar i{background:linear-gradient(90deg,var(--brand-dim),var(--gain))}
+.playc.lose .pcBar i{background:linear-gradient(90deg,color-mix(in srgb,var(--loss) 45%,transparent),var(--loss))}
+.pcGo{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--brand);
+  position:relative;transition:gap .2s}
+.pcGo svg{width:13px;height:13px}
+.playc:hover .pcGo{gap:9px}
+
+.player{display:flex;flex-direction:column;gap:12px}
+.stage{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--rule-2);background:#0A110C;
+  box-shadow:var(--shadow-3)}
+.stage canvas{display:block;width:100%;height:auto}
+.stage[data-ratio="tall"]{max-width:420px;margin:0 auto}
+.recbar{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:rgba(6,12,8,.86);backdrop-filter:blur(8px);color:#F2EEE4;font-size:12px;
+  font-family:"JetBrains Mono",monospace}
+.recbar i{position:absolute;left:0;top:0;height:2px;width:0;background:var(--brand);transition:width .12s linear}
+.pctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pctrl input[type=range]{flex:1;min-width:160px;-webkit-appearance:none;appearance:none;height:6px;border-radius:100px;
+  background:var(--surface-3);outline:none}
+.pctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--brand);cursor:pointer;box-shadow:0 0 0 4px var(--brand-glow)}
+.pctrl input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--brand);cursor:pointer}
+.pactions{display:flex;gap:9px;flex-wrap:wrap}
+
 /* ================= MODAL / SHEET ================= */
 .ovl{position:fixed;inset:0;z-index:90;background:rgba(4,8,5,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
@@ -592,6 +732,9 @@ td.r,th.r{text-align:right}
   .tiles.t2{grid-template-columns:repeat(2,1fr)}
   .badges{grid-template-columns:repeat(6,1fr)}
   .watch{grid-template-columns:repeat(4,1fr)}
+  .podium{grid-template-columns:repeat(3,1fr)}
+  .plays{grid-template-columns:repeat(4,1fr)}
+  .pfield{height:520px}
   .vsgrid{grid-template-columns:1fr 1fr}
   .simgrid{grid-template-columns:1fr 1fr}
   .fgrid{grid-template-columns:1.6fr 1fr 1fr 1fr}
@@ -612,6 +755,23 @@ td.r,th.r{text-align:right}
   .tile .v{font-size:22px}
   .badges{grid-template-columns:repeat(3,1fr)}
   .watch{grid-template-columns:1fr}
+  .podium{grid-template-columns:1fr}
+  .plays{grid-template-columns:repeat(2,1fr)}
+  .playc{padding:12px}
+  .pcPnl{font-size:21px;margin-top:7px}
+  .pcMkt{font-size:13.5px}
+  .pcMeta{font-size:10.5px;gap:5px}
+  .stage[data-ratio="tall"]{max-width:100%}
+  .pactions .btn{flex:1 1 45%}
+  .pod{display:flex;text-align:left;padding:13px}
+  .pod .in{flex-direction:row;align-items:center;gap:12px;width:100%}
+  .pod canvas{width:44px;height:44px}
+  .pod .big{font-size:19px;margin-left:auto}
+  .pfield{height:400px}
+  .closer .ci{padding:20px;gap:16px}
+  .closer .cta{margin-left:0;width:100%}
+  .closer .cta .btn{flex:1}
+  .ticker .track{animation-duration:32s}
   .vsgrid{grid-template-columns:1fr}
   .simgrid{grid-template-columns:1fr}
   .vsrow{grid-template-columns:1fr 96px 1fr;padding:9px 6px;gap:4px}
@@ -689,6 +849,9 @@ td.r,th.r{text-align:right}
 <g id="i-starf" fill="currentColor"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1L3.4 9.9l6-.8z"/></g>
 <g id="i-vs" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h11M12 5l3 3-3 3"/><path d="M20 16H9M12 13l-3 3 3 3"/></g>
 <g id="i-trash" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></g>
+<g id="i-play" fill="currentColor"><path d="M8 5.6c0-.8.9-1.3 1.6-.9l9 6.4c.6.4.6 1.4 0 1.8l-9 6.4c-.7.5-1.6 0-1.6-.9z"/></g>
+<g id="i-pause" fill="currentColor"><rect x="7" y="5" width="3.6" height="14" rx="1.4"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.4"/></g>
+<g id="i-film" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M8 5v14M16 5v14M3 12h18M3 8.5h5M3 15.5h5M16 8.5h5M16 15.5h5"/></g>
 <g id="i-scale" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M7 20h10"/><path d="M12 7l-7 2 3 5a3.5 3.5 0 0 0 4-4z" opacity=".55"/><path d="M12 7l7 2-3 5a3.5 3.5 0 0 1-4-4z" opacity=".55"/></g>
 </defs></svg>
 
@@ -696,6 +859,7 @@ td.r,th.r{text-align:right}
   <a class="logo" href="#/" aria-label="Arclight home"><svg width="21" height="21" viewBox="0 0 29 29" fill="#F7F2EA"><use href="#i-logo"/></svg></a>
   <button class="railbtn" data-go="home" aria-label="Home"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg><span class="tip">Search a wallet</span></button>
   <button class="railbtn" data-go="wallet" aria-label="Wallet"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg><span class="tip">Wallet dashboard</span></button>
+  <button class="railbtn" data-go="run" aria-label="History run"><svg viewBox="0 0 24 24"><use href="#i-film"/></svg><span class="tip">History run</span></button>
   <button class="railbtn" data-go="markets" aria-label="Markets"><svg viewBox="0 0 24 24"><use href="#i-act"/></svg><span class="tip">Perps activity</span></button>
   <button class="railbtn" data-go="leaders" aria-label="Leaderboard"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span class="tip">Leaderboard</span></button>
   <button class="railbtn" data-go="learn" aria-label="What is Arcus"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><span class="tip">What is Arcus?</span></button>
@@ -719,7 +883,7 @@ td.r,th.r{text-align:right}
     <div class="hero">
       <span class="kicker"><b>Live</b> Reading Arcus perps directly, no account needed</span>
       <h1>Any Arcus wallet,<br>explained in <em>plain English</em>.</h1>
-      <p class="lede">Paste a wallet address and get the whole story — what they trade, how they're doing, what kind of trader they are, and what every number actually means. No jargon walls, no spreadsheets.</p>
+      <p class="lede">Paste an address. Get the trader behind it — what they hold, how they're really doing, and which of eleven personalities they are.</p>
 
       <div class="searchbox" id="sbox">
         <div class="field">
@@ -736,15 +900,18 @@ td.r,th.r{text-align:right}
           <button class="chip" data-try="random">Surprise me</button>
         </div>
         <div class="safety"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg>
-          <span>Read-only. We never ask for a seed phrase, private key, or wallet connection — a public address is all it takes.</span></div>
+          <span>Read-only. No seed phrase, no private key, no wallet connection — ever.</span></div>
+        <div class="refline">Don't have an address on Arcus yet?
+          <a href="https://app.arcus.xyz/ref/PRANJAL" target="_blank" rel="noopener" id="refHero">Make one<svg viewBox="0 0 24 24"><use href="#i-ext"/></svg></a></div>
       </div>
     </div>
+
+    <div class="ticker" id="ticker" aria-hidden="true"><div class="track" id="tickTrack"></div></div>
 
     <section id="watchSec" hidden>
       <div class="sechead">
         <div class="t"><span class="eyebrow">Saved by you · on this device only</span><h2>Your watchlist</h2>
         <p>Wallets you've starred. Nothing leaves your browser — clear your site data and this list goes with it.</p></div>
-        <button class="btn ghost" data-go="vs">Compare two</button>
       </div>
       <div class="watch" id="watchList"></div>
     </section>
@@ -761,7 +928,10 @@ td.r,th.r{text-align:right}
       <div class="sechead">
         <div class="t"><span class="eyebrow">Busiest markets</span><h2>Where the money is going</h2>
         <p>Ranked by the dollar value traded in the last 24 hours. Tap any market to see its live tape.</p></div>
-        <button class="btn ghost" data-go="markets">All 51 markets</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost" data-go="markets">All markets</button>
+          <a class="btn ghost" href="https://app.arcus.xyz/ref/PRANJAL" target="_blank" rel="noopener">Trade them<svg viewBox="0 0 24 24"><use href="#i-ext"/></svg></a>
+        </div>
       </div>
       <div id="homeMktList"></div>
     </section>
@@ -770,14 +940,24 @@ td.r,th.r{text-align:right}
       <div class="sechead"><div class="t"><span class="eyebrow">Why this exists</span><h2>Exchange data, minus the homework</h2></div></div>
       <div class="tiles t3" id="whyTiles"></div>
     </section>
+
+    <div class="closer rv"><div class="ci">
+      <canvas id="closerChar"></canvas>
+      <div><h2>Which one would you be?</h2>
+        <p>Eleven personalities. You only get assigned one once you've actually traded — open an account, make a move, then read yourself back.</p></div>
+      <div class="cta">
+        <a class="btn pri" href="https://app.arcus.xyz/ref/PRANJAL" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><use href="#i-ext"/></svg>Open Arcus</a>
+        <button class="btn ghost" data-go="learn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg>What is Arcus?</button>
+      </div>
+    </div></div>
   </div>
 </div>
 
-<!-- ================= COMPARE ================= -->
-<div class="page" id="p-vs"><div class="wrap" id="vsRoot"></div></div>
-
 <!-- ================= WALLET ================= -->
 <div class="page" id="p-wallet"><div class="wrap" id="walletRoot"></div></div>
+
+<!-- ================= HISTORY RUN ================= -->
+<div class="page" id="p-run"><div class="wrap" id="runRoot"></div></div>
 
 <!-- ================= MARKETS ================= -->
 <div class="page" id="p-markets"><div class="wrap" id="marketsRoot"></div></div>
@@ -806,7 +986,7 @@ td.r,th.r{text-align:right}
       </div>
       <div class="fcol"><h4>Explore</h4>
         <a href="#/" data-go="home">Search a wallet</a>
-        <a href="#/vs" data-go="vs">Compare two wallets</a>
+        <a href="#/run" data-go="run">History run</a>
         <a href="#/markets" data-go="markets">Perps activity</a>
         <a href="#/leaders" data-go="leaders">Leaderboard</a>
         <a href="#/learn" data-go="learn">What is Arcus?</a>
@@ -834,6 +1014,7 @@ td.r,th.r{text-align:right}
 <nav id="tabs" aria-label="Main">
   <button class="tab" data-go="home"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg>Search</button>
   <button class="tab" data-go="wallet"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg>Wallet</button>
+  <button class="tab" data-go="run"><svg viewBox="0 0 24 24"><use href="#i-film"/></svg>Replay</button>
   <button class="tab" data-go="markets"><svg viewBox="0 0 24 24"><use href="#i-act"/></svg>Markets</button>
   <button class="tab" data-go="leaders"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg>Ranks</button>
   <button class="tab" data-go="learn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg>Learn</button>
@@ -845,6 +1026,376 @@ td.r,th.r{text-align:right}
 </div></div>
 
 <div class="toast" id="toast"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg><span></span></div>
+
+<script>
+/* ============================================================
+   ARCLIGHT CHARACTERS
+   Eleven trading personalities, drawn procedurally on canvas so they
+   stay crisp from a 28px list avatar to a 1080px share card.
+   Every character shares one rig (ground, aura, bust, rim light) and
+   differs in palette, headgear, prop and backdrop motif.
+   ============================================================ */
+(function(root){
+"use strict";
+
+/* ---------- tiny vector helpers ---------- */
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function circ(c,x,y,r){c.beginPath();c.arc(x,y,r,0,7);c.closePath();}
+function lg(c,x0,y0,x1,y1,stops){const g=c.createLinearGradient(x0,y0,x1,y1);stops.forEach(s=>g.addColorStop(s[0],s[1]));return g;}
+function rg(c,x,y,r0,r1,stops){const g=c.createRadialGradient(x,y,r0,x,y,r1);stops.forEach(s=>g.addColorStop(s[0],s[1]));return g;}
+function poly(c,pts,close){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));if(close!==false)c.closePath();}
+function shadow(c,col,blur,dy){c.shadowColor=col;c.shadowBlur=blur;c.shadowOffsetY=dy||0;}
+function noshadow(c){c.shadowColor="transparent";c.shadowBlur=0;c.shadowOffsetY=0;}
+
+/* ---------- shared rig ---------- */
+/* All drawing happens in a 100x100 space; caller scales. */
+function ground(c,P,motif){
+  c.save();
+  circ(c,50,50,50); c.clip();
+  c.fillStyle=rg(c,38,26,4,74,[[0,P.bg1],[1,P.bg0]]); c.fillRect(0,0,100,100);
+  if(motif) motif(c,P);
+  /* vignette + top light */
+  c.fillStyle=rg(c,50,50,26,54,[[0,"rgba(0,0,0,0)"],[1,"rgba(0,0,0,.34)"]]); c.fillRect(0,0,100,100);
+  c.fillStyle=lg(c,0,0,0,60,[[0,"rgba(255,255,255,.10)"],[1,"rgba(255,255,255,0)"]]); c.fillRect(0,0,100,100);
+  c.restore();
+}
+function aura(c,P){
+  c.save(); circ(c,50,50,50); c.clip();
+  c.fillStyle=rg(c,50,74,10,44,[[0,P.glow],[1,"rgba(0,0,0,0)"]]); c.fillRect(0,0,100,100); c.restore();
+}
+/* shoulders + neck + head; returns face centre */
+function bust(c,P,o){
+  o=o||{};
+  const hy=o.headY==null?44:o.headY, hr=o.headR==null?15:o.headR;
+  c.save(); circ(c,50,50,50); c.clip();
+  /* body */
+  c.fillStyle=P.cloth2||P.cloth;
+  poly(c,[[16,100],[22,78],[36,68],[64,68],[78,78],[84,100]]);
+  c.fill();
+  c.fillStyle=P.cloth;
+  poly(c,[[22,100],[27,80],[38,71],[62,71],[73,80],[78,100]]);
+  c.fill();
+  /* collar accent */
+  if(P.trim){ c.strokeStyle=P.trim; c.lineWidth=1.5; c.lineJoin="round";
+    poly(c,[[38,71],[50,82],[62,71]],false); c.stroke(); }
+  /* neck */
+  c.fillStyle=P.skinDark||P.skin; rr(c,45,hy+hr-6,10,10,3); c.fill();
+  /* head */
+  c.fillStyle=P.skin; circ(c,50,hy,hr); c.fill();
+  /* cheek shading + rim light */
+  c.fillStyle=rg(c,44,hy-4,2,hr+3,[[0,"rgba(255,255,255,.16)"],[1,"rgba(255,255,255,0)"]]); circ(c,50,hy,hr); c.fill();
+  c.strokeStyle=P.rim||"rgba(255,255,255,.34)"; c.lineWidth=1;
+  c.beginPath(); c.arc(50,hy,hr-.5,-2.5,-0.9); c.stroke();
+  c.restore();
+  return {x:50,y:hy,r:hr};
+}
+function eyes(c,P,f,style){
+  const dy=f.y+1;
+  c.fillStyle=P.eye||"#10231A";
+  if(style==="closed"){
+    c.strokeStyle=P.eye||"#10231A"; c.lineWidth=1.3; c.lineCap="round";
+    c.beginPath(); c.arc(f.x-5,dy,3,0.25,2.9); c.stroke();
+    c.beginPath(); c.arc(f.x+5,dy,3,0.25,2.9); c.stroke();
+  } else if(style==="visor"){ /* handled by prop */ }
+  else {
+    circ(c,f.x-5,dy,1.9); c.fill();
+    circ(c,f.x+5,dy,1.9); c.fill();
+    c.fillStyle="rgba(255,255,255,.85)";
+    circ(c,f.x-4.4,dy-.7,.7); c.fill(); circ(c,f.x+5.6,dy-.7,.7); c.fill();
+  }
+}
+function mouth(c,P,f,kind){
+  c.strokeStyle=P.eye||"#10231A"; c.lineWidth=1.2; c.lineCap="round"; c.beginPath();
+  if(kind==="smirk") c.arc(f.x+1,f.y+6,3.4,0.15,1.5);
+  else if(kind==="flat") { c.moveTo(f.x-3,f.y+8); c.lineTo(f.x+3,f.y+8); }
+  else c.arc(f.x,f.y+5,3.6,0.35,2.79);
+  c.stroke();
+}
+
+/* ---------- backdrop motifs ---------- */
+const M = {
+  candles(c,P){ c.save(); c.globalAlpha=.5;
+    const bars=[[12,64,10],[24,52,20],[36,58,14],[62,44,26],[74,54,18],[86,62,12]];
+    bars.forEach((b,i)=>{ const up=i%2===0;
+      c.fillStyle=up?P.up:P.down; c.fillRect(b[0]-2.6,b[1],5.2,b[2]);
+      c.fillRect(b[0]-.5,b[1]-5,1,b[2]+10); });
+    c.restore(); },
+  rays(c,P){ c.save(); c.globalAlpha=.30; c.translate(50,46);
+    for(let i=0;i<12;i++){ c.rotate(Math.PI/6); c.fillStyle=i%2?P.glowSolid:"rgba(255,255,255,.08)";
+      poly(c,[[0,0],[-4,-70],[4,-70]]); c.fill(); } c.restore(); },
+  grid(c,P){ c.save(); c.globalAlpha=.30; c.strokeStyle=P.glowSolid; c.lineWidth=.4;
+    for(let i=0;i<=100;i+=8){ c.beginPath();c.moveTo(i,0);c.lineTo(i,100);c.stroke();
+      c.beginPath();c.moveTo(0,i);c.lineTo(100,i);c.stroke(); } c.restore(); },
+  waves(c,P){ c.save(); c.globalAlpha=.42;
+    for(let k=0;k<3;k++){ c.strokeStyle=k?P.glowSolid:P.up; c.lineWidth=2-k*.5; c.beginPath();
+      for(let x=0;x<=100;x+=4){ const y=58+k*11+Math.sin((x/16)+k)*5; x?c.lineTo(x,y):c.moveTo(x,y); }
+      c.stroke(); } c.restore(); },
+  stars(c,P){ c.save(); let s=7;
+    const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
+    for(let i=0;i<40;i++){ const x=rnd()*100,y=rnd()*72,r=rnd()*1.1+.25;
+      c.globalAlpha=.25+rnd()*.6; c.fillStyle=i%7?"#fff":P.glowSolid; circ(c,x,y,r); c.fill(); }
+    c.restore(); },
+  tape(c,P){ c.save(); c.globalAlpha=.34; c.fillStyle=P.glowSolid;
+    [18,32,68,82].forEach((y,i)=>{ c.fillRect(i%2?4:34,y,62,2.4); });
+    c.globalAlpha=.2; c.fillStyle="#fff"; [25,75].forEach(y=>c.fillRect(12,y,76,1.4)); c.restore(); },
+  ore(c,P){ c.save(); c.globalAlpha=.42;
+    [[16,76,7],[30,84,5],[80,74,8],[68,86,4.5]].forEach(o=>{ c.fillStyle=P.glowSolid;
+      poly(c,[[o[0],o[1]-o[2]],[o[0]+o[2],o[1]],[o[0],o[1]+o[2]*.7],[o[0]-o[2],o[1]]]); c.fill(); });
+    c.restore(); },
+  reticle(c,P){ c.save(); c.globalAlpha=.34; c.strokeStyle=P.glowSolid; c.lineWidth=.9;
+    [16,26,36].forEach(r=>{ circ(c,50,44,r); c.stroke(); });
+    c.beginPath(); c.moveTo(50,2);c.lineTo(50,86); c.moveTo(6,44);c.lineTo(94,44); c.stroke(); c.restore(); },
+  depth(c,P){ c.save(); c.globalAlpha=.36;
+    for(let i=0;i<8;i++){ c.fillStyle=i<4?P.down:P.up;
+      const h=8+i*4; c.fillRect(6+i*6,92-h,4.4,h); c.fillRect(56+i*6,92-(40-h),4.4,Math.max(3,40-h)); }
+    c.restore(); },
+  mist(c,P){ c.save(); c.globalAlpha=.5;
+    for(let i=0;i<4;i++){ c.fillStyle=rg(c,30+i*15,60+i*8,2,26,[[0,P.glow],[1,"rgba(0,0,0,0)"]]);
+      c.fillRect(0,0,100,100); } c.restore(); }
+};
+
+/* ---------- props (drawn over the bust) ---------- */
+function hood(c,P,f){
+  c.save(); circ(c,50,50,50); c.clip();
+  c.fillStyle=P.cloth2||P.cloth;
+  c.beginPath(); c.moveTo(28,74); c.quadraticCurveTo(24,36,50,30); c.quadraticCurveTo(76,36,72,74);
+  c.quadraticCurveTo(62,60,50,60); c.quadraticCurveTo(38,60,28,74); c.fill();
+  c.fillStyle="rgba(0,0,0,.34)";
+  c.beginPath(); c.moveTo(35,50); c.quadraticCurveTo(33,36,50,33); c.quadraticCurveTo(67,36,65,50);
+  c.quadraticCurveTo(58,42,50,42); c.quadraticCurveTo(42,42,35,50); c.fill();
+  c.restore();
+}
+function visor(c,P,f,col){
+  c.save(); shadow(c,col,5,0);
+  c.fillStyle=col; rr(c,f.x-13,f.y-4,26,9,4.5); c.fill(); noshadow(c);
+  c.fillStyle="rgba(255,255,255,.55)"; rr(c,f.x-10,f.y-2.4,9,2.4,1.2); c.fill();
+  c.restore();
+}
+function helmet(c,P,f,col,lamp){
+  c.save();
+  c.fillStyle=col; c.beginPath(); c.arc(f.x,f.y-1,f.r+2.5,Math.PI,0); c.fill();
+  c.fillRect(f.x-f.r-2.5,f.y-2,(f.r+2.5)*2,3.4);
+  if(lamp){ c.fillStyle="#F6E7B6"; circ(c,f.x,f.y-9,3.4); c.fill();
+    c.save(); c.globalAlpha=.45; c.fillStyle=lg(c,f.x,f.y-9,f.x,f.y-40,[[0,"#F6E7B6"],[1,"rgba(246,231,182,0)"]]);
+    poly(c,[[f.x-3,f.y-9],[f.x+3,f.y-9],[f.x+16,f.y-42],[f.x-16,f.y-42]]); c.fill(); c.restore(); }
+  c.restore();
+}
+function crown(c,P,f,col){
+  c.save(); shadow(c,col,6,0); c.fillStyle=col;
+  poly(c,[[f.x-12,f.y-14],[f.x-12,f.y-24],[f.x-6,f.y-18],[f.x,f.y-27],[f.x+6,f.y-18],[f.x+12,f.y-24],[f.x+12,f.y-14]]);
+  c.fill(); noshadow(c);
+  c.fillStyle="rgba(255,255,255,.5)"; circ(c,f.x,f.y-21,1.5); c.fill(); c.restore();
+}
+function tie(c,P,col){
+  c.save(); c.fillStyle=col;
+  poly(c,[[50,72],[54,77],[51,92],[49,92],[46,77]]); c.fill();
+  c.fillStyle="rgba(0,0,0,.25)"; poly(c,[[50,72],[53.4,76],[50,79],[46.6,76]]); c.fill(); c.restore();
+}
+function headphones(c,P,f,col){
+  c.save(); c.strokeStyle=col; c.lineWidth=3.2; c.lineCap="round";
+  c.beginPath(); c.arc(f.x,f.y-1,f.r+3,Math.PI+.25,-.25); c.stroke();
+  c.fillStyle=col; rr(c,f.x-f.r-6,f.y-4,6,10,2.6); c.fill(); rr(c,f.x+f.r,f.y-4,6,10,2.6); c.fill();
+  c.restore();
+}
+function scope(c,P,f,col){
+  c.save(); c.strokeStyle=col; c.lineWidth=1.6;
+  circ(c,f.x+6,f.y+1,6.2); c.stroke();
+  c.beginPath(); c.moveTo(f.x+6,f.y-5.2); c.lineTo(f.x+6,f.y+7.2);
+  c.moveTo(f.x-.2,f.y+1); c.lineTo(f.x+12.2,f.y+1); c.stroke();
+  c.strokeStyle="rgba(255,255,255,.45)"; c.lineWidth=.8; circ(c,f.x+6,f.y+1,8.4); c.stroke();
+  c.restore();
+}
+function backpack(c,P,col){
+  c.save(); c.fillStyle=col;
+  rr(c,20,74,16,20,5); c.fill(); rr(c,64,74,16,20,5); c.fill();
+  c.fillStyle="rgba(255,255,255,.22)"; rr(c,23,79,10,3.4,1.6); c.fill(); rr(c,67,79,10,3.4,1.6); c.fill();
+  c.restore();
+}
+function hair(c,P,f,style,col){
+  c.save(); c.fillStyle=col;
+  if(style==="part"){
+    c.beginPath(); c.arc(f.x,f.y-1.5,f.r+.6,Math.PI+.12,-.12); c.fill();
+    c.beginPath(); c.moveTo(f.x-f.r,f.y-3); c.quadraticCurveTo(f.x-3,f.y-13,f.x+f.r+1,f.y-6);
+    c.quadraticCurveTo(f.x+4,f.y-10,f.x-f.r,f.y-3); c.fill();
+  } else if(style==="crop"){
+    c.beginPath(); c.arc(f.x,f.y-0.5,f.r+.4,Math.PI+.18,-.18); c.fill();
+    c.fillRect(f.x-f.r-.4,f.y-4.4,3.2,4); c.fillRect(f.x+f.r-2.8,f.y-4.4,3.2,4);
+  } else if(style==="curl"){
+    for(let i=-1;i<=1;i++){ circ(c,f.x+i*7.2,f.y-f.r+2.2,5.4); c.fill(); }
+    c.beginPath(); c.arc(f.x,f.y-1,f.r+.4,Math.PI+.2,-.2); c.fill();
+  }
+  c.restore();
+}
+function specs(c,P,f,col){
+  c.save(); c.strokeStyle=col; c.lineWidth=1.4;
+  circ(c,f.x-5.4,f.y+1,4.4); c.stroke(); circ(c,f.x+5.4,f.y+1,4.4); c.stroke();
+  c.beginPath(); c.moveTo(f.x-1,f.y+1); c.lineTo(f.x+1,f.y+1); c.stroke(); c.restore();
+}
+
+/* ---------- floating emblem above/beside the bust ---------- */
+function emblem(c,P,kind,col){
+  c.save();
+  const cx=74, cy=26;
+  shadow(c,col,8,0);
+  c.fillStyle=col;
+  if(kind==="diamond"){ poly(c,[[cx,cy-9],[cx+8,cy],[cx,cy+9],[cx-8,cy]]); c.fill(); }
+  else if(kind==="bolt"){ poly(c,[[cx+2,cy-10],[cx-7,cy+2],[cx-1,cy+2],[cx-3,cy+11],[cx+7,cy-2],[cx+1,cy-2]]); c.fill(); }
+  else if(kind==="coin"){ circ(c,cx,cy,8.4); c.fill(); noshadow(c);
+    c.fillStyle="rgba(0,0,0,.28)"; c.font="bold 10px sans-serif"; c.textAlign="center"; c.textBaseline="middle"; c.fillText("$",cx,cy+.5); }
+  else if(kind==="scales"){ c.strokeStyle=col; c.lineWidth=1.7; c.lineCap="round";
+    c.beginPath(); c.moveTo(cx,cy-9); c.lineTo(cx,cy+8); c.moveTo(cx-9,cy-5); c.lineTo(cx+9,cy-5);
+    c.moveTo(cx-9,cy-5); c.lineTo(cx-5,cy+2); c.lineTo(cx-13,cy+2); c.closePath();
+    c.moveTo(cx+9,cy-5); c.lineTo(cx+13,cy+2); c.lineTo(cx+5,cy+2); c.stroke(); }
+  else if(kind==="wave"){ c.strokeStyle=col; c.lineWidth=2.2; c.lineCap="round"; c.beginPath();
+    c.moveTo(cx-10,cy+4); c.quadraticCurveTo(cx-4,cy-10,cx+2,cy+2); c.quadraticCurveTo(cx+7,cy+9,cx+11,cy-2); c.stroke(); }
+  else if(kind==="pick"){ c.strokeStyle=col; c.lineWidth=2.2; c.lineCap="round";
+    c.beginPath(); c.moveTo(cx-7,cy+10); c.lineTo(cx+4,cy-4); c.stroke();
+    c.lineWidth=2; c.beginPath(); c.moveTo(cx-7,cy-9); c.quadraticCurveTo(cx+4,cy-9,cx+12,cy-1);
+    c.stroke(); c.beginPath(); c.moveTo(cx-7,cy-9); c.quadraticCurveTo(cx-2,cy-2,cx+1,cy-1); c.stroke(); }
+  else if(kind==="ring"){ c.strokeStyle=col; c.lineWidth=2.4; circ(c,cx,cy,8); c.stroke();
+    noshadow(c); c.fillStyle=col; circ(c,cx,cy,2.4); c.fill(); }
+  else if(kind==="flag"){ c.strokeStyle=col; c.lineWidth=1.8; c.lineCap="round";
+    c.beginPath(); c.moveTo(cx-6,cy+10); c.lineTo(cx-6,cy-10); c.stroke();
+    noshadow(c); c.fillStyle=col; poly(c,[[cx-6,cy-10],[cx+9,cy-5],[cx-6,cy]]); c.fill(); }
+  else if(kind==="moon"){ c.beginPath(); c.arc(cx,cy,8.6,0,7); c.arc(cx+4,cy-3,7.6,0,7,true); c.fill(); }
+  else if(kind==="whale"){ c.beginPath(); c.moveTo(cx-11,cy+2); c.quadraticCurveTo(cx-2,cy-9,cx+8,cy-1);
+    c.quadraticCurveTo(cx+12,cy+1,cx+13,cy-5); c.lineTo(cx+13,cy+6); c.quadraticCurveTo(cx+6,cy+9,cx-11,cy+2); c.fill(); }
+  noshadow(c); c.restore();
+}
+
+/* ============================================================
+   THE ELEVEN
+   ============================================================ */
+const CHARS = {
+  diamond:{
+    name:"The Monk", tag:"Buys in pieces. Waits in silence.",
+    P:{bg0:"#0A1710",bg1:"#16412C",cloth:"#1F5C3D",cloth2:"#143E29",trim:"#7FD8A4",skin:"#E8C7A0",skinDark:"#C9A47E",
+       glow:"rgba(127,216,164,.45)",glowSolid:"#7FD8A4",up:"#7FD8A4",down:"#1F5C3D",eye:"#12271C"},
+    motif:M.rays,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:46,headR:14.5});
+      hood(c,P,f); eyes(c,P,f,"closed"); mouth(c,P,f,"flat"); emblem(c,P,"diamond",P.glowSolid); }
+  },
+  scalp:{
+    name:"Quickdraw", tag:"In and out before the candle closes.",
+    P:{bg0:"#170F06",bg1:"#4A2A0B",cloth:"#8A4B12",cloth2:"#5E3209",trim:"#FFC46B",skin:"#F0CBA4",skinDark:"#CFA47E",
+       glow:"rgba(255,196,107,.45)",glowSolid:"#FFC46B",up:"#FFC46B",down:"#8A4B12",eye:"#20140A"},
+    motif:M.candles,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:45,headR:14.5});
+      /* speed streaks */
+      c.save(); circ(c,50,50,50); c.clip(); c.globalAlpha=.55;
+      [30,44,58].forEach((y,i)=>{ c.fillStyle=P.glowSolid; rr(c,4+i*3,y,20-i*3,2.2,1.1); c.fill(); });
+      c.restore();
+      visor(c,P,f,P.glowSolid); mouth(c,P,f,"smirk"); emblem(c,P,"bolt",P.glowSolid); }
+  },
+  whale:{
+    name:"The Leviathan", tag:"Moves the market by arriving.",
+    P:{bg0:"#06131C",bg1:"#0E3A53",cloth:"#155A7A",cloth2:"#0D3B52",trim:"#67D3F2",skin:"#D9C3A8",skinDark:"#B8A088",
+       glow:"rgba(103,211,242,.45)",glowSolid:"#67D3F2",up:"#67D3F2",down:"#155A7A",eye:"#0A1E28"},
+    motif:M.depth,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:47,headR:14.5});
+      crown(c,P,f,P.glowSolid); eyes(c,P,f); mouth(c,P,f,"flat"); emblem(c,P,"whale",P.glowSolid); }
+  },
+  maker:{
+    name:"The Architect", tag:"Sets the price others take.",
+    P:{bg0:"#0B1018",bg1:"#233251",cloth:"#33456B",cloth2:"#212F4A",trim:"#9FB6E8",skin:"#E4C4A6",skinDark:"#C2A184",
+       glow:"rgba(159,182,232,.42)",glowSolid:"#9FB6E8",up:"#9FB6E8",down:"#33456B",eye:"#141B2A"},
+    motif:M.grid,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:45,headR:14.5});
+      hair(c,P,f,"part","#2E3A5C"); specs(c,P,f,P.glowSolid); eyes(c,P,f); mouth(c,P,f,"flat");
+      emblem(c,P,"scales",P.glowSolid); }
+  },
+  rwa:{
+    name:"The Broker", tag:"Trades Wall Street while it sleeps.",
+    P:{bg0:"#12100A",bg1:"#3D3520",cloth:"#2A2A33",cloth2:"#1B1B22",trim:"#E4C878",skin:"#EDCAA6",skinDark:"#CBA886",
+       glow:"rgba(228,200,120,.42)",glowSolid:"#E4C878",up:"#E4C878",down:"#5B4A22",eye:"#181510"},
+    motif:M.tape,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:45,headR:14.5});
+      tie(c,P,P.glowSolid); hair(c,P,f,"crop","#2B2418"); eyes(c,P,f); mouth(c,P,f,"smirk");
+      emblem(c,P,"coin",P.glowSolid); }
+  },
+  swing:{
+    name:"The Surfer", tag:"Rides the move, sleeps through the noise.",
+    P:{bg0:"#06171A",bg1:"#0F4A4E",cloth:"#17706E",cloth2:"#0E4C4B",trim:"#6FE3D2",skin:"#EBC49E",skinDark:"#C9A17C",
+       glow:"rgba(111,227,210,.45)",glowSolid:"#6FE3D2",up:"#6FE3D2",down:"#17706E",eye:"#0B2224"},
+    motif:M.waves,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:45,headR:14.5});
+      /* headband */
+      c.save(); c.fillStyle=P.glowSolid; rr(c,f.x-15,f.y-9,30,4.4,2.2); c.fill(); c.restore();
+      eyes(c,P,f); mouth(c,P,f,"smile"); emblem(c,P,"wave",P.glowSolid); }
+  },
+  grinder:{
+    name:"The Miner", tag:"Shows up every single day.",
+    P:{bg0:"#150F09",bg1:"#3E2C15",cloth:"#5E4522",cloth2:"#3F2E17",trim:"#F0B65A",skin:"#E9C49F",skinDark:"#C6A17E",
+       glow:"rgba(240,182,90,.42)",glowSolid:"#F0B65A",up:"#F0B65A",down:"#5E4522",eye:"#1C140C"},
+    motif:M.ore,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:47,headR:14.5});
+      eyes(c,P,f); mouth(c,P,f,"flat"); helmet(c,P,f,P.glowSolid,true); emblem(c,P,"diamond",P.glowSolid); }
+  },
+  sniper:{
+    name:"The Sniper", tag:"Waits all week for one shot.",
+    P:{bg0:"#140A0C",bg1:"#48181F",cloth:"#6B2028",cloth2:"#48161C",trim:"#F2857F",skin:"#E7C09C",skinDark:"#C59D7B",
+       glow:"rgba(242,133,127,.42)",glowSolid:"#F2857F",up:"#F2857F",down:"#6B2028",eye:"#1A0E10"},
+    motif:M.reticle,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:45,headR:14.5});
+      hair(c,P,f,"crop","#3A1E20"); eyes(c,P,f); mouth(c,P,f,"flat"); emblem(c,P,"ring",P.glowSolid); }
+  },
+  day:{
+    name:"The Nightshift", tag:"Flat by bedtime, every time.",
+    P:{bg0:"#0A0C18",bg1:"#232A52",cloth:"#343C6E",cloth2:"#222848",trim:"#A9B4F2",skin:"#E6C3A4",skinDark:"#C4A183",
+       glow:"rgba(169,180,242,.42)",glowSolid:"#A9B4F2",up:"#A9B4F2",down:"#343C6E",eye:"#12162A"},
+    motif:M.stars,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); const f=bust(c,P,{headY:45,headR:14.5});
+      hair(c,P,f,"curl","#20263F"); eyes(c,P,f); mouth(c,P,f,"flat"); headphones(c,P,f,P.glowSolid);
+      emblem(c,P,"moon",P.glowSolid); }
+  },
+  tourist:{
+    name:"The Explorer", tag:"Just arrived. Everything is new.",
+    P:{bg0:"#0B1410",bg1:"#26432E",cloth:"#3B6440",cloth2:"#27452C",trim:"#A8DFA0",skin:"#EAC6A2",skinDark:"#C8A380",
+       glow:"rgba(168,223,160,.42)",glowSolid:"#A8DFA0",up:"#A8DFA0",down:"#3B6440",eye:"#132018"},
+    motif:M.stars,
+    draw(c,P){ ground(c,P,this.motif); aura(c,P); backpack(c,P,P.cloth2); const f=bust(c,P,{headY:45,headR:14.5});
+      /* cap */
+      c.save(); c.fillStyle=P.glowSolid; c.beginPath(); c.arc(f.x,f.y-2,f.r+1,Math.PI,0); c.fill();
+      c.fillRect(f.x-f.r-1,f.y-3,(f.r+1)*2,2.6); c.fillRect(f.x-2,f.y-4,f.r+9,2.6); c.restore();
+      eyes(c,P,f); mouth(c,P,f,"smile"); emblem(c,P,"flag",P.glowSolid); }
+  },
+  ghost:{
+    name:"The Ghost", tag:"No trace on this exchange. Yet.",
+    P:{bg0:"#0C1113",bg1:"#252F33",cloth:"#3A484D",cloth2:"#2A3438",trim:"#B9CBD1",skin:"#CBD9DE",skinDark:"#AEBDC3",
+       glow:"rgba(185,203,209,.34)",glowSolid:"#B9CBD1",up:"#B9CBD1",down:"#3A484D",eye:"#1B2427"},
+    motif:M.mist,
+    draw(c,P){ ground(c,P,this.motif);
+      c.save(); circ(c,50,50,50); c.clip(); c.globalAlpha=.72;
+      c.fillStyle=P.skin;
+      c.beginPath(); c.moveTo(30,96); c.quadraticCurveTo(28,52,50,40); c.quadraticCurveTo(72,52,70,96);
+      c.quadraticCurveTo(64,88,58,96); c.quadraticCurveTo(52,88,46,96); c.quadraticCurveTo(40,88,34,96); c.closePath(); c.fill();
+      c.globalAlpha=1; c.fillStyle=P.eye; circ(c,44,56,2.2); c.fill(); circ(c,56,56,2.2); c.fill();
+      c.restore(); aura(c,P); }
+  }
+};
+
+/* ---------- public API ---------- */
+function get(id){ return CHARS[id]||CHARS.ghost; }
+/** Draw character `id` at (x,y) with diameter `size` on ctx. */
+function draw(ctx,id,x,y,size){
+  const ch=get(id);
+  ctx.save(); ctx.translate(x,y); ctx.scale(size/100,size/100);
+  ch.draw(ctx,ch.P);
+  ctx.restore();
+}
+/** Render into a canvas element sized for the device pixel ratio. */
+function paint(canvas,id,size,dpr){
+  dpr=dpr||Math.min(3,window.devicePixelRatio||1);
+  canvas.width=Math.round(size*dpr); canvas.height=Math.round(size*dpr);
+  canvas.style.width=size+"px"; canvas.style.height=size+"px";
+  const c=canvas.getContext("2d"); c.clearRect(0,0,canvas.width,canvas.height);
+  c.scale(dpr,dpr); draw(c,id,0,0,size);
+}
+root.ArcChars={CHARS,get,draw,paint,ids:Object.keys(CHARS)};
+})(typeof window!=="undefined"?window:globalThis);
+
+</script>
 
 <script>
 (function(){
@@ -1017,7 +1568,7 @@ function tilt(card){
   const kick=()=>{ if(!raf) raf=requestAnimationFrame(apply); };
 
   if(FINE){
-    const stage=card.parentElement;
+    const stage=card;               /* the card only — controls below must not tilt it */
     stage.addEventListener("pointermove",e=>{
       const r=card.getBoundingClientRect();
       const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
@@ -1046,22 +1597,42 @@ function tilt(card){
   }
 }
 
-/* ---------- deterministic wallet avatar (no external service) ---------- */
-function avatar(canvas,addr){
-  const c=canvas.getContext("2d"), S=canvas.width=canvas.height=104, cell=S/7;
-  let h=0; for(let i=2;i<addr.length;i++) h=(h*31+addr.charCodeAt(i))>>>0;
-  const rnd=()=>{ h^=h<<13;h>>>=0;h^=h>>17;h^=h<<5;h>>>=0; return h/4294967296; };
-  const hue=Math.floor(rnd()*360);
-  c.fillStyle=`hsl(${hue} 26% 12%)`; c.fillRect(0,0,S,S);
-  const pal=[`hsl(${hue} 55% 58%)`,`hsl(${(hue+42)%360} 48% 52%)`,`hsl(${(hue+300)%360} 40% 62%)`];
-  for(let y=0;y<7;y++) for(let x=0;x<4;x++){
-    if(rnd()>.46){
-      c.fillStyle=pal[Math.floor(rnd()*pal.length)];
-      c.fillRect(x*cell,y*cell,cell+.6,cell+.6);
-      c.fillRect((6-x)*cell,y*cell,cell+.6,cell+.6);
-    }
-  }
+/* ---------- avatars ----------
+   character()  a trading personality, used only where we've computed one
+   seal()       a calm abstract token for an address whose personality we
+                haven't worked out — no face, so we never imply one
+   -------------------------------------------------------------- */
+function hashOf(a){ let h=2166136261; for(let i=2;i<a.length;i++){ h^=a.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+function character(canvas,id,size){
+  size=size||canvas.clientWidth||40;
+  if(window.ArcChars) ArcChars.paint(canvas,id,size,Math.min(3,window.devicePixelRatio||1));
 }
+function seal(canvas,addr,size){
+  size=size||canvas.clientWidth||34;
+  const dpr=Math.min(3,window.devicePixelRatio||1);
+  canvas.width=size*dpr; canvas.height=size*dpr;
+  canvas.style.width=size+"px"; canvas.style.height=size+"px";
+  const c=canvas.getContext("2d"); c.scale(dpr,dpr);
+  const h=hashOf(addr), hue=h%360, hue2=(hue+38)%360, S=size;
+  const g=c.createLinearGradient(0,0,S,S);
+  g.addColorStop(0,`hsl(${hue} 34% 30%)`); g.addColorStop(1,`hsl(${hue2} 30% 17%)`);
+  c.fillStyle=g; c.beginPath(); c.arc(S/2,S/2,S/2,0,7); c.fill();
+  /* one quiet geometric mark, chosen from the hash */
+  c.save(); c.translate(S/2,S/2); c.rotate((h>>9)%4*Math.PI/2);
+  c.strokeStyle=`hsl(${hue} 62% 72% / .85)`; c.lineWidth=Math.max(1,S*.055); c.lineCap="round";
+  const k=(h>>3)%5, r=S*.24;
+  c.beginPath();
+  if(k===0){ c.arc(0,0,r,0,4.2); }
+  else if(k===1){ c.moveTo(-r,r*.6); c.lineTo(0,-r); c.lineTo(r,r*.6); }
+  else if(k===2){ c.moveTo(-r,-r*.5); c.lineTo(r,-r*.5); c.moveTo(-r,r*.5); c.lineTo(r,r*.5); }
+  else if(k===3){ c.moveTo(0,-r); c.lineTo(r,0); c.lineTo(0,r); c.lineTo(-r,0); c.closePath(); }
+  else { c.moveTo(-r,r); c.lineTo(0,-r*.3); c.lineTo(r,-r); }
+  c.stroke(); c.restore();
+  c.strokeStyle="rgba(255,255,255,.10)"; c.lineWidth=1;
+  c.beginPath(); c.arc(S/2,S/2,S/2-.5,0,7); c.stroke();
+}
+/* back-compat: every old avatar() call site now renders a seal */
+function avatar(canvas,addr){ seal(canvas,addr); }
 
 /* ---------- sparkline ---------- */
 function spark(vals,w,h,color,fill){
@@ -1082,13 +1653,14 @@ function spark(vals,w,h,color,fill){
 /* ============================================================
    ROUTER
    ============================================================ */
-const PAGES=["home","wallet","vs","markets","leaders","learn"];
+const PAGES=["home","wallet","run","markets","leaders","learn"];
 let current="home", loaded={};
 function setNav(p){
   $$("[data-go]").forEach(b=>{ const on=b.dataset.go===p; b.classList.toggle("on",on); });
 }
 function show(p){
   if(!PAGES.includes(p)) p="home";
+  if(current==="run"&&p!=="run"&&typeof stopRun==="function") stopRun();
   current=p;
   PAGES.forEach(x=>$("#p-"+x).classList.toggle("on",x===p));
   setNav(p);
@@ -1096,22 +1668,20 @@ function show(p){
   if(p==="markets"&&!loaded.markets){loaded.markets=1;renderMarkets();}
   if(p==="leaders"&&!loaded.leaders){loaded.leaders=1;renderLeaders();}
   if(p==="learn"&&!loaded.learn){loaded.learn=1;renderLearn();}
-  if(p==="vs"){ if(!loaded.vs){loaded.vs=1;renderCompare();}
-    else{ const A=$("#vsA"),B=$("#vsB");
-      if(A&&vsA) A.value=vsA; if(B&&vsB) B.value=vsB;
-      if(A) A.dispatchEvent(new Event("input")); } }
   if(p==="wallet"&&!walletAddr) renderWalletEmpty();
+  if(p==="run"&&!runAddr) renderRunEmpty();
 }
 function route(){
   const h=(location.hash||"#/").replace(/^#\/?/,"");
   const parts=h.split("/").filter(Boolean);
   if(parts[0]==="w"&&parts[1]){ show("wallet"); loadWallet(parts[1]); return; }
-  if(parts[0]==="vs"){ show("vs"); if(!loaded.vs){loaded.vs=1;renderCompare();}
-    if(parts[1]&&parts[2]) runCompare(parts[1],parts[2]); return; }
+  if(parts[0]==="run"){ stopRun(); show("run");
+    if(parts[1]&&isAddr(parts[1])){ if(runAddr!==parts[1].toLowerCase()) loadRun(parts[1]); }
+    else { runAddr=null; renderRunEmpty(); }
+    return; }
   show(parts[0]||"home");
 }
 function go(p,addr){ location.hash = p==="wallet"&&addr ? "#/w/"+addr : (p==="home"?"#/":"#/"+p); }
-function goVs(a,b){ location.hash="#/vs/"+a+"/"+b; }
 window.addEventListener("hashchange",route);
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-go]"); if(!b) return;
@@ -1209,13 +1779,171 @@ function mktList(arr,mount){
     <div class="mcards">${arr.map(mktCard).join("")}</div>`;
 }
 
+
+/* ============================================================
+   PHYSICS FIELD — markets as bodies you can shove around
+   Soft gravity to centre, elastic collisions, pointer repulsion
+   with real momentum. Pauses when off-screen or tab hidden.
+   ============================================================ */
+function PhysicsField(host, items, opts){
+  opts=opts||{};
+  const cv=document.createElement("canvas"); host.appendChild(cv);
+  const c=cv.getContext("2d");
+  const tip=el("div","tip"); host.appendChild(tip);
+  let W=0,H=0,dpr=1,raf=null,running=false,bodies=[],hot=null;
+  const ptr={x:-9e9,y:-9e9,px:-9e9,py:-9e9,vx:0,vy:0,down:false,grab:null};
+  const REP = isMobile()?3200:4600;
+
+  function measure(){
+    const r=host.getBoundingClientRect();
+    dpr=Math.min(2,window.devicePixelRatio||1);
+    W=r.width; H=r.height;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    cv.style.width=W+"px"; cv.style.height=H+"px";
+    c.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function build(){
+    const vals=items.map(opts.value);
+    const mx=Math.max.apply(null,vals)||1;
+    /* radius from value, then a single global scale so the whole cluster fits */
+    const Rmax=Math.min(W,H)*(isMobile()?0.17:0.145), Rmin=isMobile()?11:13;
+    let rads=vals.map(v=>Math.max(Rmin, Rmax*Math.sqrt(Math.max(v,mx*0.0015)/mx)));
+    let area=rads.reduce((s2,r)=>s2+Math.PI*r*r,0);
+    const budget=W*H*(isMobile()?0.40:0.36);
+    /* scale both ways so a 10-market view and a 51-market view both fill the field */
+    let f=Math.sqrt(budget/Math.max(area,1));
+    const hardMax=Math.min(W,H)*0.24;
+    f=clamp(f,0.35,Math.min(3.2,hardMax/Math.max.apply(null,rads)));
+    rads=rads.map(r=>Math.max(Rmin*0.9,r*f));
+    /* seed on a phyllotaxis spiral so the first frame is already balanced */
+    const GA=Math.PI*(3-Math.sqrt(5)), spread=Math.min(W,H)*0.40;
+    bodies=items.map((it,i)=>{
+      const t=Math.sqrt((i+0.5)/items.length)*spread, a=i*GA;
+      return {it,r:rads[i],
+        x:W/2+Math.cos(a)*t, y:H/2+Math.sin(a)*t*0.82,
+        vx:0,vy:0,m:rads[i]*rads[i]};
+    });
+    /* let it settle before the first paint so nothing pops */
+    for(let k=0;k<90;k++) settle();
+  }
+  function settle(){
+    for(const b of bodies){
+      b.vx += (W/2-b.x)*0.0016; b.vy += (H/2-b.y)*0.0020;
+      b.vx*=0.86; b.vy*=0.86; b.x+=b.vx; b.y+=b.vy;
+    }
+    separate();
+    for(const b of bodies){
+      if(b.x<b.r)b.x=b.r; if(b.x>W-b.r)b.x=W-b.r;
+      if(b.y<b.r)b.y=b.r; if(b.y>H-b.r)b.y=H-b.r;
+    }
+  }
+  function separate(){
+    for(let i=0;i<bodies.length;i++) for(let j=i+1;j<bodies.length;j++){
+      const a=bodies[i],b=bodies[j];
+      let dx=b.x-a.x, dy=b.y-a.y, d2=dx*dx+dy*dy, rs=a.r+b.r+1.5;
+      if(d2<rs*rs){
+        if(d2<0.0001){ dx=(Math.random()-.5)*.2; dy=(Math.random()-.5)*.2; d2=dx*dx+dy*dy; }
+        const d=Math.sqrt(d2), ov=(rs-d)/d*0.5;
+        const tm=a.m+b.m, wa=b.m/tm, wb=a.m/tm;
+        a.x-=dx*ov*wa*1.02; a.y-=dy*ov*wa*1.02;
+        b.x+=dx*ov*wb*1.02; b.y+=dy*ov*wb*1.02;
+        const nx=dx/d, ny=dy/d, pv=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
+        if(pv>0){ a.vx-=pv*nx*wa; a.vy-=pv*ny*wa; b.vx+=pv*nx*wb; b.vy+=pv*ny*wb; }
+      }
+    }
+  }
+  function step(){
+    ptr.vx=ptr.x-ptr.px; ptr.vy=ptr.y-ptr.py; ptr.px=ptr.x; ptr.py=ptr.y;
+    for(const b of bodies){
+      b.vx += (W/2-b.x)*0.0034;        /* springs the cluster home after a shove */
+      b.vy += (H/2-b.y)*0.0040;
+      const dx=b.x-ptr.x, dy=b.y-ptr.y, d2=dx*dx+dy*dy;
+      if(d2<26000 && d2>1){
+        const d=Math.sqrt(d2), f=REP/(d2*Math.max(d,1));
+        b.vx += dx*f + ptr.vx*0.10;
+        b.vy += dy*f + ptr.vy*0.10;
+      }
+      const sp=Math.hypot(b.vx,b.vy), CAP=17;
+      if(sp>CAP){ b.vx=b.vx/sp*CAP; b.vy=b.vy/sp*CAP; }
+      b.vx*=0.90; b.vy*=0.90;
+      b.x+=b.vx; b.y+=b.vy;
+    }
+    separate(); separate();
+    for(const b of bodies){
+      if(b.x<b.r){b.x=b.r;b.vx*=-0.5;} if(b.x>W-b.r){b.x=W-b.r;b.vx*=-0.5;}
+      if(b.y<b.r){b.y=b.r;b.vy*=-0.5;} if(b.y>H-b.r){b.y=H-b.r;b.vy*=-0.5;}
+    }
+  }
+  function paint(){
+    c.clearRect(0,0,W,H);
+    for(const b of bodies){
+      const st=opts.style(b.it), isHot=hot===b;
+      const g=c.createRadialGradient(b.x-b.r*0.35,b.y-b.r*0.45,b.r*0.1,b.x,b.y,b.r);
+      g.addColorStop(0,st.hi); g.addColorStop(1,st.lo);
+      c.beginPath(); c.arc(b.x,b.y,b.r,0,7); c.fillStyle=g; c.fill();
+      c.lineWidth=isHot?2.4:1.2; c.strokeStyle=isHot?st.edgeHot:st.edge; c.stroke();
+      if(b.r>=(isMobile()?17:20)){
+        c.fillStyle=st.text; c.textAlign="center"; c.textBaseline="middle";
+        c.font=`700 ${Math.min(b.r*0.44,17).toFixed(0)}px Archivo, sans-serif`;
+        c.fillText(opts.label(b.it), b.x, b.y-(b.r>34?b.r*0.13:0));
+        if(b.r>34){ c.font=`500 ${Math.min(b.r*0.28,12).toFixed(0)}px "JetBrains Mono", monospace`;
+          c.fillStyle=st.sub; c.fillText(opts.sub(b.it), b.x, b.y+b.r*0.3); }
+      }
+    }
+  }
+  function loop(){ step(); paint(); raf=requestAnimationFrame(loop); }
+  function start(){ if(running||REDUCED_FIELD()) { if(!running){ step(); step(); paint(); } return; } running=true; raf=requestAnimationFrame(loop); }
+  function stop(){ running=false; if(raf) cancelAnimationFrame(raf); raf=null; }
+  function REDUCED_FIELD(){ return REDUCED; }
+
+  function at(x,y){ for(let i=bodies.length-1;i>=0;i--){ const b=bodies[i];
+    if((x-b.x)**2+(y-b.y)**2 < b.r*b.r) return b; } return null; }
+  function local(e){ const r=cv.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; }
+  function showTip(b,x,y){
+    if(!b){ tip.classList.remove("on"); return; }
+    tip.innerHTML=opts.tip(b.it);
+    tip.classList.add("on");
+    const tw=tip.offsetWidth||170, th=tip.offsetHeight||60;
+    tip.style.left=clamp(x-tw/2,8,W-tw-8)+"px";
+    tip.style.top=clamp(y-b.r-th-12,8,H-th-8)+"px";
+  }
+  cv.addEventListener("pointermove",e=>{
+    const [x,y]=local(e); ptr.x=x; ptr.y=y;
+    if(ptr.grab){ ptr.grab.x=x; ptr.grab.y=y; ptr.grab.vx=ptr.vx*0.6; ptr.grab.vy=ptr.vy*0.6; }
+    const b=at(x,y); if(b!==hot){ hot=b; cv.style.cursor=b?"pointer":"default"; }
+    showTip(hot,x,y);
+    if(REDUCED){ step(); paint(); }
+  },{passive:true});
+  cv.addEventListener("pointerleave",()=>{ ptr.x=ptr.y=-9e9; hot=null; tip.classList.remove("on"); });
+  cv.addEventListener("pointerdown",e=>{ const [x,y]=local(e); ptr.down=true; ptr.grab=at(x,y);
+    if(ptr.grab) cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener("pointerup",e=>{
+    const [x,y]=local(e); const b=at(x,y);
+    if(ptr.grab && b===ptr.grab && Math.hypot(ptr.vx,ptr.vy)<3 && opts.click) opts.click(b.it);
+    ptr.grab=null; ptr.down=false;
+  });
+  cv.addEventListener("pointercancel",()=>{ptr.grab=null;ptr.down=false;});
+
+  const vis = "IntersectionObserver" in window ? new IntersectionObserver(es=>{
+    es[0].isIntersecting ? start() : stop();
+  },{threshold:.05}) : null;
+  document.addEventListener("visibilitychange",()=>{ document.hidden?stop():(host.isConnected&&start()); });
+
+  measure(); build(); paint();
+  if(vis) vis.observe(host); else start();
+  let rz; window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{ measure(); build(); paint(); },200); },{passive:true});
+  return {start,stop,destroy(){ stop(); if(vis) vis.disconnect(); host.innerHTML=""; },
+    reweight(v){ opts.value=v; const keep=bodies.map(b=>({x:b.x,y:b.y})); build();
+      bodies.forEach((b,i)=>{ if(keep[i]){b.x=keep[i].x;b.y=keep[i].y;} }); }};
+}
+
 /* ============================================================
    HOME
    ============================================================ */
 const WHY=[
-  {i:"scale",t:"Numbers, translated",d:"Arcus reports raw values in “quote quantums” and microsecond timestamps. Every figure here is converted, labelled, and followed by a sentence saying what it means for the person holding the wallet."},
-  {i:"shield",t:"Read-only by design",d:"There is no connect-wallet button anywhere on this site, because there is nothing to sign. A public address is all the exchange's API needs, and all we ever ask for."},
-  {i:"layers",t:"The whole footprint",d:"Positions, fills, orders, funding, deposits and the equity curve — pulled together into one picture instead of seven separate screens."}
+  {i:"scale",t:"Numbers, translated",d:"Raw quantums and microsecond stamps in. Dollars, dates and a plain sentence out."},
+  {i:"shield",t:"Read-only by design",d:"No connect button, because there's nothing to sign. A public address is all it takes."},
+  {i:"layers",t:"The whole footprint",d:"Positions, fills, funding, deposits and the equity curve — one picture, not seven screens."}
 ];
 async function renderHome(){
   const tiles=$("#pulseTiles");
@@ -1247,6 +1975,10 @@ async function renderHome(){
     });
     const list=$("#homeMktList");
     mktList(ms.slice().sort((a,b)=>b.vol-a.vol).slice(0,6),list);
+    paintTicker(ms);
+    const cc=$("#closerChar");
+    if(cc){ const pool=["diamond","whale","scalp","rwa","surfer","sniper"];
+      character(cc, (window.ArcChars&&ArcChars.ids)? ArcChars.ids[Math.floor(Math.random()*ArcChars.ids.length)] : "diamond", 88); }
     reveal($("#p-home"));
     glow($("#p-home"));
   }catch(e){
@@ -1254,117 +1986,210 @@ async function renderHome(){
       <div class="sub">Couldn't reach the Arcus API. It may be rate-limiting this device — wait a minute and hit refresh.</div></div>`;
   }
 }
+function paintTicker(ms){
+  const t=$("#tickTrack"); if(!t) return;
+  const top=ms.slice().sort((a,b)=>b.vol-a.vol).slice(0,22);
+  const one=top.map(m=>`<span class="tk-item"><b>${m.name}</b>
+    <span class="${m.chg>=0?"gain":"loss"}">${usd(m.mark)}</span>
+    <span class="${m.chg>=0?"gain":"loss"}" style="font-weight:500;font-size:11.5px">${pct(m.chg)}</span></span>`).join("");
+  t.innerHTML=one+one;   /* doubled so the loop is seamless */
+}
 $("#pulseRf").addEventListener("click",()=>{ cache.clear(); MKTS=null; renderHome(); toast("Refreshed"); });
 
 /* ============================================================
-   MARKETS PAGE
+   MARKETS PAGE — a field you can play with, and a table you can read
    ============================================================ */
-let mktFilter="ALL", mktSort={k:"vol",d:-1};
+let mktFilter="ALL", mktSort={k:"vol",d:-1}, mktView="field", mktWeight="vol", FIELD=null;
+const WEIGHTS={vol:["24h volume",m=>m.vol,usd],oi:["Open interest",m=>m.oi,usd],trades:["Trades",m=>m.trades,v=>num(v)]};
+
+function bodyStyle(m){
+  const up=m.chg>=0, mag=clamp(Math.abs(m.chg)/6,0.15,1);
+  const hue=up?152:8, sat=up?46:58;
+  return {
+    hi:`hsl(${hue} ${sat}% ${(up?46:52)+mag*12}%)`,
+    lo:`hsl(${hue} ${sat-8}% ${(up?24:26)+mag*6}%)`,
+    edge:`hsl(${hue} ${sat}% ${up?58:62}% / .45)`,
+    edgeHot:`hsl(${hue} ${sat+14}% ${up?72:74}%)`,
+    text:"rgba(255,255,255,.96)", sub:"rgba(255,255,255,.62)"
+  };
+}
 async function renderMarkets(){
   const root=$("#marketsRoot");
   root.innerHTML=`<section style="margin-top:26px">
-    <div class="sechead"><div class="t"><span class="eyebrow">Arcus perpetuals</span>
-      <h2>Every market, ranked</h2>
-      <p>Perpetual futures on crypto, US stocks, commodities and indices — all trading 24/7. Numbers refresh when you reload.</p></div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="mfilters"></div>
-    <div id="mlist"></div>
-    <p class="dim3" style="font-size:12.5px;margin-top:14px">Funding is the hourly fee that keeps a perpetual's price tied to the real asset. A positive rate means people betting on the price going up are paying those betting it goes down.</p>
+    <div class="sechead"><div class="t"><span class="eyebrow">Arcus perpetuals · 24/7</span>
+      <h2>The whole board, alive</h2>
+      <p>Every market is a body. Bigger means more money moved, green means up on the day. Shove them around.</p></div></div>
+    <div class="viewbar">
+      <div class="vswitch" id="mView">
+        <button data-v="field" class="on">${ic("layers")}Field</button>
+        <button data-v="table">${ic("act")}Table</button>
+      </div>
+      <span class="dim3" style="font-size:12.5px" id="mHint">Drag a market to fling it · click to open</span>
+    </div>
+    <div id="mFieldWrap">
+      <div class="pfield" id="mField">
+        <div class="hud">${Object.keys(WEIGHTS).map(k=>`<button class="fchip${k===mktWeight?" on":""}" data-w="${k}">${WEIGHTS[k][0]}</button>`).join("")}</div>
+        <div class="legend"><span><i style="background:#4FA36A"></i>up today</span><span><i style="background:#C9564A"></i>down today</span></div>
+      </div>
+    </div>
+    <div id="mTableWrap" hidden>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="mfilters"></div>
+      <div id="mlist"></div>
+    </div>
+    <p class="dim3" style="font-size:12.5px;margin-top:14px">Funding is the hourly fee that keeps a perpetual tied to the real asset — the crowded side pays the other.</p>
   </section>`;
   const FS=[["ALL","All"],["CRYPTO","Crypto"],["EQUITIES","Stocks"],["COMMODITIES","Commodities"],["INDICES","Indices"]];
-  $("#mfilters").innerHTML=FS.map(f=>`<button class="chip${f[0]===mktFilter?" on":""}" data-f="${f[0]}"
+  $("#mfilters").innerHTML=FS.map(f=>`<button class="chip" data-f="${f[0]}"
     style="${f[0]===mktFilter?"border-color:var(--brand);color:var(--brand)":""}">${f[1]}</button>`).join("");
+
   const ms=await markets().catch(()=>[]);
-  if(!ms.length){ $("#mlist").innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div><h3>Couldn't load markets</h3><p>The exchange API didn't answer. Give it a moment and reload.</p></div>`; return; }
+  if(!ms.length){ $("#mFieldWrap").innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div><h3>Couldn't load markets</h3><p>The exchange API didn't answer. Give it a moment and reload.</p></div>`; return; }
+
+  const online=ms.filter(m=>m.status==="ONLINE"||m.vol>0);
+  FIELD=PhysicsField($("#mField"), online, {
+    value:WEIGHTS[mktWeight][1],
+    label:m=>m.base,
+    sub:m=>pct(m.chg),
+    style:bodyStyle,
+    tip:m=>`<b>${m.name}</b><s>${m.full}</s>
+      <s style="color:var(--ink-2);margin-top:6px">${usd(m.mark)} · ${pct(m.chg)}</s>
+      <s>${usd(m.vol)} traded · ${usd(m.oi)} open</s>`,
+    click:m=>openMarket(m.name)
+  });
+  $("#mField .hud").addEventListener("click",e=>{
+    const b2=e.target.closest("[data-w]"); if(!b2) return;
+    mktWeight=b2.dataset.w;
+    $$("#mField .fchip").forEach(x=>x.classList.toggle("on",x.dataset.w===mktWeight));
+    FIELD.reweight(WEIGHTS[mktWeight][1]);
+  });
+
   function paint(){
     let arr=ms.filter(m=>mktFilter==="ALL"||m.cat===mktFilter);
-    arr.sort((a,b)=>{ const k=mktSort.k; const va=a[k],vb=b[k];
+    arr.sort((a2,b2)=>{ const k=mktSort.k, va=a2[k], vb=b2[k];
       return (typeof va==="string"? va.localeCompare(vb) : va-vb)*mktSort.d; });
     mktList(arr,$("#mlist"));
     $$("#mlist th").forEach(th=>{ th.classList.toggle("srt",th.dataset.s===mktSort.k);
       const ar=$(".ar",th); if(ar) ar.textContent=mktSort.d<0?"▼":"▲"; });
   }
   paint();
-  $("#mfilters").addEventListener("click",e=>{ const b=e.target.closest("[data-f]"); if(!b)return;
-    mktFilter=b.dataset.f;
-    $$("#mfilters .chip").forEach(c=>{c.style.borderColor="";c.style.color="";});
-    b.style.borderColor="var(--brand)";b.style.color="var(--brand)";
-    paint(); });
+  $("#mfilters").addEventListener("click",e=>{ const b2=e.target.closest("[data-f]"); if(!b2)return;
+    mktFilter=b2.dataset.f;
+    $$("#mfilters .chip").forEach(c2=>{c2.style.borderColor="";c2.style.color="";});
+    b2.style.borderColor="var(--brand)"; b2.style.color="var(--brand)"; paint(); });
   $("#mlist").addEventListener("click",e=>{
     const th=e.target.closest("th[data-s]");
     if(th){ const k=th.dataset.s; mktSort = mktSort.k===k?{k,d:-mktSort.d}:{k,d:-1}; paint(); return; }
-    const row=e.target.closest("[data-mkt]");
-    if(row) openMarket(row.dataset.mkt);
+    const row=e.target.closest("[data-mkt]"); if(row) openMarket(row.dataset.mkt);
+  });
+  $("#mView").addEventListener("click",e=>{
+    const b2=e.target.closest("[data-v]"); if(!b2) return;
+    mktView=b2.dataset.v;
+    $$("#mView button").forEach(x=>x.classList.toggle("on",x.dataset.v===mktView));
+    const f=mktView==="field";
+    $("#mFieldWrap").hidden=!f; $("#mTableWrap").hidden=f;
+    $("#mHint").textContent = f? "Drag a market to fling it · click to open" : "Tap a column to sort · tap a row to open";
+    if(f&&FIELD) FIELD.start(); else if(FIELD) FIELD.stop();
   });
 }
-async function openMarket(name){
-  const ms=await markets(); const m=ms.find(x=>x.name===name); if(!m) return;
-  const body=el("div","",`
-    <div class="tiles t2" style="grid-template-columns:1fr 1fr">
-      <div class="tile"><div class="k"><span>Price</span></div><div class="v">${usd(m.mark)}</div>
-        <div class="sub ${m.chg>=0?"gain":"loss"}">${pct(m.chg)} in 24h</div></div>
-      <div class="tile"><div class="k"><span>Max leverage</span></div><div class="v">${maxLev(m.imf)}×</div>
-        <div class="sub">$1 controls up to $${maxLev(m.imf)}</div></div>
-      <div class="tile"><div class="k"><span>24h volume</span></div><div class="v">${usd(m.vol)}</div>
-        <div class="sub">${num(m.trades)} trades</div></div>
-      <div class="tile"><div class="k"><span>Open interest</span></div><div class="v">${usd(m.oi)}</div>
-        <div class="sub">${num(m.oiBase,2)} ${m.base} held</div></div>
-    </div>
-    <div class="panel"><div class="ph"><h3 style="font-size:14px">Last 48 hours</h3>
-      <span class="eyebrow">1h candles</span></div><div class="pb" style="height:110px" id="mkChart">
-      <div class="sk" style="height:100%"></div></div></div>
-    <div class="panel"><div class="ph"><h3 style="font-size:14px">Live tape</h3><span class="eyebrow">Newest first</span></div>
-      <div class="tape" id="mkTape"><div class="sk" style="height:120px;margin:12px"></div></div></div>
-    <p class="dim3" style="font-size:12px">Funding right now is ${(m.fr*100).toFixed(4)}% per hour${m.fr>=0?", paid by longs to shorts":", paid by shorts to longs"}.
-      ${m.rth?"This market follows US stock-market hours for margin purposes, but you can trade it any time.":"Trades around the clock."}</p>`);
-  openModal(m.name+" · "+m.full, body);
-  const now=Date.now()*1000;
-  safe(api(`/v1/candles?market=${name}&timeframe=1h&countback=48&to=${now}`,60000),null).then(c=>{
-    const arr=(c&&c.candles||[]).slice().sort((a,b)=>a.openTime-b.openTime).map(x=>N(x.close));
-    const t=$("#mkChart"); if(!t) return;
-    t.innerHTML = arr.length>2 ? spark(arr,300,90, m.chg>=0?"var(--gain)":"var(--loss)") : `<div class="dim3" style="font-size:13px">No candle history yet.</div>`;
-  });
-  safe(api(`/v1/trades?market=${name}&limit=30`,15000),null).then(tr=>{
-    const t=$("#mkTape"); if(!t) return; const rows=(tr&&tr.trades||[]);
-    if(!rows.length){ t.innerHTML=`<div class="dim3" style="padding:14px;font-size:13px">No trades in range.</div>`; return; }
-    t.innerHTML=rows.map(x=>`<div class="trow">
-      <span class="sd ${x.side==="BUY"?"gain":"loss"}">${x.side}</span>
-      <span class="px">${num(x.size,4)}</span>
-      <span class="px">${usd(N(x.price))}</span>
-      <a class="ad" href="#/w/${x.takerAddress.toLowerCase()}">${shortA(x.takerAddress)}</a></div>`).join("");
-    $$("#mkTape .ad").forEach(a=>a.addEventListener("click",closeModal));
-  });
-}
-
 /* ============================================================
-   LEADERBOARD
+   LEADERBOARD — an arena that re-racks, and the table underneath
    ============================================================ */
-let lbW="30d", lbS="volume";
-async function renderLeaders(){
+let lbW="30d", lbS="volume", lbView="arena", lbData=[];
+const LBM={volume:["Volume",e=>Q(e.volume),usd],pnl:["Profit",e=>Q(e.pnl),v=>usd(v,{plus:true})],fees:["Fees paid",e=>Q(e.feesPaid),usd]};
+
+function renderLeaders(){
   const root=$("#leadersRoot");
   root.innerHTML=`<section style="margin-top:26px">
-    <div class="sechead"><div class="t"><span class="eyebrow">Top 100 traders</span><h2>The leaderboard</h2>
-      <p>Ranked from Arcus's own hourly rollup. Tap any row to open that wallet's full story.</p></div></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-      <div class="seg" id="lbWin">${[["24h","24 hours"],["30d","30 days"],["all","All time"]].map(w=>`<button data-w="${w[0]}" class="${w[0]===lbW?"on":""}">${w[1]}</button>`).join("")}</div>
-      <div class="seg" id="lbSort">${[["volume","Volume"],["pnl","Profit"],["fees","Fees"]].map(s=>`<button data-s="${s[0]}" class="${s[0]===lbS?"on":""}">${s[1]}</button>`).join("")}</div>
+    <div class="sechead"><div class="t"><span class="eyebrow">Top 100 traders</span><h2>The arena</h2>
+      <p>Switch the measure and watch everyone re-rack. Tap anyone to read their wallet.</p></div></div>
+    <div class="viewbar">
+      <div class="vswitch" id="lbView">
+        <button data-v="arena" class="on">${ic("trophy")}Arena</button>
+        <button data-v="table">${ic("act")}Table</button>
+      </div>
+      <div class="seg" id="lbWin">${[["24h","24h"],["30d","30d"],["all","All time"]].map(w=>`<button data-w="${w[0]}" class="${w[0]===lbW?"on":""}">${w[1]}</button>`).join("")}</div>
+      <div class="seg" id="lbSort">${Object.keys(LBM).map(k=>`<button data-s="${k}" class="${k===lbS?"on":""}">${LBM[k][0]}</button>`).join("")}</div>
     </div>
-    <div id="lbList"></div>
-    <p class="dim3" style="font-size:12.5px;margin-top:14px">Profit here counts only trades that have been closed. A trader sitting on a huge winning position that's still open will look flat until they take it off.</p>
+    <div id="lbArena"></div>
+    <div id="lbList" hidden></div>
+    <p class="dim3" style="font-size:12.5px;margin-top:14px">Profit counts only closed trades — someone sitting on a big winner still open will look flat here.</p>
   </section>`;
-  const bind=(sel,attr,set)=>$(sel).addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
-    $$("button",$(sel)).forEach(x=>x.classList.remove("on")); b.classList.add("on"); set(b.dataset[attr]); paint();});
-  bind("#lbWin","w",v=>lbW=v); bind("#lbSort","s",v=>lbS=v);
-  async function paint(){
-    const box=$("#lbList");
-    box.innerHTML=`<div class="panel"><div class="pb">${Array(8).fill('<div class="sk" style="height:34px;margin-bottom:8px"></div>').join("")}</div></div>`;
+  const bind=(sel,attr,set)=>$(sel).addEventListener("click",e=>{const b2=e.target.closest("button");if(!b2)return;
+    $$("button",$(sel)).forEach(x=>x.classList.remove("on")); b2.classList.add("on"); set(b2.dataset[attr]); load();});
+  bind("#lbWin","w",v=>lbW=v);
+  $("#lbSort").addEventListener("click",e=>{ const b2=e.target.closest("button"); if(!b2) return;
+    $$("#lbSort button").forEach(x=>x.classList.remove("on")); b2.classList.add("on");
+    lbS=b2.dataset.s;                    /* re-rack in place — no refetch, so the movement reads */
+    if(lbData.length){ paintArena(false); paintTable(); }
+  });
+  $("#lbView").addEventListener("click",e=>{ const b2=e.target.closest("[data-v]"); if(!b2)return;
+    lbView=b2.dataset.v; $$("#lbView button").forEach(x=>x.classList.toggle("on",x.dataset.v===lbView));
+    $("#lbArena").hidden=lbView!=="arena"; $("#lbList").hidden=lbView==="arena";
+    if(lbView==="arena") paintArena(true); });
+  load();
+
+  async function load(){
+    const box=$("#lbArena");
+    box.innerHTML=`<div class="podium">${Array(3).fill('<div class="sk" style="height:150px;border-radius:18px"></div>').join("")}</div>
+      <div class="race">${Array(8).fill('<div class="sk" style="height:44px;border-radius:12px;margin-bottom:5px"></div>').join("")}</div>`;
     const r=await safe(api(`/v1/leaderboard?window=${lbW}&sortBy=${lbS}&limit=100`,60000),null);
-    const es=r&&r.entries||[];
-    if(!es.length){ box.innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div><h3>Nothing to rank</h3><p>The leaderboard came back empty for this window.</p></div>`; return; }
-    box.innerHTML=`<div class="panel tblwrap"><table><thead><tr>
+    lbData=(r&&r.entries)||[];
+    if(!lbData.length){ box.innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div><h3>Nothing to rank</h3><p>The leaderboard came back empty for this window.</p></div>`; $("#lbList").innerHTML=""; return; }
+    paintArena(false); paintTable();
+  }
+
+  function paintArena(reflow){
+    const box=$("#lbArena");
+    const get=LBM[lbS][1], fmt=LBM[lbS][2];
+    const rows=lbData.map((e,i)=>({e,v:get(e),i})).sort((x,y)=>y.v-x.v);
+    const top=rows.slice(0,3), rest=rows.slice(3,40);
+    const mx=Math.max.apply(null,rows.map(r2=>Math.abs(r2.v)))||1;
+    const MED=["1st","2nd","3rd"], GL=["rgba(228,200,120,.22)","rgba(196,206,214,.18)","rgba(201,138,75,.20)"];
+
+    /* FLIP: remember where each row is before the DOM changes */
+    const before={};
+    if(reflow!==true) $$(".rrow",box).forEach(n=>{ before[n.dataset.a]=n.getBoundingClientRect().top; });
+
+    box.innerHTML=`
+      <div class="podium">${top.map((r2,i)=>`
+        <div class="pod g${i+1}" data-a="${r2.e.address}" style="--glowc:${GL[i]}">
+          <div class="in"><span class="medal">${MED[i]}</span>
+            <canvas class="av" data-a="${r2.e.address}"></canvas>
+            <span class="ad">${shortA(r2.e.address)}</span>
+            <span class="big ${lbS==="pnl"?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span>
+            <span class="sub">${lbS==="volume"?usd(Q(r2.e.pnl),{plus:true})+" profit":usd(Q(r2.e.volume))+" traded"}</span>
+          </div></div>`).join("")}</div>
+      <div class="race">${rest.map((r2,i)=>`
+        <div class="rrow" data-a="${r2.e.address}">
+          <span class="rk">${i+4}</span>
+          <div class="rbody">
+            <div class="rtop"><span class="rad">${shortA(r2.e.address)}</span>
+              <span class="rv ${lbS==="pnl"?(r2.v>=0?"gain":"loss"):""}">${fmt(r2.v)}</span></div>
+            <div class="rbar${r2.v<0?" neg":""}"><i data-w="${clamp(Math.abs(r2.v)/mx*100,1.5,100).toFixed(1)}"></i></div>
+          </div></div>`).join("")}</div>`;
+    $$(".av",box).forEach(cn=>seal(cn,cn.dataset.a,60));
+    box.onclick=ev=>{ const t=ev.target.closest("[data-a]"); if(t) go("wallet",t.dataset.a); };
+
+    /* FLIP: play the movement */
+    if(reflow!==true && !REDUCED){
+      $$(".rrow",box).forEach(n=>{
+        const was=before[n.dataset.a]; if(was==null) { n.style.opacity="0"; requestAnimationFrame(()=>{ n.style.transition="opacity .5s"; n.style.opacity="1"; }); return; }
+        const now=n.getBoundingClientRect().top, dy=was-now;
+        if(Math.abs(dy)<1) return;
+        n.style.transform=`translateY(${dy}px)`; n.style.transition="none";
+        requestAnimationFrame(()=>{ n.style.transition="transform .68s cubic-bezier(.2,.9,.25,1)"; n.style.transform=""; });
+      });
+    }
+    setTimeout(()=>$$(".rbar i",box).forEach(i2=>{ i2.style.width=i2.dataset.w+"%"; }),60);
+  }
+
+  function paintTable(){
+    const es=lbData;
+    $("#lbList").innerHTML=`<div class="panel tblwrap"><table><thead><tr>
         <th style="width:52px">#</th><th>Wallet</th><th class="r">Volume</th><th class="r">Realised profit</th><th class="r">Fees paid</th></tr></thead>
       <tbody>${es.map((e,i)=>`<tr data-a="${e.address}">
         <td><span class="rank${i<3?" top":""}">${i+1}</span></td>
-        <td><div class="mktname"><canvas class="av" data-a="${e.address}" style="width:28px;height:28px;border-radius:9px;flex:none"></canvas>
+        <td><div class="mktname"><canvas class="av" data-a="${e.address}" style="width:28px;height:28px;border-radius:50%;flex:none"></canvas>
           <span class="nm"><b class="mono" style="font-size:12.5px">${shortA(e.address)}</b>
           <s>${Q(e.volume)>=1e6?"Whale":Q(e.volume)>=1e5?"Heavy":"Active"}</s></span></div></td>
         <td class="r mono">${usd(Q(e.volume))}</td>
@@ -1372,14 +2197,13 @@ async function renderLeaders(){
         <td class="r mono dim">${usd(Q(e.feesPaid))}</td></tr>`).join("")}</tbody></table></div>
       <div class="mcards">${es.slice(0,60).map((e,i)=>`<div class="mcard" data-a="${e.address}">
         <span class="rank${i<3?" top":""}" style="width:22px">${i+1}</span>
-        <canvas class="av" data-a="${e.address}" style="width:32px;height:32px;border-radius:10px;flex:none"></canvas>
+        <canvas class="av" data-a="${e.address}" style="width:32px;height:32px;border-radius:50%;flex:none"></canvas>
         <div style="min-width:0"><b class="mono" style="font-size:13px">${shortA(e.address)}</b>
           <div class="mono" style="font-size:11.5px;color:var(--ink-3);margin-top:2px">${usd(Q(e.volume))} traded</div></div>
         <div class="rt"><b class="${Q(e.pnl)>=0?"gain":"loss"}">${usd(Q(e.pnl),{plus:true})}</b><s class="dim3">profit</s></div></div>`).join("")}</div>`;
-    $$(".av",box).forEach(c=>avatar(c,c.dataset.a));
-    box.addEventListener("click",ev=>{ const r=ev.target.closest("[data-a]"); if(r) go("wallet",r.dataset.a); });
+    $$("#lbList .av").forEach(cn=>seal(cn,cn.dataset.a,32));
+    $("#lbList").onclick=ev=>{ const t=ev.target.closest("[data-a]"); if(t) go("wallet",t.dataset.a); };
   }
-  paint();
 }
 
 /* ============================================================
@@ -1716,6 +2540,7 @@ async function loadWallet(a){
 
 function paintWallet(){
   const w=W, arc=archetype(w), sc=score(w), bg=badges(w), lines=story(w,arc);
+  const CH=(window.ArcChars?ArcChars.get(arc.id):{name:arc.n,tag:""});
   const gotN=bg.filter(b=>b.got).length;
   const root=$("#walletRoot");
   const posHTML = w.positions.length ? w.positions.map(p=>`
@@ -1759,15 +2584,16 @@ function paintWallet(){
       <div style="margin-left:auto;display:flex;gap:8px">
         <button class="ibtn" id="wstar" title="${watched(w.addr)?"Remove from watchlist":"Save to watchlist"}"
           style="${watched(w.addr)?"color:var(--copper);border-color:var(--copper-dim)":""}">${ic(watched(w.addr)?"starf":"star")}</button>
-        <button class="ibtn" id="wvs" title="Compare with another wallet">${ic("vs")}</button>
+        <button class="ibtn" id="wrun" title="Replay a trade">${ic("film")}</button>
         <button class="ibtn" id="wref" title="Reload">${ic("rf")}</button>
         <button class="btn ghost" id="wshareTop">${ic("xlogo")}<span class="hideSm">Share</span></button>
       </div>
     </div>
 
     <div class="arche rv"><div class="in">
-      <span class="em">${ic(arc.i)}</span>
-      <div style="flex:1;min-width:200px"><span class="eyebrow">Trader archetype</span><h2>${arc.n}</h2>
+      <span class="em"><canvas id="archeChar"></canvas></span>
+      <div style="flex:1;min-width:200px"><span class="eyebrow">Trading personality</span><h2>${CH.name}</h2>
+        <div class="tagline">${CH.tag}</div>
         <p class="desc">${arc.d}</p></div>
       <div class="lvl"><div class="n" id="scoreN">0</div><div class="l">Arclight score</div></div>
     </div></div>
@@ -1863,7 +2689,8 @@ function paintWallet(){
     </div>
   </div>`;
 
-  avatar($("#wav"),w.addr);
+  character($("#wav"),arc.id,52);
+  const ac=$("#archeChar"); if(ac) character(ac,arc.id,76);
   paintCard();
 
   /* animate numbers */
@@ -1884,6 +2711,7 @@ function paintWallet(){
     $("#wblur").innerHTML=ic(a.classList.contains("blur")?"eyeoff":"eye");
   });
   $("#wref").addEventListener("click",()=>{ cache.clear(); loadWallet(w.addr); });
+  $("#wrun").addEventListener("click",()=>{ location.hash="#/run/"+w.addr; });
   $("#wstar").addEventListener("click",()=>{
     const on=watchToggle(w.addr); const b=$("#wstar");
     b.innerHTML=ic(on?"starf":"star");
@@ -1891,7 +2719,6 @@ function paintWallet(){
     b.title=on?"Remove from watchlist":"Save to watchlist";
     toast(on?"Saved to your watchlist":"Removed from watchlist");
   });
-  $("#wvs").addEventListener("click",()=>{ vsA=w.addr; vsB=null; go("vs"); });
   $("#simGo").addEventListener("click",findSimilar);
   $("#wshareTop").addEventListener("click",shareX);
   $("#cFlip").addEventListener("click",()=>$("#card3d").classList.toggle("flip"));
@@ -1909,16 +2736,18 @@ function paintWallet(){
 /* ---------- the card faces ---------- */
 function cardData(){
   const w=W, arc=archetype(w), sc=score(w), bg=badges(w);
+  const CH=(window.ArcChars?ArcChars.get(arc.id):{name:arc.n,tag:""});
   const pnlMode = cardMode==="pnl";
   return {
+    charId:arc.id, charName:CH.name, charTag:CH.tag,
     tag: pnlMode?"Profit & loss":"Activity",
     label: pnlMode?"Total profit":"Traded all time",
     big: pnlMode? usd(w.profit,{plus:true}) : usd(w.volLife),
     up: pnlMode? w.profit>=0 : true,
     roi: pnlMode? (w.netDep>0?pct(w.roi*100)+" on deposits":"") : num(w.fillCount)+" fills",
     mini: pnlMode
-      ? [["Account value",usd(w.equity)],["Realised",usd(w.realized,{plus:true})],["Open positions",String(w.positions.length)],["Score",sc.total+"/100"]]
-      : [["Markets",String(w.markets)],["Win rate",w.winRate!=null?Math.round(w.winRate*100)+"%":"—"],["Badges",bg.filter(b=>b.got).length+"/"+bg.length],["Score",sc.total+"/100"]],
+      ? [["Account",usd(w.equity)],["Realised",usd(w.realized,{plus:true})],["Score",sc.total+"/100"]]
+      : [["Markets",String(w.markets)],["Win rate",w.winRate!=null?Math.round(w.winRate*100)+"%":"—"],["Score",sc.total+"/100"]],
     arc:arc.n, addr:w.addr, sc
   };
 }
@@ -1928,14 +2757,18 @@ function paintCard(){
     <span class="glowline"></span>
     <div class="ctop"><span class="brandmark"><span class="lg"><svg width="16" height="16" viewBox="0 0 29 29" fill="#F7F2EA"><use href="#i-logo"/></svg></span>
       <span>${SITE_NAME}</span></span><span class="ctag">${d.tag}</span></div>
+    <div class="chero"><span class="ring"></span>
+      <canvas id="cardChar"></canvas>
+      <span class="cname">${d.charName}</span>
+      <span class="ctag2">${d.charTag}</span></div>
     <div class="cbody">
-      <span class="lab">${d.arc}</span>
-      <span class="lab" style="margin-top:10px">${d.label}</span>
+      <span class="lab">${d.label}</span>
       <span class="big ${cardMode==="pnl"?(d.up?"gain":"loss"):""}">${d.big}</span>
       ${d.roi?`<span class="roi ${d.up?"up":"dn"}">${ic(d.up?"up":"down",'width:12px;height:12px')}${d.roi}</span>`:""}
       <div class="cmini">${d.mini.map(m=>`<div><div class="k">${m[0]}</div><div class="v">${m[1]}</div></div>`).join("")}</div>
     </div>
-    <div class="cfoot${cardBlur?" blur":""}"><span class="ad">${shortA(d.addr)}</span><span class="qr">arcus perps</span></div>`;
+    <div class="cfoot${cardBlur?" blur":""}"><span class="ad">${shortA(d.addr)}</span><span class="qr">arclight</span></div>`;
+  const cc=$("#cardChar"); if(cc) character(cc,d.charId,118);
   $("#cBack").innerHTML=`
     <span class="glowline"></span>
     <div class="ctop"><span class="brandmark"><span class="lg"><svg width="16" height="16" viewBox="0 0 29 29" fill="#F7F2EA"><use href="#i-logo"/></svg></span>
@@ -1968,136 +2801,164 @@ function shareX(){
 /* ---------- canvas card image (hand-drawn, no library) ---------- */
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);
   c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
-function drawCard(){
-  const w=W, d=cardData(), sc=d.sc;
-  const W_=1080, H_=1350, cv=document.createElement("canvas");
-  cv.width=W_; cv.height=H_; const c=cv.getContext("2d");
+function drawCard(ratio){
+  const w=W, d=cardData();
+  const tall = ratio!=="wide";
+  const W_= tall?1080:1600, H_= tall?1350:900;
+  const cv=document.createElement("canvas"); cv.width=W_; cv.height=H_;
+  const c=cv.getContext("2d");
   const dark=document.documentElement.getAttribute("data-theme")!=="light";
   const P = dark
     ? {bg:"#0B120D",card:"#131E16",card2:"#0E1710",ink:"#F2EEE4",ink2:"#9FB0A4",ink3:"#6B7C70",rule:"#243328",brand:"#4E9E62",gain:"#5FB07C",loss:"#D9695C"}
     : {bg:"#EFEDE4",card:"#FFFFFF",card2:"#F7F4EC",ink:"#14231A",ink2:"#4C5E52",ink3:"#7C8C81",rule:"#D9D5C7",brand:"#2E6B3C",gain:"#2E7D52",loss:"#B0453A"};
 
+  /* ---- ground ---- */
   const g=c.createLinearGradient(0,0,W_,H_);
   g.addColorStop(0,P.card); g.addColorStop(.55,P.card2); g.addColorStop(1,P.bg);
   c.fillStyle=g; c.fillRect(0,0,W_,H_);
-  const rg=c.createRadialGradient(180,120,0,180,120,760);
-  rg.addColorStop(0, dark?"rgba(78,158,98,.22)":"rgba(46,107,60,.13)"); rg.addColorStop(1,"rgba(0,0,0,0)");
-  c.fillStyle=rg; c.fillRect(0,0,W_,H_);
-  c.strokeStyle=dark?"rgba(78,158,98,.06)":"rgba(46,107,60,.07)"; c.lineWidth=1;
+  c.strokeStyle=dark?"rgba(78,158,98,.055)":"rgba(46,107,60,.06)"; c.lineWidth=1;
   for(let x=0;x<W_;x+=54){c.beginPath();c.moveTo(x,0);c.lineTo(x,H_);c.stroke();}
   for(let y=0;y<H_;y+=54){c.beginPath();c.moveTo(0,y);c.lineTo(W_,y);c.stroke();}
-  const lg=c.createLinearGradient(140,0,940,0);
-  lg.addColorStop(0,"rgba(0,0,0,0)");lg.addColorStop(.5,P.brand);lg.addColorStop(1,"rgba(0,0,0,0)");
-  c.fillStyle=lg; c.fillRect(140,0,800,3);
 
-  const M=84;
-  /* header */
-  c.fillStyle="#234728"; rr(c,M,72,68,68,20); c.fill();
-  c.save(); c.translate(M+10,82); c.scale(1.68,1.68); c.fillStyle="#F7F2EA";
-  const p1=new Path2D("M6 5h7.5A10.5 10.5 0 0 1 24 15.5V23a1 1 0 0 1-1 1h-3.6a1 1 0 0 1-1-1v-7.5A5.9 5.9 0 0 0 12.5 9.6H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z");
-  const p2=new Path2D("M6 11.6h6.2a1 1 0 0 1 .72 1.7l-6.2 6.2A1 1 0 0 1 5 18.8v-6.2a1 1 0 0 1 1-1z");
-  const p3=new Path2D("M18.4 17.5v6.2a1 1 0 0 1-1 1h-6.2a1 1 0 0 1-.7-1.7l6.2-6.2a1 1 0 0 1 1.7.7z");
-  c.fill(p1);c.fill(p2);c.fill(p3); c.restore();
-  c.fillStyle=P.ink; c.font='700 40px Archivo, sans-serif'; c.textBaseline="middle";
-  c.fillText(SITE_NAME, M+88, 108);
+  const M = tall?84:110;
+  const heroR = tall?170:150;
+  const heroX = tall? W_/2 : M+heroR+20;
+  const heroY = tall? 430 : H_/2 - 10;
+
+  /* glow behind the hero */
+  const hg=c.createRadialGradient(heroX,heroY,heroR*.5,heroX,heroY,heroR*2);
+  hg.addColorStop(0,dark?"rgba(78,158,98,.34)":"rgba(46,107,60,.20)"); hg.addColorStop(1,"rgba(0,0,0,0)");
+  c.fillStyle=hg; c.fillRect(0,0,W_,H_);
+
+  /* ---- header ---- */
+  c.fillStyle="#234728"; rr(c,M,tall?70:60,68,68,20); c.fill();
+  c.save(); c.translate(M+10,(tall?70:60)+10); c.scale(1.68,1.68); c.fillStyle="#F7F2EA";
+  c.fill(new Path2D("M6 5h7.5A10.5 10.5 0 0 1 24 15.5V23a1 1 0 0 1-1 1h-3.6a1 1 0 0 1-1-1v-7.5A5.9 5.9 0 0 0 12.5 9.6H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"));
+  c.fill(new Path2D("M6 11.6h6.2a1 1 0 0 1 .72 1.7l-6.2 6.2A1 1 0 0 1 5 18.8v-6.2a1 1 0 0 1 1-1z"));
+  c.fill(new Path2D("M18.4 17.5v6.2a1 1 0 0 1-1 1h-6.2a1 1 0 0 1-.7-1.7l6.2-6.2a1 1 0 0 1 1.7.7z"));
+  c.restore();
+  c.fillStyle=P.ink; c.font='700 40px Archivo, sans-serif'; c.textBaseline="middle"; c.textAlign="left";
+  c.fillText(SITE_NAME, M+88, (tall?70:60)+36);
   c.font='500 22px "JetBrains Mono", monospace'; c.fillStyle=P.brand; c.textAlign="right";
-  const tagT=d.tag.toUpperCase(); const tw=c.measureText(tagT).width;
-  c.strokeStyle=P.brand; c.lineWidth=2; rr(c,W_-M-tw-36,88,tw+36,42,21); c.stroke();
-  c.fillText(tagT, W_-M-18, 110); c.textAlign="left";
+  const tagT=d.tag.toUpperCase(), tw=c.measureText(tagT).width;
+  c.strokeStyle=P.brand; c.lineWidth=2; rr(c,W_-M-tw-36,(tall?70:60)+16,tw+36,42,21); c.stroke();
+  c.fillText(tagT, W_-M-18,(tall?70:60)+38); c.textAlign="left";
 
-  /* archetype */
-  c.fillStyle=P.ink3; c.font='500 21px "JetBrains Mono", monospace';
-  c.fillText("TRADER ARCHETYPE", M, 248);
-  c.fillStyle=P.ink; c.font='700 54px Archivo, sans-serif';
-  c.fillText(d.arc, M, 300);
-
-  /* big number */
-  c.fillStyle=P.ink3; c.font='500 21px "JetBrains Mono", monospace';
-  c.fillText(d.label.toUpperCase(), M, 410);
-  c.fillStyle = cardMode==="pnl" ? (d.up?P.gain:P.loss) : P.ink;
-  c.font='800 132px Archivo, sans-serif';
-  c.fillText(d.big, M, 500);
-  if(d.roi){
-    c.font='700 26px "JetBrains Mono", monospace';
-    const rw=c.measureText(d.roi).width;
-    c.fillStyle = d.up ? (dark?"rgba(95,176,124,.16)":"rgba(46,125,82,.13)") : (dark?"rgba(217,105,92,.16)":"rgba(176,69,58,.13)");
-    rr(c,M,566,rw+40,50,25); c.fill();
-    c.fillStyle=d.up?P.gain:P.loss; c.fillText(d.roi, M+20, 592);
+  /* ---- hero character ---- */
+  if(window.ArcChars){
+    c.save();
+    c.shadowColor="rgba(0,0,0,.75)"; c.shadowBlur=54; c.shadowOffsetY=18;
+    c.beginPath(); c.arc(heroX,heroY,heroR,0,7); c.fillStyle=P.card; c.fill();
+    c.restore();
+    c.save(); c.beginPath(); c.arc(heroX,heroY,heroR,0,7); c.clip();
+    ArcChars.draw(c,d.charId,heroX-heroR,heroY-heroR,heroR*2);
+    c.restore();
+    c.strokeStyle=dark?"rgba(255,255,255,.14)":"rgba(20,35,26,.14)"; c.lineWidth=3;
+    c.beginPath(); c.arc(heroX,heroY,heroR,0,7); c.stroke();
   }
 
-  /* mini grid */
-  const gy=666, gw=(W_-M*2-24)/2, gh=118;
+  /* ---- text column ---- */
+  const tx = tall? W_/2 : M+heroR*2+70;
+  const ta = tall? "center":"left";
+  c.textAlign=ta;
+  let y = tall? heroY+heroR+72 : 210;
+  c.fillStyle=P.ink; c.font='800 62px Archivo, sans-serif';
+  c.fillText(d.charName, tx, y);
+  y+=40;
+  c.fillStyle=P.ink3; c.font='400 25px "Instrument Sans", sans-serif';
+  c.fillText(d.charTag, tx, y);
+  y+= tall?86:78;
+  c.fillStyle=P.ink3; c.font='500 21px "JetBrains Mono", monospace';
+  c.fillText(d.label.toUpperCase(), tx, y);
+  y+=76;
+  c.fillStyle = cardMode==="pnl" ? (d.up?P.gain:P.loss) : P.ink;
+  c.font='800 116px Archivo, sans-serif';
+  c.fillText(d.big, tx, y);
+  if(d.roi){
+    y+=88; c.font='700 26px "JetBrains Mono", monospace';
+    const rw=c.measureText(d.roi).width, rx = ta==="center"? tx-(rw+40)/2 : tx;
+    c.fillStyle = d.up ? (dark?"rgba(95,176,124,.16)":"rgba(46,125,82,.13)") : (dark?"rgba(217,105,92,.16)":"rgba(176,69,58,.13)");
+    rr(c,rx,y-32,rw+40,50,25); c.fill();
+    c.fillStyle=d.up?P.gain:P.loss; c.textAlign="left"; c.fillText(d.roi, rx+20, y-6); c.textAlign=ta;
+  }
+
+  /* ---- three stat tiles ---- */
+  const gy = tall? H_-330 : H_-250;
+  const gx0 = tall? M : M+heroR*2+70;
+  const gw = ((tall?W_-M*2:W_-gx0-M) - 28)/3, gh=118;
   d.mini.forEach((m,i)=>{
-    const x=M+(i%2)*(gw+24), y=gy+Math.floor(i/2)*(gh+22);
-    c.fillStyle=dark?"rgba(255,255,255,.035)":"rgba(20,35,26,.035)"; rr(c,x,y,gw,gh,20); c.fill();
-    c.strokeStyle=P.rule; c.lineWidth=1.5; rr(c,x,y,gw,gh,20); c.stroke();
-    c.fillStyle=P.ink3; c.font='500 19px "JetBrains Mono", monospace'; c.fillText(m[0].toUpperCase(),x+26,y+40);
-    c.fillStyle=P.ink; c.font='700 42px Archivo, sans-serif'; c.fillText(m[1],x+26,y+84);
+    const x=gx0+i*(gw+14);
+    c.fillStyle=dark?"rgba(255,255,255,.035)":"rgba(20,35,26,.035)"; rr(c,x,gy,gw,gh,20); c.fill();
+    c.strokeStyle=P.rule; c.lineWidth=1.5; rr(c,x,gy,gw,gh,20); c.stroke();
+    c.textAlign="center";
+    c.fillStyle=P.ink3; c.font='500 18px "JetBrains Mono", monospace'; c.fillText(m[0].toUpperCase(),x+gw/2,gy+40);
+    c.fillStyle=P.ink; c.font='700 40px Archivo, sans-serif'; c.fillText(m[1],x+gw/2,gy+86);
   });
 
-  /* score bars */
-  let by=gy+2*(gh+22)+34;
-  c.fillStyle=P.ink3; c.font='500 19px "JetBrains Mono", monospace'; c.fillText("SCORE BREAKDOWN",M,by);
-  by+=26;
-  sc.parts.forEach(p=>{
-    c.fillStyle=P.ink2; c.font='500 22px "Instrument Sans", sans-serif'; c.fillText(p[0],M,by+18);
-    const bx=M+250, bw=W_-M*2-250-70;
-    c.fillStyle=P.rule; rr(c,bx,by+8,bw,12,6); c.fill();
-    const fg=c.createLinearGradient(bx,0,bx+bw,0); fg.addColorStop(0,P.brand); fg.addColorStop(1,dark?"#C98A4B":"#A4682C");
-    c.fillStyle=fg; rr(c,bx,by+8,Math.max(12,bw*p[1]/100),12,6); c.fill();
-    c.fillStyle=P.ink3; c.font='500 19px "JetBrains Mono", monospace'; c.textAlign="right";
-    c.fillText(String(p[1]),W_-M,by+18); c.textAlign="left";
-    by+=42;
-  });
-
-  /* footer */
-  c.strokeStyle=P.rule; c.lineWidth=2; c.beginPath(); c.moveTo(M,H_-152); c.lineTo(W_-M,H_-152); c.stroke();
+  /* ---- footer ---- */
+  c.textAlign="left";
+  c.strokeStyle=P.rule; c.lineWidth=2; c.beginPath(); c.moveTo(M,H_-136); c.lineTo(W_-M,H_-136); c.stroke();
   c.fillStyle=P.ink2; c.font='500 26px "JetBrains Mono", monospace';
-  c.fillText(cardBlur?"0x••••••••••••":shortA(d.addr), M, H_-106);
+  c.fillText(cardBlur?"0x••••••••••••":shortA(d.addr), M, H_-92);
   c.fillStyle=P.ink3; c.font='400 22px "Instrument Sans", sans-serif';
-  c.fillText("Read any Arcus wallet · built by "+BUILDER.name+" "+BUILDER.handle, M, H_-64);
-  c.textAlign="right"; c.fillStyle=P.brand; c.font='700 24px Archivo, sans-serif';
-  c.fillText("arcus perps", W_-M, H_-106); c.textAlign="left";
+  c.fillText("built by "+BUILDER.name+" "+BUILDER.handle, M, H_-52);
+  c.textAlign="right"; c.fillStyle=P.brand; c.font='700 26px Archivo, sans-serif';
+  c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), W_-M, H_-92);
+  c.fillStyle=P.ink3; c.font='400 22px "Instrument Sans", sans-serif';
+  c.fillText("arcus perps", W_-M, H_-52);
+  c.textAlign="left";
   return cv;
 }
 async function saveImage(){
   const btn=$("#cImg"); btn.disabled=true;
   await (document.fonts&&document.fonts.ready||Promise.resolve());
-  const cv=drawCard();
-  const box=el("div","",`<p class="dim" style="font-size:13.5px">Your card is ready. ${isMobile()?"Press and hold the image to save it to your camera roll.":"Right-click the image and choose “Save image as…”, or use the button below."}</p>`);
-  const img=el("img"); img.alt="Arclight wallet card";
-  cv.toBlob(async b=>{
-    const u=URL.createObjectURL(b); img.src=u; box.appendChild(img);
-    const row=el("div","",""); row.style.cssText="display:flex;gap:9px;flex-wrap:wrap";
-    const dl=el("button","btn pri",ic("dl")+"Download");
-    dl.addEventListener("click",async()=>{
-      const fn=`arclight-${(W.addr||"wallet").slice(0,10)}.png`;
-      // Hosted on claude.ai the viewer sandbox blocks direct saves, so route
-      // through the downloads capability when it's there; a self-hosted deploy
-      // falls straight through to the ordinary anchor download.
-      let host=null;
-      try{ host = (window.claude && claude.use) ? await claude.use("downloads") : null; }catch(_){}
-      if(host){
-        try{ await host.save({filename:fn,data:b}); toast("Saved"); }
-        catch(err){ const c=err&&err.code;
-          toast(c==="declined"?"Save cancelled":c==="too_large"?"Image too large to save":"Couldn't save — try Copy image"); }
-        return;
-      }
-      const a=el("a"); a.href=u; a.download=fn; document.body.appendChild(a); a.click(); a.remove(); toast("Saved to downloads");
-    });
-    const cp=el("button","btn ghost",ic("copy")+"Copy image");
-    cp.addEventListener("click",async()=>{
-      try{ await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); toast("Image copied"); }
-      catch(e){ toast(isMobile()?"Press and hold the image instead":"Your browser blocked the copy — use Download"); }
-    });
-    const sh=el("button","btn ghost",ic("xlogo")+"Share on X");
-    sh.addEventListener("click",()=>{ shareX(); toast("Attach the saved image to your post"); });
-    row.appendChild(dl); row.appendChild(cp); row.appendChild(sh); box.appendChild(row);
-    openModal("Your wallet card",box);
-    btn.disabled=false;
-  },"image/png");
-}
+  let ratio="tall", blob=null, url=null;
+  const box=el("div","",""); box.style.cssText="display:flex;flex-direction:column;gap:13px";
+  const note=el("p","dim"); note.style.cssText="font-size:13.5px";
+  const seg=el("div","seg",'<button data-r="tall" class="on">Portrait 9:16</button><button data-r="wide">Landscape 16:9</button>');
+  const img=el("img"); img.alt="Arclight card"; img.style.cssText="width:100%;border-radius:14px;border:1px solid var(--rule)";
+  const row=el("div",""); row.style.cssText="display:flex;gap:9px;flex-wrap:wrap";
+  const dl=el("button","btn pri",ic("dl")+"Download");
+  const cp=el("button","btn ghost",ic("copy")+"Copy image");
+  const sh=el("button","btn ghost",ic("xlogo")+"Share on X");
+  row.appendChild(dl); row.appendChild(cp); row.appendChild(sh);
+  box.appendChild(seg); box.appendChild(note); box.appendChild(img); box.appendChild(row);
 
+  function render(){
+    const cv=drawCard(ratio);
+    return new Promise(res=>cv.toBlob(b=>{
+      if(url) URL.revokeObjectURL(url);
+      blob=b; url=URL.createObjectURL(b); img.src=url;
+      note.textContent = isMobile()
+        ? "Press and hold the image to save it to your camera roll, or use Download."
+        : "Right-click to save, or use the buttons below.";
+      res();
+    },"image/png"));
+  }
+  seg.addEventListener("click",async e=>{ const b2=e.target.closest("[data-r]"); if(!b2) return;
+    $$("button",seg).forEach(x=>x.classList.remove("on")); b2.classList.add("on"); ratio=b2.dataset.r; await render(); });
+  dl.addEventListener("click",async()=>{
+    const fn=`arclight-${(W.addr||"wallet").slice(0,10)}-${ratio}.png`;
+    let host=null;
+    try{ host=(window.claude&&claude.use)?await claude.use("downloads"):null; }catch(_){}
+    if(host){
+      try{ await host.save({filename:fn,data:blob}); toast("Saved"); }
+      catch(err){ const c2=err&&err.code;
+        toast(c2==="declined"?"Save cancelled":c2==="too_large"?"Image too large":"Couldn't save — try Copy image"); }
+      return;
+    }
+    const a2=el("a"); a2.href=url; a2.download=fn; document.body.appendChild(a2); a2.click(); a2.remove(); toast("Saved to downloads");
+  });
+  cp.addEventListener("click",async()=>{
+    try{ await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]); toast("Image copied"); }
+    catch(e){ toast(isMobile()?"Press and hold the image instead":"Blocked by your browser — use Download"); }
+  });
+  sh.addEventListener("click",()=>{ shareX(); toast("Attach the saved image to your post"); });
+
+  await render();
+  openModal("Your card",box);
+  btn.disabled=false;
+}
 
 /* ============================================================
    WATCHLIST  (this device only — localStorage, never sent anywhere)
@@ -2137,122 +2998,6 @@ async function renderWatch(){
 }
 
 /* ============================================================
-   COMPARE — two wallets, side by side
-   ============================================================ */
-let vsA=null, vsB=null;
-function renderCompare(){
-  const root=$("#vsRoot");
-  root.innerHTML=`<section style="margin-top:26px">
-    <div class="sechead"><div class="t"><span class="eyebrow">Head to head</span><h2>Compare two wallets</h2>
-      <p>Drop in two addresses and see who's actually ahead — on profit, discipline, range and everything in between.</p></div></div>
-    <div class="vsgrid" style="margin-bottom:14px">
-      <div class="vsin" id="vsinA"><span class="tag">A</span>${ic("search")}
-        <input id="vsA" spellcheck="false" autocomplete="off" placeholder="First wallet — 0x…"></div>
-      <div class="vsin" id="vsinB"><span class="tag">B</span>${ic("search")}
-        <input id="vsB" spellcheck="false" autocomplete="off" placeholder="Second wallet — 0x…"></div>
-    </div>
-    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:8px">
-      <button class="btn pri" id="vsGo">${ic("vs")}Compare</button>
-      <button class="btn ghost" id="vsSwap">${ic("rf")}Swap</button>
-      <button class="btn ghost" id="vsTop">${ic("trophy")}Top 2 by volume</button>
-    </div>
-    <div class="err" id="vsErr" hidden>${ic("alert")}<span></span></div>
-    <div id="vsOut" style="margin-top:20px"></div>
-  </section>`;
-  const A=$("#vsA"), B=$("#vsB");
-  const mark=()=>{ $("#vsinA").classList.toggle("ok",isAddr(A.value.trim())); $("#vsinB").classList.toggle("ok",isAddr(B.value.trim())); $("#vsErr").hidden=true; };
-  A.addEventListener("input",mark); B.addEventListener("input",mark);
-  [A,B].forEach(i=>i.addEventListener("keydown",e=>{ if(e.key==="Enter") $("#vsGo").click(); }));
-  if(vsA) A.value=vsA; if(vsB) B.value=vsB; mark();
-  $("#vsGo").addEventListener("click",()=>{
-    const a=A.value.trim().toLowerCase(), b=B.value.trim().toLowerCase();
-    if(!isAddr(a)||!isAddr(b)){ const e=$("#vsErr"); $("span",e).textContent="Both boxes need a full 0x address (42 characters)."; e.hidden=false; return; }
-    if(a===b){ const e=$("#vsErr"); $("span",e).textContent="Those are the same wallet — try two different ones."; e.hidden=false; return; }
-    goVs(a,b);
-  });
-  $("#vsSwap").addEventListener("click",()=>{ const t=A.value; A.value=B.value; B.value=t; mark(); });
-  $("#vsTop").addEventListener("click",async()=>{
-    const btn=$("#vsTop"); btn.disabled=true;
-    const lb=await safe(api("/v1/leaderboard?window=30d&sortBy=volume&limit=100",120000),null);
-    const es=lb&&lb.entries||[]; btn.disabled=false;
-    if(es.length>1){ A.value=es[0].address; B.value=es[1].address; mark(); $("#vsGo").click(); }
-  });
-  reveal(root);
-}
-async function runCompare(a,b){
-  a=a.toLowerCase(); b=b.toLowerCase(); vsA=a; vsB=b;
-  const A=$("#vsA"), B=$("#vsB"); if(A) A.value=a; if(B) B.value=b;
-  const out=$("#vsOut"); if(!out) return;
-  out.innerHTML=`<div class="scanner"><div class="scanline"><i></i></div>
-    <div class="st">Reading both wallets…</div></div>`;
-  try{
-    const [wa,wb]=await Promise.all([fetchWallet(a),fetchWallet(b)]);
-    paintCompare(wa,wb);
-  }catch(e){
-    out.innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div><h3>Couldn't load both wallets</h3>
-      <p>${e&&e.message==="RATE"?"Arcus is rate-limiting this device — wait a minute and try again.":"One of the addresses didn't return data."}</p></div>`;
-  }
-}
-function paintCompare(wa,wb){
-  const sa=score(wa), sb=score(wb), aa=archetype(wa), ab=archetype(wb);
-  const ba=badges(wa).filter(x=>x.got).length, bb=badges(wb).filter(x=>x.got).length;
-  /* dir: 1 = higher wins, -1 = lower wins, 0 = no winner */
-  const R=[
-    ["Arclight score", sa.total, sb.total, v=>String(v), 1],
-    ["Total profit", wa.profit, wb.profit, v=>usd(v,{plus:true}), 1],
-    ["Return on deposits", wa.netDep>0?wa.roi*100:null, wb.netDep>0?wb.roi*100:null, v=>v==null?"—":pct(v), 1],
-    ["Account value", wa.equity, wb.equity, usd, 1],
-    ["Traded all time", wa.volLife, wb.volLife, usd, 1],
-    ["Win rate", wa.winRate!=null?wa.winRate*100:null, wb.winRate!=null?wb.winRate*100:null, v=>v==null?"—":Math.round(v)+"%", 1],
-    ["Markets used", wa.markets, wb.markets, v=>String(v), 1],
-    ["Fills", wa.fillCount, wb.fillCount, v=>num(v), 1],
-    ["Typical hold", wa.medHold, wb.medHold, v=>v==null?"—":dur(v), 0],
-    ["Position leverage", wa.effLev, wb.effLev, v=>v?v.toFixed(1)+"×":"—", -1],
-    ["Funding paid", wa.fundNet, wb.fundNet, v=>usd(v,{plus:true}), 1],
-    ["Fees paid", wa.feesLife, wb.feesLife, usd, -1],
-    ["Badges", ba, bb, v=>v+"/12", 1],
-    ["Liquidations", wa.liq, wb.liq, v=>String(v), -1]
-  ];
-  let winA=0, winB=0;
-  const rows=R.map(r=>{
-    const [lab,va,vb,fmt,dir]=r;
-    let wa_=false, wb_=false;
-    if(dir!==0 && va!=null && vb!=null && va!==vb){ const aWins=dir>0? va>vb : va<vb; aWins?(wa_=true,winA++):(wb_=true,winB++); }
-    return `<div class="vsrow"><span class="cl l ${wa_?"w":""}">${fmt(va)}</span>
-      <span class="lb">${lab}</span><span class="cl r ${wb_?"w":""}">${fmt(vb)}</span></div>`;
-  }).join("");
-  const head=(w,arc,sc,side,win)=>`<div class="vsw ${win?"win":""}">
-      <canvas class="av" data-a="${w.addr}"></canvas>
-      <span class="nm">${shortA(w.addr)}</span>
-      <span class="ar">${arc.n}</span>
-      <span class="sc">${sc.total}</span>
-      <span class="eyebrow">wins ${side}</span></div>`;
-  $("#vsOut").innerHTML=`
-    <div class="vshead rv">
-      ${head(wa,aa,sa,winA,winA>winB)}
-      <div class="vsmid">VS</div>
-      ${head(wb,ab,sb,winB,winB>winA)}
-    </div>
-    <div class="panel rv" style="margin-top:14px"><div class="ph">
-      <h3>${winA===winB?"Dead heat":`Wallet ${winA>winB?"A":"B"} takes it, ${Math.max(winA,winB)}–${Math.min(winA,winB)}`}</h3>
-      <span class="eyebrow">14 measures</span></div>${rows}</div>
-    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
-      <button class="btn ghost" data-open="${wa.addr}">${ic("wallet")}Open A in full</button>
-      <button class="btn ghost" data-open="${wb.addr}">${ic("wallet")}Open B in full</button>
-      <button class="btn pri" id="vsShare">${ic("xlogo")}Share result</button>
-    </div>
-    <p class="dim3" style="font-size:12px;margin-top:12px">“Typical hold” has no winner — holding longer isn't better or worse, it's a different style. Lower is better for leverage, fees and liquidations.</p>`;
-  $$("#vsOut .av").forEach(c=>avatar(c,c.dataset.a));
-  $$("#vsOut [data-open]").forEach(b=>b.addEventListener("click",()=>go("wallet",b.dataset.open)));
-  $("#vsShare").addEventListener("click",()=>{
-    const win=winA===winB?"It's a dead heat":`${winA>winB?shortA(wa.addr):shortA(wb.addr)} wins ${Math.max(winA,winB)}–${Math.min(winA,winB)}`;
-    const txt=`${shortA(wa.addr)} (${aa.n}, ${sa.total}/100) vs ${shortA(wb.addr)} (${ab.n}, ${sb.total}/100) on Arcus.\n\n${win}.\n\nCompare any two wallets 👇`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(SITE_URL||REF_LINK)}`,"_blank","noopener");
-  });
-  reveal($("#vsOut"));
-}
-
-/* ============================================================
    SIMILAR WALLETS — sampled from the same market's tape
    ============================================================ */
 async function findSimilar(){
@@ -2280,16 +3025,494 @@ async function findSimilar(){
       return `<div class="simc" data-a="${r.a}"><canvas class="av" data-a="${r.a}"></canvas>
         <div class="si"><b>${shortA(r.a)}</b><s>${rel}</s></div>
         <span class="sv">${usd(r.vol)}</span></div>`;}).join("")}</div>
-      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">
-        <button class="btn ghost" id="simVs">${ic("vs")}Compare with the closest</button></div>`;
+`;
     $$(".av",box).forEach(c=>avatar(c,c.dataset.a));
     box.onclick=e=>{ const c=e.target.closest(".simc"); if(c) go("wallet",c.dataset.a); };
-    const sv=$("#simVs"); if(sv) sv.addEventListener("click",e=>{ e.stopPropagation(); goVs(w.addr,ranked[0].a); });
     btn.remove();
   }catch(e){
     box.innerHTML=`<p class="dim3" style="font-size:13.5px">${e&&e.message==="RATE"?"Arcus is rate-limiting this device — try again in a minute.":"Couldn't sample the market tape just now."}</p>`;
     btn.disabled=false; btn.innerHTML=ic("users")+"Try again";
   }
+}
+
+
+/* ============================================================
+   HISTORY RUN — replay a real trade on real candles
+   Every play is reconstructed from the wallet's own fills, drawn
+   bar by bar on a canvas that doubles as the video source.
+   ============================================================ */
+const TFS=[["1m",6e4],["3m",18e4],["5m",3e5],["15m",9e5],["30m",18e5],["1h",36e5],
+           ["2h",72e5],["4h",144e5],["8h",288e5],["12h",432e5],["1d",864e5],["3d",2592e5],["1w",6048e5]];
+function pickTF(span){ for(const t of TFS){ if(span/t[1]<=130) return t; } return TFS[TFS.length-1]; }
+
+function buildPlays(w){
+  const byM={}, out=[];
+  w.fills.forEach(f=>{ (byM[f.marketDisplayName]=byM[f.marketDisplayName]||[]).push(f); });
+  const posBy={}; w.positions.forEach(p=>posBy[p.market]=p);
+  Object.keys(byM).forEach(m=>{
+    const fs=byM[m].slice().sort((a,b)=>a.createdAt-b.createdAt);
+    let cur=null, sz=0;
+    fs.forEach(f=>{
+      const mag=Math.abs(N(f.size)), s=(f.side==="BUY"?1:-1)*mag;
+      if(Math.abs(sz)<1e-9 && !cur) cur={m,t0:f.createdAt/1000,fills:[],pnl:0,dir:s>0?"LONG":"SHORT",peak:0,notional:0};
+      cur.fills.push({t:f.createdAt/1000,p:N(f.price),s:mag,side:f.side,eff:f.positionEffect||"",
+                      pnl:N(f.closedPnl),liq:!!f.liquidation,role:f.role});
+      cur.pnl+=N(f.closedPnl); cur.notional+=mag*N(f.price);
+      sz+=s; cur.peak=Math.max(cur.peak,Math.abs(sz));
+      if(Math.abs(sz)<1e-9){ cur.t1=f.createdAt/1000; cur.open=false; out.push(cur); cur=null; }
+    });
+    if(cur){ const p=posBy[m];
+      cur.t1=Date.now(); cur.open=true; cur.upnl=p?p.upnl:0; cur.mark=p?p.mark:0; cur.size=p?p.size:Math.abs(sz);
+      out.push(cur); }
+  });
+  return out.map(p=>Object.assign(p,{total:p.pnl+(p.upnl||0)}))
+            .sort((a,b)=>Math.abs(b.total)-Math.abs(a.total));
+}
+
+/* ---------- the renderer ---------- */
+function Replay(canvas, play, candles, w){
+  const c=canvas.getContext("2d");
+  const CH=(window.ArcChars?ArcChars.get(archetype(w).id):null);
+  let RATIO="wide", Wd=0, Hd=0, dpr=1;
+  const dark=()=>document.documentElement.getAttribute("data-theme")!=="light";
+  function pal(){ return dark()
+    ? {bg0:"#0A110C",bg1:"#0F1A12",ink:"#F2EEE4",ink2:"#9FB0A4",ink3:"#63736A",grid:"rgba(255,255,255,.045)",
+       rule:"#22301F",up:"#5FB07C",dn:"#D9695C",brand:"#4E9E62",band:"rgba(78,158,98,.10)",bandDn:"rgba(217,105,92,.10)"}
+    : {bg0:"#F1EFE7",bg1:"#FBF9F2",ink:"#14231A",ink2:"#4C5E52",ink3:"#8A968E",grid:"rgba(20,35,26,.06)",
+       rule:"#DCD8CA",up:"#2E7D52",dn:"#B0453A",brand:"#2E6B3C",band:"rgba(46,107,60,.10)",bandDn:"rgba(176,69,58,.10)"}; }
+
+  function size(ratio){
+    RATIO=ratio||RATIO;
+    const wide=RATIO==="wide";
+    Wd=wide?1600:1080; Hd=wide?900:1920;
+    canvas.width=Wd; canvas.height=Hd;
+  }
+  size("wide");
+
+  const bars=candles.slice().sort((a,b)=>a.t-b.t);
+  const t0=bars.length?bars[0].t:play.t0, t1=bars.length?bars[bars.length-1].t:play.t1;
+  const lo=Math.min.apply(null,bars.map(b=>b.l).concat(play.fills.map(f=>f.p)));
+  const hi=Math.max.apply(null,bars.map(b=>b.h).concat(play.fills.map(f=>f.p)));
+  const padY=(hi-lo)*0.14||1;
+  const YLO=lo-padY, YHI=hi+padY;
+
+  function frame(){
+    const wide=RATIO==="wide";
+    const M=wide?{l:64,r:132,t:150,b:96}:{l:44,r:104,t:280,b:330};
+    return {x:M.l,y:M.t,w:Wd-M.l-M.r,h:Hd-M.t-M.b,M};
+  }
+  const X=(t,F)=>F.x+((t-t0)/Math.max(1,t1-t0))*F.w;
+  const Y=(p,F)=>F.y+F.h-((p-YLO)/Math.max(1e-9,YHI-YLO))*F.h;
+
+  /* position + pnl as of time t */
+  function stateAt(t){
+    let sz=0, cash=0, realized=0, last=null, n=0;
+    for(const f of play.fills){
+      if(f.t>t) break;
+      const s=(f.side==="BUY"?1:-1)*f.s;
+      sz+=s; cash-=s*f.p; realized+=f.pnl; last=f; n++;
+    }
+    let px=null;
+    for(const b of bars){ if(b.t<=t) px=b.c; else break; }
+    const unreal = (px!=null && Math.abs(sz)>1e-9) ? sz*px+cash : 0;
+    return {sz,realized,unreal,total:realized+unreal,px,last,n};
+  }
+
+  function drawBg(P,F){
+    const g=c.createLinearGradient(0,0,0,Hd);
+    g.addColorStop(0,P.bg1); g.addColorStop(1,P.bg0);
+    c.fillStyle=g; c.fillRect(0,0,Wd,Hd);
+    c.strokeStyle=P.grid; c.lineWidth=1;
+    for(let i=0;i<=6;i++){ const y=F.y+F.h*i/6; c.beginPath(); c.moveTo(F.x,y); c.lineTo(F.x+F.w,y); c.stroke(); }
+    /* price axis */
+    c.fillStyle=P.ink3; c.font='500 20px "JetBrains Mono", monospace'; c.textAlign="left"; c.textBaseline="middle";
+    for(let i=0;i<=6;i++){ const y=F.y+F.h*i/6, v=YHI-(YHI-YLO)*i/6;
+      c.fillText(usd(v), F.x+F.w+14, y); }
+  }
+  function drawBand(P,F,prog){
+    if(!play.fills.length) return;
+    const a=X(play.t0,F), b=Math.min(X(play.t1,F), F.x+F.w*prog);
+    if(b<=a) return;
+    c.fillStyle = play.total>=0?P.band:P.bandDn;
+    c.fillRect(a,F.y,b-a,F.h);
+    c.strokeStyle = (play.total>=0?P.up:P.dn); c.globalAlpha=.35; c.lineWidth=2;
+    c.beginPath(); c.moveTo(a,F.y); c.lineTo(a,F.y+F.h); c.stroke(); c.globalAlpha=1;
+  }
+  function drawBars(P,F,prog){
+    const cut=F.x+F.w*prog;
+    const bw=Math.max(3.5,(F.w/Math.max(bars.length,1))*0.72);
+    for(const b of bars){
+      const x=X(b.t,F); if(x>cut) break;
+      const up=b.c>=b.o, col=up?P.up:P.dn;
+      c.strokeStyle=col; c.fillStyle=col; c.lineWidth=Math.max(1,bw*0.16);
+      c.beginPath(); c.moveTo(x,Y(b.h,F)); c.lineTo(x,Y(b.l,F)); c.stroke();
+      const yo=Y(b.o,F), yc=Y(b.c,F);
+      c.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(bw*0.5,Math.abs(yc-yo)));
+    }
+    /* playhead */
+    const st=stateAt(t0+(t1-t0)*prog);
+    if(st.px!=null && prog>0.002){
+      c.strokeStyle=P.brand; c.globalAlpha=.5; c.lineWidth=2; c.setLineDash([7,7]);
+      c.beginPath(); c.moveTo(cut,F.y); c.lineTo(cut,F.y+F.h); c.stroke();
+      c.setLineDash([]); c.globalAlpha=1;
+      const y=Y(st.px,F);
+      c.fillStyle=P.brand; c.beginPath(); c.arc(cut,y,7,0,7); c.fill();
+      c.globalAlpha=.22; c.beginPath(); c.arc(cut,y,18,0,7); c.fill(); c.globalAlpha=1;
+    }
+    return st;
+  }
+  function drawFills(P,F,prog){
+    const tNow=t0+(t1-t0)*prog;
+    for(const f of play.fills){
+      if(f.t>tNow) continue;
+      const x=X(f.t,F), y=Y(f.p,F), buy=f.side==="BUY";
+      const age=clamp((tNow-f.t)/Math.max(1,(t1-t0)*0.035),0,1);
+      const pop=1+(1-age)*1.4;
+      const col=f.liq?P.dn:(buy?P.up:P.dn);
+      if(age<1){ c.globalAlpha=(1-age)*0.5; c.fillStyle=col;
+        c.beginPath(); c.arc(x,y,26*pop,0,7); c.fill(); c.globalAlpha=1; }
+      c.fillStyle=col; c.strokeStyle=dark()?"rgba(0,0,0,.55)":"rgba(255,255,255,.7)"; c.lineWidth=2;
+      const s=10*pop;
+      c.beginPath();
+      if(buy){ c.moveTo(x,y-s); c.lineTo(x+s,y+s*0.8); c.lineTo(x-s,y+s*0.8); }
+      else   { c.moveTo(x,y+s); c.lineTo(x+s,y-s*0.8); c.lineTo(x-s,y-s*0.8); }
+      c.closePath(); c.fill(); c.stroke();
+      if(f.liq){ c.strokeStyle=P.dn; c.lineWidth=3; c.beginPath(); c.arc(x,y,s*1.9,0,7); c.stroke(); }
+    }
+  }
+  function drawHud(P,F,prog,st){
+    const wide=RATIO==="wide";
+    const tNow=t0+(t1-t0)*prog;
+    /* brand */
+    c.fillStyle="#234728"; rr(c,F.M.l,wide?44:64,56,56,17); c.fill();
+    c.save(); c.translate(F.M.l+8,(wide?44:64)+8); c.scale(1.38,1.38); c.fillStyle="#F7F2EA";
+    c.fill(new Path2D("M6 5h7.5A10.5 10.5 0 0 1 24 15.5V23a1 1 0 0 1-1 1h-3.6a1 1 0 0 1-1-1v-7.5A5.9 5.9 0 0 0 12.5 9.6H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"));
+    c.fill(new Path2D("M6 11.6h6.2a1 1 0 0 1 .72 1.7l-6.2 6.2A1 1 0 0 1 5 18.8v-6.2a1 1 0 0 1 1-1z"));
+    c.fill(new Path2D("M18.4 17.5v6.2a1 1 0 0 1-1 1h-6.2a1 1 0 0 1-.7-1.7l6.2-6.2a1 1 0 0 1 1.7.7z"));
+    c.restore();
+    c.textAlign="left"; c.textBaseline="middle";
+    c.fillStyle=P.ink; c.font='700 32px Archivo, sans-serif';
+    c.fillText(SITE_NAME, F.M.l+70, (wide?44:64)+28);
+
+    /* market + direction */
+    const ty=wide?128:190;
+    c.fillStyle=P.ink; c.font=`800 ${wide?54:64}px Archivo, sans-serif`;
+    c.fillText(play.m, F.M.l, ty);
+    const dirw=c.measureText(play.m).width;
+    const badge=(play.open?"HOLDING ":"")+play.dir;
+    c.font='700 22px "JetBrains Mono", monospace';
+    const bw2=c.measureText(badge).width;
+    c.fillStyle=play.dir==="LONG"?P.band:P.bandDn;
+    rr(c,F.M.l+dirw+22,ty-20,bw2+30,40,20); c.fill();
+    c.fillStyle=play.dir==="LONG"?P.up:P.dn;
+    c.fillText(badge,F.M.l+dirw+37,ty+1);
+
+    /* running PnL, right aligned */
+    c.textAlign="right";
+    const pnl=st.total;
+    c.fillStyle=P.ink3; c.font='500 22px "JetBrains Mono", monospace';
+    c.fillText(play.open?"PROFIT SO FAR":"PROFIT ON THIS TRADE", Wd-F.M.r+108, wide?60:80);
+    c.fillStyle=pnl>=0?P.up:P.dn; c.font=`800 ${wide?68:76}px Archivo, sans-serif`;
+    c.fillText(usd(pnl,{plus:true}), Wd-F.M.r+108, wide?116:150);
+
+    /* clock under the playhead */
+    c.textAlign="center"; c.fillStyle=P.ink2; c.font='500 22px "JetBrains Mono", monospace';
+    const cut=F.x+F.w*prog;
+    c.fillText(new Date(tNow).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"}),
+      clamp(cut,F.x+60,F.x+F.w-60), F.y+F.h+40);
+
+    /* position size ribbon */
+    c.textAlign="left"; c.fillStyle=P.ink3; c.font='500 20px "JetBrains Mono", monospace';
+    const sizeTxt = Math.abs(st.sz)>1e-9 ? `POSITION ${num(Math.abs(st.sz),4)} ${play.m.split("-")[0]}` : "FLAT";
+    c.fillText(sizeTxt, F.M.l, F.y+F.h+40);
+
+    /* footer */
+    c.fillStyle=P.ink3; c.font='400 20px "Instrument Sans", sans-serif';
+    c.fillText(shortA(w.addr)+"  ·  built by "+BUILDER.name+" "+BUILDER.handle, F.M.l, Hd-34);
+    c.textAlign="right"; c.fillStyle=P.brand; c.font='700 22px Archivo, sans-serif';
+    c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), Wd-F.M.r+108, Hd-34);
+  }
+  function drawOutro(P,F,k){
+    /* k 0..1 — the closing card fades over the chart */
+    c.fillStyle = dark()?`rgba(9,15,11,${0.955*k})`:`rgba(243,241,233,${0.96*k})`;
+    c.fillRect(0,0,Wd,Hd);
+    const cx=Wd/2, cy=Hd*0.42, R=RATIO==="wide"?128:170;
+    c.globalAlpha=k;
+    if(window.ArcChars){
+      c.save(); c.beginPath(); c.arc(cx,cy,R,0,7); c.clip();
+      ArcChars.draw(c,archetype(w).id,cx-R,cy-R,R*2); c.restore();
+      c.strokeStyle=dark()?"rgba(255,255,255,.16)":"rgba(20,35,26,.16)"; c.lineWidth=3;
+      c.beginPath(); c.arc(cx,cy,R,0,7); c.stroke();
+    }
+    c.textAlign="center"; c.textBaseline="middle";
+    c.fillStyle=P.ink; c.font=`800 ${RATIO==="wide"?56:64}px Archivo, sans-serif`;
+    c.fillText(CH?CH.name:"", cx, cy+R+62);
+    c.fillStyle=P.ink3; c.font='500 24px "JetBrains Mono", monospace';
+    c.fillText(play.m+" · "+(play.open?"still holding":"closed "+dstr(play.t1)), cx, cy+R+108);
+    const pnl=play.total;
+    c.fillStyle=pnl>=0?P.up:P.dn; c.font=`800 ${RATIO==="wide"?120:132}px Archivo, sans-serif`;
+    c.fillText(usd(pnl,{plus:true}), cx, cy+R+206);
+    c.fillStyle=P.ink2; c.font='400 26px "Instrument Sans", sans-serif';
+    c.fillText("Replay any Arcus wallet · "+(SITE_URL||"arclight").replace(/^https?:\/\//,""), cx, cy+R+272);
+    c.globalAlpha=1;
+  }
+
+  function render(prog){
+    const P=pal(), F=frame();
+    prog=clamp(prog,0,1);
+    const chartProg=clamp(prog/0.86,0,1);
+    drawBg(P,F);
+    drawBand(P,F,chartProg);
+    const st=drawBars(P,F,chartProg);
+    drawFills(P,F,chartProg);
+    drawHud(P,F,chartProg,st);
+    if(prog>0.88) drawOutro(P,F,clamp((prog-0.88)/0.12,0,1));
+  }
+  return {render,size,get ratio(){return RATIO;},get dims(){return [Wd,Hd];},bars};
+}
+
+
+/* ---------- History Run page ---------- */
+let runAddr=null, runW=null, runPlays=[], RP=null, runRatio="wide",
+    runT=0, runPlaying=false, runRaf=null, runT0=0, runRec=false;
+const RUN_SECONDS=10;
+
+function renderRunEmpty(){
+  $("#runRoot").innerHTML=`<section style="margin-top:26px">
+    <div class="sechead"><div class="t"><span class="eyebrow">History run</span>
+      <h2>Watch a trade happen again</h2>
+      <p>Real fills on real candles, walking bar by bar. Pick any trade a wallet made — or one it's still holding — and take the clip.</p></div></div>
+    <div class="searchbox" id="rbox" style="max-width:600px">
+      <div class="field">${ic("search")}
+        <input id="rinput" type="text" spellcheck="false" autocomplete="off" autocapitalize="off"
+          placeholder="0x… paste any EVM wallet address" aria-label="Wallet address">
+        <button class="btn pri" id="rgo">Find trades</button></div>
+      <div class="err" id="rerr" hidden>${ic("alert")}<span></span></div>
+      <div class="hint"><span>Try:</span>
+        <button class="chip" data-rtry="0x25CC275CFE3Cce1700E816e00d4CD1f60872038A">A patient HYPE bull</button>
+        <button class="chip" data-rtry="top">#1 by volume</button></div>
+    </div>
+    <div class="tiles t3" style="margin-top:30px">
+      ${[["act","Every fill, in place","Entries and exits land on the exact bar they happened on, sized by how much went in."],
+         ["clock","The clock runs","Position size and profit walk forward with the candles instead of sitting in a table."],
+         ["dl","Take the clip","Export it as video in landscape or portrait, then post it."]]
+        .map(t=>`<div class="tile rv"><div class="k">${ic(t[0],"width:14px;height:14px;color:var(--brand)")}<span>${t[1]}</span></div>
+          <div class="sub" style="margin-top:2px;font-size:13.5px">${t[2]}</div></div>`).join("")}
+    </div></section>`;
+  const go2=()=>{ const v=$("#rinput").value.trim();
+    if(!isAddr(v)){ const e=$("#rerr"); $("span",e).textContent="That doesn't look like an EVM address."; e.hidden=false; return; }
+    location.hash="#/run/"+v.toLowerCase(); };
+  $("#rgo").addEventListener("click",go2);
+  $("#rinput").addEventListener("keydown",e=>{ if(e.key==="Enter") go2(); });
+  $$("[data-rtry]").forEach(b=>b.addEventListener("click",async()=>{
+    const v=b.dataset.rtry;
+    if(isAddr(v)){ $("#rinput").value=v; go2(); return; }
+    const lb=await safe(api("/v1/leaderboard?window=30d&sortBy=volume&limit=100",120000),null);
+    const e=(lb&&lb.entries||[])[0]; if(e){ $("#rinput").value=e.address; go2(); }
+  }));
+  reveal($("#runRoot")); glow($("#runRoot"));
+}
+
+async function loadRun(addr){
+  addr=(addr||"").toLowerCase(); runAddr=addr;
+  const root=$("#runRoot");
+  root.innerHTML=`<div class="scanner"><div class="scanline"><i></i></div>
+    <div class="st">Reconstructing every trade this wallet made…</div></div>`;
+  try{
+    runW = (W && W.addr===addr) ? W : await fetchWallet(addr);
+    runPlays = buildPlays(runW);
+    paintPlays();
+  }catch(e){
+    root.innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div>
+      <h3>${e&&e.message==="RATE"?"Arcus is rate-limiting this device":"Couldn't reach Arcus"}</h3>
+      <p>${e&&e.message==="RATE"?"Wait about a minute and try again.":"The exchange API didn't answer."}</p>
+      <button class="btn pri" data-go="run">Back</button></div>`;
+  }
+}
+
+function playCard(p,i){
+  const win=p.total>=0, span=p.t1-p.t0;
+  return `<div class="playc ${win?"win":"lose"}" data-play="${i}">
+    <div class="pcTop">
+      <span class="pcMkt">${p.m}</span>
+      <span class="pill ${p.dir==="LONG"?"c":"e"}">${p.open?"HOLDING":p.dir}</span>
+    </div>
+    <div class="pcPnl ${win?"gain":"loss"}">${usd(p.total,{plus:true})}</div>
+    <div class="pcMeta">
+      <span>${dstr(p.t0)}</span><i></i><span>${durTxt(span)}</span><i></i><span>${p.fills.length} fill${p.fills.length===1?"":"s"}</span>
+    </div>
+    <div class="pcBar"><i style="width:0" data-w="${clamp(Math.abs(p.total)/maxAbs()*100,4,100).toFixed(1)}"></i></div>
+    <button class="pcGo">${ic("play")}Replay</button>
+  </div>`;
+}
+function durTxt(ms){ return dur(ms); }
+function maxAbs(){ return Math.max.apply(null,runPlays.map(p=>Math.abs(p.total)))||1; }
+
+function paintPlays(){
+  const w=runW, arc=archetype(w), CH=(window.ArcChars?ArcChars.get(arc.id):{name:arc.n});
+  const wins=runPlays.filter(p=>p.total>0).length;
+  $("#runRoot").innerHTML=`
+  <div class="whead" style="padding-top:22px">
+    <div class="idrow">
+      <span class="avatar"><canvas id="runav"></canvas></span>
+      <div class="addr"><div class="a"><span class="txt">${shortA(w.addr)}</span></div>
+        <div class="meta"><span>${CH.name}</span><i></i><span>${runPlays.length} trades to replay</span><i></i>
+          <span>${wins} in profit</span></div></div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="ibtn" id="runBack" title="Another wallet">${ic("search")}</button>
+        <button class="btn ghost" data-go="wallet" data-addr="${w.addr}">${ic("wallet")}<span class="hideSm">Full wallet</span></button>
+      </div>
+    </div>
+  </div>
+  <section style="margin-top:20px">
+    <div class="sechead"><div class="t"><span class="eyebrow">Pick a play</span><h2>Biggest moves first</h2>
+      <p>Open positions are included — you can replay a trade that hasn't finished yet.</p></div></div>
+    ${runPlays.length?`<div class="plays" id="playsGrid">${runPlays.slice(0,24).map(playCard).join("")}</div>`
+      :`<div class="empty"><div class="ei">${ic("search")}</div><h3>No trades to replay</h3>
+        <p>This wallet hasn't filled any orders on Arcus yet.</p></div>`}
+  </section>
+  <div id="playerMount"></div>`;
+  const av=$("#runav"); if(av) character(av,arc.id,52);
+  setTimeout(()=>$$("#playsGrid .pcBar i").forEach(i=>i.style.width=i.dataset.w+"%"),80);
+  $("#runBack").addEventListener("click",()=>{ location.hash="#/run"; });
+  const grid=$("#playsGrid");
+  if(grid) grid.addEventListener("click",e=>{ const c2=e.target.closest("[data-play]"); if(c2) openPlay(+c2.dataset.play); });
+  reveal($("#runRoot")); glow($("#runRoot"));
+}
+
+async function openPlay(idx){
+  const p=runPlays[idx]; if(!p) return;
+  const mount=$("#playerMount");
+  mount.innerHTML=`<section style="margin-top:34px"><div class="scanner" style="padding:30px">
+    <div class="scanline"><i></i></div><div class="st">Fetching ${p.m} candles for this window…</div></div></section>`;
+  mount.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"});
+  const span=Math.max(p.t1-p.t0, 36e5);
+  const pad=span*0.22;
+  const [tfName,tfMs]=pickTF(span+pad*2);
+  const to=Math.round((p.t1+pad)*1000);
+  const countback=clamp(Math.ceil((span+pad*2)/tfMs)+6, 24, 1400);
+  const r=await safe(api(`/v1/candles?market=${p.m}&timeframe=${tfName}&countback=${countback}&to=${to}`,300000),null);
+  let bars=((r&&r.candles)||[]).map(x=>({t:Math.round(N(x.openTime)/1000),o:N(x.open),h:N(x.high),l:N(x.low),c:N(x.close)}))
+    .filter(b=>isFinite(b.t)&&b.h>0).sort((a,b)=>a.t-b.t);
+  bars=bars.filter(b=>b.t>=p.t0-pad && b.t<=p.t1+pad);
+  if(bars.length<6){
+    mount.innerHTML=`<section style="margin-top:34px"><div class="empty"><div class="ei">${ic("alert")}</div>
+      <h3>Not enough price history</h3><p>Arcus didn't return candles covering this window for ${p.m}.</p></div></section>`;
+    return;
+  }
+  mount.innerHTML=`<section style="margin-top:34px" id="playerSec">
+    <div class="sechead"><div class="t"><span class="eyebrow">History run</span>
+      <h2>${p.m} · ${p.open?"still holding":p.dir.toLowerCase()}</h2>
+      <p>${p.fills.length} fill${p.fills.length===1?"":"s"} over ${durTxt(p.t1-p.t0)}, on ${tfName} candles.</p></div></div>
+    <div class="player">
+      <div class="stage" id="stage"><canvas id="runCanvas"></canvas>
+        <div class="recbar" id="recBar" hidden><i></i><span>Rendering video…</span></div></div>
+      <div class="pctrl">
+        <button class="ibtn" id="rPlay" title="Play / pause">${ic("pause")}</button>
+        <input type="range" id="rScrub" min="0" max="1000" value="0" aria-label="Scrub">
+        <div class="seg" id="rRatio">
+          <button data-r="wide" class="on">16:9</button><button data-r="tall">9:16</button></div>
+      </div>
+      <div class="pactions">
+        <button class="btn pri" id="rVideo">${ic("film")}Download video</button>
+        <button class="btn ghost" id="rFrame">${ic("dl")}Save frame</button>
+        <button class="btn ghost" id="rShare">${ic("xlogo")}Share on X</button>
+      </div>
+      <p class="dim3" style="font-size:12px">Rendering records in real time — about ${RUN_SECONDS} seconds. Keep this tab in front while it runs.</p>
+    </div></section>`;
+  const cv=$("#runCanvas");
+  RP=Replay(cv,p,bars,runW);
+  RP.size(runRatio);
+  $("#stage").dataset.ratio=runRatio;
+  runT=0; startRun();
+
+  $("#rPlay").addEventListener("click",()=>{ runPlaying?stopRun():startRun(); });
+  $("#rScrub").addEventListener("input",e=>{ stopRun(); runT=+e.target.value/1000; RP.render(runT); });
+  $("#rRatio").addEventListener("click",e=>{ const b=e.target.closest("[data-r]"); if(!b) return;
+    $$("#rRatio button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+    runRatio=b.dataset.r; RP.size(runRatio); $("#stage").dataset.ratio=runRatio; RP.render(runT); });
+  $("#rVideo").addEventListener("click",()=>exportVideo(p));
+  $("#rFrame").addEventListener("click",()=>saveFrame(p));
+  $("#rShare").addEventListener("click",()=>shareRun(p));
+}
+
+function startRun(){
+  if(runPlaying||!RP) return;
+  runPlaying=true; $("#rPlay").innerHTML=ic("pause");
+  if(runT>=1) runT=0;
+  runT0=performance.now()-runT*RUN_SECONDS*1000;
+  const step=()=>{
+    if(!runPlaying) return;
+    runT=clamp((performance.now()-runT0)/(RUN_SECONDS*1000),0,1);
+    RP.render(runT);
+    const s=$("#rScrub"); if(s) s.value=String(Math.round(runT*1000));
+    if(runT>=1){ stopRun(); return; }
+    runRaf=requestAnimationFrame(step);
+  };
+  runRaf=requestAnimationFrame(step);
+}
+function stopRun(){ runPlaying=false; if(runRaf) cancelAnimationFrame(runRaf); runRaf=null;
+  const b=$("#rPlay"); if(b) b.innerHTML=ic("play"); }
+
+function pickMime(){
+  const types=["video/mp4;codecs=avc1.42E01E","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"];
+  if(!window.MediaRecorder) return null;
+  return types.find(t=>{ try{ return MediaRecorder.isTypeSupported(t); }catch(e){ return false; } })||null;
+}
+async function exportVideo(p){
+  if(runRec||!RP) return;
+  const cv=$("#runCanvas"), mime=pickMime();
+  if(!mime||!cv.captureStream){ toast("This browser can't record video — use Save frame"); return; }
+  stopRun(); runRec=true;
+  const bar=$("#recBar"), fill=$("#recBar i"), btn=$("#rVideo");
+  bar.hidden=false; btn.disabled=true;
+  try{
+    const stream=cv.captureStream(30);
+    const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9e6});
+    const chunks=[]; rec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+    const done=new Promise(res=>{ rec.onstop=res; });
+    rec.start(120);
+    const t0=performance.now(), total=RUN_SECONDS*1000+700;
+    await new Promise(res=>{
+      const tick=()=>{
+        const el2=performance.now()-t0, pr=clamp(el2/(RUN_SECONDS*1000),0,1);
+        RP.render(pr); fill.style.width=(el2/total*100).toFixed(1)+"%";
+        if(el2<total) requestAnimationFrame(tick); else res();
+      };
+      requestAnimationFrame(tick);
+    });
+    rec.stop(); await done;
+    const blob=new Blob(chunks,{type:mime});
+    const ext=mime.indexOf("mp4")>=0?"mp4":"webm";
+    const fn=`arclight-${p.m.replace("-USD","").toLowerCase()}-${runRatio==="wide"?"16x9":"9x16"}.${ext}`;
+    let host=null; try{ host=(window.claude&&claude.use)?await claude.use("downloads"):null; }catch(_){}
+    if(host){
+      try{ await host.save({filename:fn,data:blob}); toast("Video saved"); }
+      catch(err){ toast(err&&err.code==="declined"?"Save cancelled":"Couldn't save the video"); }
+    } else {
+      const u=URL.createObjectURL(blob), a=el("a"); a.href=u; a.download=fn;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(u),8000); toast("Video saved to downloads");
+    }
+  }catch(e){ toast("Recording failed — try Save frame instead"); }
+  finally{ runRec=false; bar.hidden=true; fill.style.width="0%"; btn.disabled=false; RP.render(runT); }
+}
+async function saveFrame(p){
+  const cv=$("#runCanvas");
+  RP.render(Math.max(runT,0.97));
+  cv.toBlob(async b=>{
+    const fn=`arclight-${p.m.replace("-USD","").toLowerCase()}.png`;
+    let host=null; try{ host=(window.claude&&claude.use)?await claude.use("downloads"):null; }catch(_){}
+    if(host){ try{ await host.save({filename:fn,data:b}); toast("Frame saved"); }catch(e){ toast("Save cancelled"); } return; }
+    const u=URL.createObjectURL(b), a=el("a"); a.href=u; a.download=fn;
+    document.body.appendChild(a); a.click(); a.remove(); toast("Frame saved");
+  },"image/png");
+}
+function shareRun(p){
+  const who=shortA(runAddr);
+  const verb = p.total>=0 ? "banked" : "torched";
+  const txt=`${who} ${verb} ${usdExact(Math.abs(p.total))} ${p.open?"and is still holding":"on one"} ${p.m} ${p.dir.toLowerCase()} on Arcus.\n\nWatch it play out 👇`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(SITE_URL||REF_LINK)}`,"_blank","noopener");
 }
 
 /* ============================================================
