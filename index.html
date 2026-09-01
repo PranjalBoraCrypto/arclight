@@ -173,13 +173,13 @@ ul{margin:0;padding:0;list-style:none}
 #topbar .logo{width:30px;height:30px;border-radius:9px;background:#234728;display:grid;place-items:center;flex:none}
 #topbar .name{font-family:"Archivo";font-weight:700;font-size:16px;letter-spacing:-.02em}
 #topbar .grow{flex:1}
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(7,1fr);
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(8,1fr);
   background:color-mix(in srgb,var(--ground) 93%,transparent);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 7px;color:var(--ink-3);
-  font-size:8.5px;letter-spacing:-.01em;font-weight:500;transition:color .2s;position:relative}
-.tab svg{width:19px;height:19px;transition:transform .34s cubic-bezier(.2,1.5,.4,1)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 1px 7px;color:var(--ink-3);
+  font-size:8px;letter-spacing:-.01em;font-weight:500;transition:color .2s;position:relative}
+.tab svg{width:18px;height:18px;transition:transform .34s cubic-bezier(.2,1.5,.4,1)}
 .tab.on{color:var(--brand)}
 .tab.on svg{transform:translateY(-2px) scale(1.12)}
 .tab.on::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:20px;height:2px;border-radius:0 0 3px 3px;background:var(--brand)}
@@ -1089,6 +1089,153 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 @keyframes scan{0%{transform:translateX(-110%)}100%{transform:translateX(240%)}}
 .scanner .st{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-3);min-height:18px}
 
+/* ================= CARRY / FUNDING ================= */
+.chero{padding:42px 0 4px;max-width:62ch}
+.chero h1{font-size:clamp(30px,5.4vw,52px);letter-spacing:-.035em;line-height:1.02;margin-top:12px}
+.chero .lede{color:var(--ink-2);font-size:clamp(15px,2vw,17.5px);line-height:1.55;margin-top:16px;max-width:56ch}
+.chero .lede b{color:var(--ink)}
+
+.ctlbar{position:sticky;top:0;z-index:40;margin-top:24px;display:flex;flex-wrap:wrap;gap:14px 20px;align-items:flex-end;
+  padding:14px 16px;border-radius:16px;border:1px solid var(--rule);
+  background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow-1)}
+.cfield{display:flex;flex-direction:column;gap:7px;min-width:0}
+.cfield.grow{flex:1;min-width:150px}
+.cfield>label{display:flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;
+  font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.cfield>label b{color:var(--brand);font-family:"Archivo";letter-spacing:0;font-size:12px}
+.minput{display:flex;align-items:center;gap:2px;height:34px;padding:0 11px;border-radius:11px;
+  border:1px solid var(--rule);background:var(--surface-2);transition:border-color .2s,box-shadow .2s}
+.minput:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-glow)}
+.minput span{color:var(--ink-3);font-family:"JetBrains Mono",monospace;font-size:13px}
+.minput input{width:88px;background:none;border:0;outline:0;color:var(--ink);
+  font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:500;padding:0}
+.ctlbar .seg button{padding:0 11px;height:30px;font-size:12px}
+.ctlbar .sl{margin-bottom:4px}
+
+/* ---- lead card ---- */
+.cbest{position:relative;margin-top:22px;border-radius:22px;overflow:hidden;
+  border:1px solid var(--rule-2);background:linear-gradient(155deg,var(--surface-2),var(--surface))}
+.cbest::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(700px circle at 92% -20%,var(--brand-glow),transparent 60%)}
+.cbflow{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.85}
+.cbin{position:relative;padding:24px;display:flex;flex-direction:column;gap:20px;pointer-events:none}
+.cbin>*,.cbin a,.cbin button,.cbin [data-coin]{pointer-events:auto}
+.cbtop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cbmk{display:flex;align-items:center;gap:10px;margin-top:9px;flex-wrap:wrap;cursor:pointer}
+.cbmk .tk{width:34px;height:34px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;
+  font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:600;color:var(--ink-2);flex:none;
+  border:1px solid var(--rule);transition:.2s}
+.cbmk:hover .tk{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.cbmk>b{font-family:"Archivo";font-size:22px;letter-spacing:-.02em}
+.cbside{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:8px;
+  font-size:11px;font-weight:700;letter-spacing:.02em}
+.cbside svg{width:13px;height:13px}
+.cbside.s{background:var(--loss-bg);color:var(--loss)}
+.cbside.l{background:var(--gain-bg);color:var(--gain)}
+.cbclock{display:inline-flex;align-items:center;gap:8px;cursor:help;padding:7px 12px;border-radius:100px;
+  border:1px solid var(--rule-2);background:color-mix(in srgb,var(--surface) 84%,transparent);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.cbclock svg{width:14px;height:14px;color:var(--brand);flex:none}
+.cbclock b{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.cbflowleg{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px;padding-top:13px;
+  border-top:1px solid var(--rule)}
+.cbflowleg .fl{font-size:12px;font-weight:600;padding:3px 9px;border-radius:8px;white-space:nowrap}
+.cbflowleg .fl.pay{background:var(--loss-bg);color:var(--loss)}
+.cbflowleg .fl.get{background:var(--gain-bg);color:var(--gain)}
+.cbflowleg .fa{color:var(--brand);font-size:15px;font-weight:700}
+.cbflowleg s{text-decoration:none;color:var(--ink-3);font-size:11.5px;flex-basis:100%}
+.cap{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500}
+
+.cbmid{display:grid;gap:20px}
+.cbpay{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cbpay>.cap{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.seg.tiny{padding:2px}
+.seg.tiny button{height:22px;padding:0 8px;font-size:10.5px;border-radius:8px;letter-spacing:0;text-transform:none;
+  font-family:"Archivo"}
+.cbbig{font-family:"Archivo";font-size:clamp(38px,6.6vw,62px);letter-spacing:-.04em;line-height:1;
+  font-variant-numeric:tabular-nums;margin-top:2px}
+.cbpay .sub{color:var(--ink-2);font-size:13px;max-width:46ch}
+.cbtick{display:inline-flex;align-items:center;gap:8px;margin-top:9px;padding:6px 11px;border-radius:100px;
+  border:1px solid var(--rule-2);background:var(--surface);width:fit-content;
+  font-size:12.5px;color:var(--ink-2);font-family:"JetBrains Mono",monospace}
+.cbtick i{display:grid;place-items:center;color:var(--brand)}
+.cbtick svg{width:14px;height:14px;animation:coinspin 3.4s linear infinite}
+@keyframes coinspin{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+@media (prefers-reduced-motion:reduce){.cbtick svg{animation:none}}
+
+.cbgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+.cbnum{background:var(--surface);padding:13px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cbnum .big{font-family:"Archivo";font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;
+  font-variant-numeric:tabular-nums}
+.cbnum .sub{color:var(--ink-3);font-size:11.5px;line-height:1.35}
+.cbwarn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:13px;
+  background:var(--loss-bg);border:1px solid color-mix(in srgb,var(--loss) 32%,transparent);
+  color:var(--ink-2);font-size:13px;line-height:1.45}
+.cbwarn svg{width:17px;height:17px;color:var(--loss);flex:none;margin-top:1px}
+.cbwarn b{color:var(--loss)}
+
+/* ---- the board ---- */
+.carrygrid{display:grid;gap:14px;grid-template-columns:1fr}
+.ccard{position:relative;border-radius:17px;border:1px solid var(--rule);background:var(--surface);
+  padding:15px;display:flex;flex-direction:column;gap:13px;overflow:hidden;
+  transition:border-color .25s,transform .25s cubic-bezier(.2,.9,.3,1),box-shadow .25s}
+.ccard::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;transition:opacity .25s;opacity:.55}
+.ccard.s::after{background:var(--loss)} .ccard.l::after{background:var(--gain)}
+.ccard:hover{border-color:var(--rule-2);box-shadow:var(--shadow-2)}
+.ccard:hover::after{opacity:1}
+.cctop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ccname{display:flex;align-items:center;gap:9px;min-width:0;cursor:pointer}
+.ccname .tk{width:30px;height:30px;border-radius:9px;background:var(--surface-3);display:grid;place-items:center;
+  font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:600;color:var(--ink-2);flex:none;
+  border:1px solid var(--rule);transition:.2s}
+.ccname:hover .tk{border-color:var(--brand);color:var(--brand)}
+.ccname>span{display:flex;flex-direction:column;min-width:0}
+.ccname b{font-size:14.5px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ccname s{text-decoration:none;color:var(--ink-3);font-size:11px;font-family:"JetBrains Mono",monospace}
+.ccnums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 10px}
+.ccnums>div{display:flex;flex-direction:column;gap:1px;min-width:0}
+.ccnums b{font-family:"Archivo";font-size:17px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ccnums s{text-decoration:none;color:var(--ink-3);font-size:10.5px}
+.ccspark{height:44px;border-radius:9px;overflow:hidden;background:var(--surface-2);border:1px solid var(--rule)}
+.ccleg{display:flex;gap:14px;flex-wrap:wrap;color:var(--ink-3);font-size:10.5px}
+.ccleg span{display:inline-flex;align-items:center;gap:5px}
+.ccleg .sw{width:8px;height:8px;border-radius:2px;display:block;flex:none}
+.ccleg .sw.g{background:var(--gain)} .ccleg .sw.r{background:var(--loss)}
+.ccfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:11px;
+  border-top:1px solid var(--rule);font-size:11.5px;flex-wrap:wrap}
+.ccfoot .go{display:inline-flex;align-items:center;gap:6px;color:var(--brand);font-weight:600;cursor:pointer;
+  transition:gap .2s}
+.ccfoot .go svg{width:13px;height:13px}
+.ccard:hover .ccfoot .go{gap:9px}
+.ccflags{display:flex;gap:6px;flex-wrap:wrap;margin-top:-4px}
+.fpill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:100px;
+  font-size:10.5px;font-weight:600;cursor:help;border:1px solid transparent;transition:.2s}
+.fpill svg{width:11px;height:11px}
+.fpill.flip,.fpill.flipped{background:var(--loss-bg);color:var(--loss);
+  border-color:color-mix(in srgb,var(--loss) 26%,transparent)}
+.fpill.thin{background:color-mix(in srgb,var(--warn) 13%,transparent);color:var(--warn);
+  border-color:color-mix(in srgb,var(--warn) 26%,transparent)}
+.fpill:hover{transform:translateY(-1px)}
+.ccard.flagged::after{opacity:.3}
+.warnpill{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:100px;font-size:9.5px;font-weight:700;
+  background:var(--loss-bg);color:var(--loss);font-family:"Archivo";letter-spacing:.02em;vertical-align:1px}
+
+/* ---- the honest bit ---- */
+.truths{display:grid;gap:12px;grid-template-columns:1fr}
+.truth{display:flex;gap:13px;align-items:flex-start;padding:16px;border-radius:15px;
+  border:1px solid var(--rule);background:var(--surface);transition:border-color .25s,transform .25s}
+.truth:hover{border-color:var(--rule-2);transform:translateY(-2px)}
+.truth .ti{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;
+  background:var(--surface-3);color:var(--brand);border:1px solid var(--rule)}
+.truth .ti svg{width:17px;height:17px}
+.truth b{font-size:14.5px;letter-spacing:-.01em;display:block}
+.truth p{color:var(--ink-2);font-size:13.2px;line-height:1.55;margin-top:5px}
+.truth p b{display:inline;font-size:inherit;color:var(--ink)}
+
 /* ================= DESKTOP ================= */
 @media (min-width:900px){
   #topbar,#tabs{display:none}
@@ -1116,6 +1263,15 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .dash .sticky{position:sticky;top:26px}
   .mcards{display:none}
   .hero{padding:84px 0 8px}
+  .cbin{padding:30px}
+  .cbmid{grid-template-columns:1.05fr 1fr;align-items:start;gap:30px}
+  .cbgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .carrygrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .truths{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ctlbar{top:12px;flex-wrap:nowrap;gap:22px}
+}
+@media (min-width:1240px){
+  .carrygrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 /* ================= MOBILE ================= */
 @media (max-width:899px){
@@ -1197,6 +1353,36 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .searchbox .field{padding:5px 5px 5px 13px;border-radius:15px}
   .searchbox input{font-size:16px;padding:11px 0}
   .btn{padding:11px 15px;font-size:14px}
+  .chero{padding:24px 0 2px}
+  .ctlbar{position:static;padding:13px;gap:13px 12px;border-radius:14px;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .ctlbar .cfield{flex:1 1 100%}
+  .ctlbar .cfield.grow{flex:1 1 100%}
+  .cbclock{padding:6px 10px;gap:6px}
+  .cbclock .cap{font-size:9px}
+  .cbclock b{font-size:14px}
+  .cbflowleg{margin-top:12px;padding-top:11px;gap:7px}
+  .cbflowleg .fl{font-size:11px;padding:3px 8px}
+  .ctlbar .seg{width:100%}
+  .ctlbar .seg button{flex:1;padding:0 6px;font-size:11px;white-space:nowrap}
+  .minput input{width:100%;flex:1;min-width:0}
+  .minput{width:100%}
+  .cbin{padding:16px;gap:16px}
+  .cbmk>b{font-size:18px}
+  .cbclock b{font-size:17px}
+  .cbbig{font-size:clamp(30px,10vw,42px)}
+  .cbgrid{border-radius:12px}
+  .cbnum{padding:11px 11px}
+  .cbnum .sub{font-size:10.5px}
+  .cbtick{font-size:11.5px;padding:5px 10px}
+  .cbpay .sub{font-size:12px}
+  .ccard{padding:13px;border-radius:15px}
+  .ccnums b{font-size:15.5px}
+  .ccnums{gap:10px 8px}
+  .ccname b{font-size:13.5px}
+  .ccfoot{font-size:10.5px}
+  .truth{padding:14px;gap:11px}
+  .truth p{font-size:12.6px}
+  .truth .ti{width:30px;height:30px;border-radius:10px}
   .modal{border-radius:20px 20px 0 0;max-height:92vh;margin-top:auto;transform:translateY(100%)}
   .ovl{align-items:flex-end;padding:0}
   .ovl.on .modal{transform:none}
@@ -1249,6 +1435,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 <g id="i-ext" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-8.5 8.5"/><path d="M18 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></g>
 <g id="i-rf" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L20 15.5"/><path d="M20 20v-4.5h-4.5"/></g>
 <g id="i-coin" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v8.8M14.3 9.6c-.5-.7-1.4-1-2.3-1-1.3 0-2.3.7-2.3 1.8 0 2.4 4.6 1.3 4.6 3.7 0 1.1-1 1.9-2.3 1.9-1 0-1.9-.4-2.4-1.1"/></g>
+<g id="i-fund" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5A8.5 8.5 0 0 1 18 6.2M20.5 14.5A8.5 8.5 0 0 1 6 17.8"/><path d="M3.2 5.6v4h4M20.8 18.4v-4h-4"/><circle cx="12" cy="12" r="2.6"/></g>
 <g id="i-radar" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><path d="M12 12l6.4-6.4"/><circle cx="16.4" cy="7.6" r="1.5" fill="currentColor" stroke="none"/></g>
 <g id="i-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-6 7 6 7"/><path d="M20 4v16"/></g>
 <g id="i-star" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1L3.4 9.9l6-.8z"/></g>
@@ -1269,6 +1456,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   <button class="railbtn" data-go="wallet"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg><span class="lb">Wallet</span></button>
   <button class="railbtn" data-go="run"><svg viewBox="0 0 24 24"><use href="#i-film"/></svg><span class="lb">History run</span></button>
   <button class="railbtn" data-go="radar"><svg viewBox="0 0 24 24"><use href="#i-radar"/></svg><span class="lb">Radar</span></button>
+  <button class="railbtn" data-go="carry"><svg viewBox="0 0 24 24"><use href="#i-fund"/></svg><span class="lb">Funding</span></button>
   <button class="railbtn" data-go="markets"><svg viewBox="0 0 24 24"><use href="#i-act"/></svg><span class="lb">Markets</span></button>
   <button class="railbtn" data-go="leaders"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span class="lb">Leaderboard</span></button>
   <button class="railbtn" data-go="learn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><span class="lb">What is Arcus?</span></button>
@@ -1369,6 +1557,9 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 <!-- ================= RADAR ================= -->
 <div class="page" id="p-radar"><div class="wrap" id="radarRoot"></div></div>
 
+<!-- ================= FUNDING / CARRY ================= -->
+<div class="page" id="p-carry"><div class="wrap" id="carryRoot"></div></div>
+
 <!-- ================= HISTORY RUN ================= -->
 <div class="page" id="p-run"><div class="wrap" id="runRoot"></div></div>
 
@@ -1400,6 +1591,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
       <div class="fcol"><h4>Explore</h4>
         <a href="#/" data-go="home">Search a wallet</a>
         <a href="#/radar" data-go="radar">Radar</a>
+        <a href="#/carry" data-go="carry">Funding</a>
         <a href="#/run" data-go="run">History run</a>
         <a href="#/markets" data-go="markets">Perps activity</a>
         <a href="#/leaders" data-go="leaders">Leaderboard</a>
@@ -1430,6 +1622,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   <button class="tab" data-go="wallet"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg>Wallet</button>
   <button class="tab" data-go="run"><svg viewBox="0 0 24 24"><use href="#i-film"/></svg>Replay</button>
   <button class="tab" data-go="radar"><svg viewBox="0 0 24 24"><use href="#i-radar"/></svg>Radar</button>
+  <button class="tab" data-go="carry"><svg viewBox="0 0 24 24"><use href="#i-fund"/></svg>Funding</button>
   <button class="tab" data-go="markets"><svg viewBox="0 0 24 24"><use href="#i-act"/></svg>Markets</button>
   <button class="tab" data-go="leaders"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg>Ranks</button>
   <button class="tab" data-go="learn"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg>Learn</button>
@@ -2197,7 +2390,7 @@ function spark(vals,w,h,color,fill){
 /* ============================================================
    ROUTER
    ============================================================ */
-const PAGES=["home","wallet","radar","run","markets","leaders","learn"];
+const PAGES=["home","wallet","radar","carry","run","markets","leaders","learn"];
 let current="home", loaded={};
 function setNav(p){
   $$("[data-go]").forEach(b=>{ const on=b.dataset.go===p; b.classList.toggle("on",on); });
@@ -2206,12 +2399,14 @@ function show(p){
   if(!PAGES.includes(p)) p="home";
   if(current==="run"&&p!=="run"&&typeof stopRun==="function") stopRun();
   if(current==="wallet"&&p!=="wallet"&&typeof stopCast==="function") stopCast();
+  if(current==="carry"&&p!=="carry"&&typeof stopCarry==="function") stopCarry();
   if(current==="learn"&&p!=="learn"&&ssRaf){ cancelAnimationFrame(ssRaf); ssRaf=null; }
   current=p;
   PAGES.forEach(x=>$("#p-"+x).classList.toggle("on",x===p));
   setNav(p);
   window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"});
   if(p==="radar"&&!loaded.radar){loaded.radar=1;renderRadar();}
+  if(p==="carry"&&!loaded.carry){loaded.carry=1;renderCarry();}
   if(p==="markets"&&!loaded.markets){loaded.markets=1;renderMarkets();}
   if(p==="leaders"&&!loaded.leaders){loaded.leaders=1;renderLeaders();}
   if(p==="learn"&&!loaded.learn){loaded.learn=1;renderLearn();}
@@ -2977,6 +3172,9 @@ function renderLearn(){
         </div><span class="hintline" id="ssHint">Push it — it settles back to the real rate</span></div>
         <div class="fundrows" id="fundRows"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px" id="ssPick"></div>
+        <div style="display:flex;justify-content:center;margin-top:16px">
+          <button class="btn ghost" data-go="carry"><svg viewBox="0 0 24 24"><use href="#i-fund"/></svg>See which markets pay the most</button>
+        </div>
       </div>
     </div>
   </section>
@@ -5819,6 +6017,430 @@ function magnetise(scope,sel,strength){
     },{passive:true});
     n.addEventListener("pointerleave",()=>{ n.style.transform=""; });
   });
+}
+
+/* ============================================================
+   CARRY — funding as income, with the arithmetic shown.
+   Every figure is computed from the market's own realised funding
+   history (hourly, up to 33 days) and the exchange's published fee
+   tiers. Nothing is modelled, projected or smoothed.
+   ============================================================ */
+let carryData=null, carryBusy=false, carryRaf=null, carryIO=null;
+let carryMargin=1000, carryLev=3, carryMaker=true, carrySort="apr", carryHold=720;
+const HOURS_Y=24*365;
+
+function fundStats(rates,n){
+  const a=rates.slice(0,n).map(r=>r.v);
+  if(!a.length) return null;
+  const mean=a.reduce((x,y)=>x+y,0)/a.length;
+  const sign=Math.sign(mean)||1;
+  const same=a.filter(v=>Math.sign(v)===sign).length/a.length;
+  const sd=Math.sqrt(a.reduce((s,v)=>s+(v-mean)*(v-mean),0)/a.length);
+  return {mean, hours:a.length, consistency:same, sd,
+          min:Math.min.apply(null,a), max:Math.max.apply(null,a),
+          apr:mean*HOURS_Y};
+}
+
+async function carryScan(onStep){
+  const ms=await markets();
+  const pick=ms.filter(m=>m.status==="ONLINE"&&m.oi>0)
+               .sort((a,b)=>b.oi-a.oi).slice(0,18);
+  const feeR=await safe(api("/v1/feeTiers",600000),null);
+  const base=(feeR&&feeR.tiers&&feeR.tiers[0])||{maker_fee_ppm:0,taker_fee_ppm:225};
+  const fees={maker:(base.maker_fee_ppm||0)/1e6, taker:(base.taker_fee_ppm||225)/1e6};
+  const rows=[]; let done=0;
+  const q=pick.slice();
+  async function worker(){
+    while(q.length){
+      const m=q.shift();
+      onStep&&onStep(m.name, ++done, pick.length);
+      const r=await safe(api(`/v1/fundingRates?market=${m.name}&limit=800`,600000),null);
+      const rates=((r&&r.fundingRates)||[])
+        .map(x=>({t:N(x.time)/1000, v:N(x.fundingRate)}))
+        .filter(x=>isFinite(x.v)&&x.t>0)
+        .sort((a,b)=>b.t-a.t);                       /* newest first */
+      if(rates.length<48) continue;
+      const w={d1:fundStats(rates,24), d7:fundStats(rates,168), d30:fundStats(rates,720)};
+      if(!w.d7) continue;
+      rows.push({m, rates, w, spark:rates.slice(0,168).map(x=>x.v).reverse()});
+    }
+  }
+  await Promise.all([worker(),worker(),worker()]);
+  return {rows, fees, at:Date.now()};
+}
+
+/* what the numbers mean for a given size */
+function carryMath(row,margin,lev,maker,fees){
+  const s=row.w.d7, notional=margin*lev;
+  const side = s.mean>0 ? "SHORT" : "LONG";          /* you take the side that collects */
+  const rate = Math.abs(s.mean);                     /* per hour, on notional */
+  const perHr = notional*rate;
+  const perDay = perHr*24, perMonth=perDay*30, perYear=perDay*365;
+  const feeRate = maker? fees.maker : fees.taker;
+  const roundTrip = notional*feeRate*2;
+  const breakEvenHrs = perHr>0 ? roundTrip/perHr : Infinity;
+  const aprOnMargin = margin>0 ? perYear/margin : 0;
+  /* how far price can move before the exchange closes an UNHEDGED position */
+  const liqMove = lev>0 ? 100/lev : 100;
+  const nowRate = row.m.fr;
+  const nowAligned = Math.sign(nowRate)===Math.sign(s.mean) && Math.abs(nowRate)>0;
+  /* worst single hour in the window, as a cost */
+  const worstHr = notional*Math.min(0, s.mean>0 ? -Math.abs(s.min) : -Math.abs(s.max));
+  return {side, rate, perHr, perDay, perMonth, perYear, roundTrip, breakEvenHrs,
+          aprOnMargin, liqMove, notional, nowRate, nowAligned, worstHr, feeRate};
+}
+
+/* ---------- the page ---------- */
+async function renderCarry(force){
+  const root=$("#carryRoot");
+  if(carryBusy) return;
+  if(carryData && !force && Date.now()-carryData.at<300000){ paintCarry(); return; }
+  carryBusy=true;
+  root.innerHTML=`<section style="margin-top:26px">
+    <div class="sechead"><div class="t"><span class="eyebrow">Funding</span>
+      <h2>Reading every hourly payment</h2>
+      <p>Pulling up to 33 days of funding history for the deepest markets on Arcus.</p></div></div>
+    <div id="clHost" style="height:210px"></div></section>`;
+  const L=radarLoader($("#clHost"));
+  try{ carryData=await carryScan((n,i,t)=>L.step(n,i,t)); L.stop(); paintCarry(); }
+  catch(e){
+    L.stop();
+    root.innerHTML=`<div class="empty" style="padding-top:70px"><div class="ei">${ic("alert")}</div>
+      <h3>${e&&e.message==="RATE"?"Arcus is rate-limiting this device":"Couldn't read funding history"}</h3>
+      <p>Wait a moment and try again.</p>
+      <button class="btn pri" id="carryRetry">${ic("rf")}Try again</button></div>`;
+    const b=$("#carryRetry"); if(b) b.addEventListener("click",()=>{cache.clear();renderCarry(true);});
+  }
+  carryBusy=false;
+}
+
+function hrsText(h){
+  if(!isFinite(h)) return "never";
+  if(h<=0) return "instantly";
+  if(h<1) return Math.round(h*60)+" min";
+  if(h<48) return h.toFixed(1)+" hr";
+  return (h/24).toFixed(1)+" days";
+}
+const HOLDS=[[24,"a day"],[168,"a week"],[720,"a month"],[8760,"a year"]];
+function holdLabel(h){ const f=HOLDS.find(x=>x[0]===h); return f?f[1]:h+" hr"; }
+
+function stopCarry(){
+  if(carryRaf){ cancelAnimationFrame(carryRaf); carryRaf=null; }
+  if(carryIO){ carryIO.disconnect(); carryIO=null; }
+}
+
+function paintCarry(){
+  stopCarry();
+  const D=carryData, root=$("#carryRoot");
+  const rows=D.rows.map(r=>({r, mth:carryMath(r,carryMargin,carryLev,carryMaker,D.fees)}))
+    .filter(x=>x.mth.perYear>0);
+  const sorted=rows.slice().sort((a,b)=>{
+    if(carrySort==="apr") return b.mth.aprOnMargin-a.mth.aprOnMargin;
+    if(carrySort==="steady") return b.r.w.d7.consistency-a.r.w.d7.consistency;
+    return b.r.m.oi-a.r.m.oi;
+  });
+  /* Depth and steadiness gates, both drawn from the scanned set itself rather
+     than a made-up threshold: a market can top the yield sort and still be
+     untradeable if it's thin, or meaningless if the rate keeps flipping. */
+  const ois=D.rows.map(r=>r.m.oi).sort((a,b)=>a-b);
+  const q=f=>ois.length? ois[Math.min(ois.length-1,Math.floor(ois.length*f))] : 0;
+  const medOI=q(0.5), thinOI=q(0.25);
+  const STEADY=0.75;
+  const okDepth=x=>x.r.m.oi>=medOI, okSteady=x=>x.r.w.d7.consistency>=STEADY;
+  const best=sorted.find(x=>okDepth(x)&&okSteady(x)) || sorted.find(okSteady) || sorted[0];
+  if(!best){ root.innerHTML=`<div class="empty" style="padding-top:70px"><div class="ei">${ic("alert")}</div>
+    <h3>Funding is flat right now</h3><p>No market is paying enough to be worth writing down. Check back in a few hours.</p></div>`; return; }
+
+  const bm=best.mth, bs=best.r.w.d7;
+  const grossHold = bm.perHr*carryHold;
+  const netHold   = grossHold - bm.roundTrip;
+
+  root.innerHTML=`
+  <div class="chero rv">
+    <span class="eyebrow">Funding · read ${ago(D.at)}</span>
+    <h1>Get paid to wait.</h1>
+    <p class="lede">A perpetual charges the crowded side every hour and hands the money to the other side.
+      Sit on the paying side and it bleeds you. Sit on the receiving side — <b>hedged</b> — and it's income.
+      Every number below is a market's own realised funding, not a forecast.</p>
+  </div>
+
+  <div class="ctlbar rv" id="carryCtl">
+    <div class="cfield">
+      <label>Margin <button class="info" data-tip="How much of your own money goes in. Everything on this page scales from it.">?</button></label>
+      <div class="minput"><span>$</span><input id="cMargin" type="text" inputmode="numeric" value="${num(carryMargin)}"></div>
+    </div>
+    <div class="cfield grow">
+      <label>Leverage <b id="cLevV">${carryLev}×</b>
+        <button class="info" data-tip="Funding is paid on position size, not on your margin. ${carryLev}× margin means ${carryLev}× the funding — and ${carryLev}× the risk if the position isn't hedged.">?</button></label>
+      <input type="range" class="sl" id="cLev" min="1" max="10" step="1" value="${carryLev}">
+    </div>
+    <div class="cfield">
+      <label>Order type <button class="info" data-tip="Limit orders rest on the book and pay the maker fee. Market orders take liquidity and pay the taker fee. This decides how long the position works before it has covered its own costs.">?</button></label>
+      <div class="seg" id="cFee">
+        <button data-fee="maker" class="${carryMaker?"on":""}">Limit · ${(D.fees.maker*100).toFixed(3)}%</button>
+        <button data-fee="taker" class="${carryMaker?"":"on"}">Market · ${(D.fees.taker*100).toFixed(3)}%</button>
+      </div>
+    </div>
+    <div class="cfield">
+      <label>Rank by</label>
+      <div class="seg" id="cSort">
+        ${[["apr","Yield"],["steady","Consistency"],["oi","Depth"]].map(o=>`<button data-cs="${o[0]}" class="${carrySort===o[0]?"on":""}">${o[1]}</button>`).join("")}
+      </div>
+    </div>
+  </div>
+
+  <div class="cbest rv">
+    <canvas class="cbflow" id="cbFlow"></canvas>
+    <div class="cbin">
+      <div class="cbtop">
+        <div>
+          <span class="eyebrow">${best===sorted[0]?"Paying the most right now":"Best of the ones deep enough to trade"}</span>
+          <div class="cbmk" data-coin="${best.r.m.name}">
+            <span class="tk">${best.r.m.base.slice(0,4)}</span>
+            <b>${best.r.m.name}</b>
+            <span class="cbside ${bm.side==="SHORT"?"s":"l"}">${ic(bm.side==="SHORT"?"down":"up")}${bm.side} collects</span>
+          </div>
+        </div>
+        <div class="cbclock" id="cbClock" data-tip="Funding settles once an hour. Whoever is holding the position at that moment receives it — or pays it.">
+          ${ic("clock")}<span class="cap">Next payment in</span><b id="cbCount">–</b>
+        </div>
+      </div>
+
+      <div class="cbmid">
+        <div class="cbpay">
+          <span class="cap">Hold it for <span class="seg tiny" id="cHold">${HOLDS.map(h=>`<button data-ch="${h[0]}" class="${carryHold===h[0]?"on":""}">${h[1].replace("a ","")}</button>`).join("")}</span></span>
+          <b class="cbbig ${netHold>=0?"gain":"loss"}" id="cbBig">${usd(netHold)}</b>
+          <span class="sub">after ${usd(bm.roundTrip)} of entry + exit fees, on ${usd(bm.notional)} of position</span>
+          <div class="cbtick"><i>${ic("coin")}</i><span id="cbTick">collecting ${usd(bm.perHr)} an hour</span></div>
+          <div class="cbflowleg">
+            <span class="fl ${bm.side==="SHORT"?"pay":"get"}">${bm.side==="SHORT"?"Longs pay":"Longs collect"}</span>
+            <span class="fa">${bm.side==="SHORT"?"→":"←"}</span>
+            <span class="fl ${bm.side==="SHORT"?"get":"pay"}">${bm.side==="SHORT"?"Shorts collect":"Shorts pay"}</span>
+            <s>every hour. ${usd(best.r.m.oi)} of open interest sits in this market — ${best.r.m.oi>=medOI?"mid-pack or better for depth on Arcus":"thin, so size will move the price"}.${best===sorted[0]?"":` ${sorted[0].r.m.name} shows a higher yield but ${okDepth(sorted[0])?"its rate keeps flipping":"there isn't the depth to trade it"} — it's on the board below.`}</s>
+          </div>
+        </div>
+        <div class="cbgrid">
+          <div class="cbnum"><span class="cap">Yield on margin</span>
+            <b class="big gain">${(bm.aprOnMargin*100).toFixed(1)}%</b><span class="sub">a year, at the realised rate</span></div>
+          <div class="cbnum"><span class="cap">Same sign</span>
+            <b class="big">${Math.round(bs.consistency*100)}%</b><span class="sub">of the last ${bs.hours} hours</span></div>
+          <div class="cbnum"><span class="cap">Fees covered in</span>
+            <b class="big">${hrsText(bm.breakEvenHrs)}</b><span class="sub">${carryMaker?"limit orders are free here":"round trip "+usd(bm.roundTrip)}</span></div>
+          <div class="cbnum"><span class="cap">Worst hour</span>
+            <b class="big ${bm.worstHr<0?"loss":""}">${bm.worstHr<0?usd(bm.worstHr):"none"}</b><span class="sub">${bm.worstHr<0?"the priciest hour in the window":"it never flipped in 7 days"}</span></div>
+        </div>
+      </div>
+      ${bm.nowAligned?"":`<div class="cbwarn">${ic("alert")}<span>The live rate is <b>${(bm.nowRate*100).toFixed(4)}%</b> an hour, which is the other way round from the 7-day average. Funding has just flipped — the position would be paying, not collecting, at this moment.</span></div>`}
+    </div>
+  </div>
+
+  <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">The board</span><h2>Where funding is paying</h2>
+      <p>Every market on Arcus with real open interest — ${D.rows.length} of them — ranked on realised 7-day funding. “Collects” is the side that receives the payment. Rows are flagged where the rate keeps flipping or the market is too thin to take size, and the lead card above skips both.</p></div></div>
+    <div class="carrygrid" id="carryGrid">
+      ${sorted.map((x,i)=>{
+        const r=x.r, m=x.mth, s=r.w.d7;
+        const flags=[];
+        if(s.consistency<STEADY) flags.push(["flip",`Coin-flip · the rate held its sign only ${Math.round(s.consistency*100)}% of the last 7 days, so the average here is closer to noise than income.`]);
+        if(r.m.oi<thinOI) flags.push(["thin",`Thin · ${usd(r.m.oi)} of open interest, the shallowest quarter of the markets scanned. Size will move the price against you on the way in and out.`]);
+        if(!m.nowAligned) flags.push(["flipped",`The live rate is ${(r.m.fr*100).toFixed(4)}% an hour, the opposite way from the 7-day average. Right now this side would be paying.`]);
+        return `<div class="ccard ${m.side==="SHORT"?"s":"l"}${flags.length?" flagged":""}" data-cc="${i}" style="--d:${Math.min(i,10)*45}ms">
+          <div class="cctop">
+            <div class="ccname" data-coin="${r.m.name}"><span class="tk">${r.m.base.slice(0,4)}</span>
+              <span><b>${r.m.name}</b><s>${usd(r.m.oi)} open interest</s></span></div>
+            <span class="cbside ${m.side==="SHORT"?"s":"l"}">${ic(m.side==="SHORT"?"down":"up")}${m.side}</span>
+          </div>
+          ${flags.length?`<div class="ccflags">${flags.map(f=>`<span class="fpill ${f[0]}" data-tip="${f[1]}">${ic(f[0]==="thin"?"layers":"alert")}${f[0]==="flip"?"coin-flip":f[0]==="thin"?"thin market":"rate flipped"}</span>`).join("")}</div>`:""}
+          <div class="ccnums">
+            <div><span class="cap">Yield on margin</span><b class="gain">${(m.aprOnMargin*100).toFixed(1)}%</b><s>a year</s></div>
+            <div><span class="cap">${holdLabel(carryHold)} at ${carryLev}×</span><b>${usd(m.perHr*carryHold-m.roundTrip)}</b><s>after fees</s></div>
+            <div><span class="cap">Same sign</span><b>${Math.round(s.consistency*100)}%</b><s>of 7 days</s></div>
+            <div><span class="cap">Fees covered in</span><b>${hrsText(m.breakEvenHrs)}</b><s>${carryMaker?"limit":"market"}</s></div>
+          </div>
+          <div class="ccspark" data-cs="${i}"></div>
+          <div class="ccleg"><span><i class="sw g"></i>hours it paid your side</span><span><i class="sw r"></i>hours it cost you</span></div>
+          <div class="ccfoot">
+            <span class="mono dim3">now ${(r.m.fr*100).toFixed(4)}%/hr</span>
+            <span class="go" data-coin="${r.m.name}">${ic("ext")}Open</span>
+          </div>
+        </div>`;}).join("")}
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">Read this part</span>
+      <h2>What makes this real, and what breaks it</h2>
+      <p>If any of it were made up, you'd catch it in a minute against the exchange. So here is exactly where each number comes from and what it doesn't cover.</p></div></div>
+    <div class="truths">
+      ${[
+        ["shield","This is only income if you hedge it",
+         "Collecting funding means holding a perp position, and on its own that is a directional bet. Price moves dwarf funding — a 1% move against you is worth roughly a month of carry on most of these. The market-neutral version is short the perp and hold the same asset spot, so price cancels out and the funding doesn't. Arclight can't see your spot leg, so nothing here accounts for the cost of holding it."],
+        ["clock","The rate changes every hour and these are averages",
+         "Every headline figure is the <b>realised average of the last 168 hourly payments</b>, not a promise about the next 168. The live rate is printed on each card beside it, and a card is flagged the moment the current rate stops matching the direction the average points."],
+        ["alert","It flips, and then it costs you",
+         "The consistency number is the share of the last 7 days the rate kept the same sign. Below roughly 80% the position spends real time paying instead of collecting, and the “worst hour” figure on the lead card is the single most expensive hour in the window."],
+        ["scale","Leverage multiplies the yield and the risk equally",
+         `Funding is paid on position size, so at ${carryLev}× the yield on your margin is ${carryLev}× the yield on notional. The same arithmetic says an unhedged position is liquidated by roughly a ${(100/carryLev).toFixed(0)}% move against it, before fees and maintenance margin. Hedged, leverage is capital efficiency; unhedged, it's just a bigger bet.`],
+        ["coin","Fees come from the exchange's own published schedule",
+         `Read live from the Arcus fee tiers endpoint: base tier is ${(D.fees.maker*100).toFixed(3)}% maker and ${(D.fees.taker*100).toFixed(3)}% taker. Entering and exiting on limit orders currently costs nothing at that tier, which is why break-even is instant on the limit setting. Your own tier may be better; it will never be worse.`],
+        ["target","None of this is a recommendation",
+         "It is arithmetic on published numbers, shown so you can check it. It has no idea what price does next, and neither do we. Sizing, hedging and whether to trade at all are yours."]
+      ].map(t=>`<div class="truth rv"><span class="ti">${ic(t[0])}</span>
+        <div><b>${t[1]}</b><p>${t[2]}</p></div></div>`).join("")}
+    </div>
+  </section>
+
+  <div class="closer rv"><div class="ci">
+    <canvas id="carryChar"></canvas>
+    <div><h2>Funding gets paid on the hour, to whoever is holding</h2>
+      <p>Nothing above needs a call on price — only a position on the receiving side, and the patience to sit there. These contracts trade on Arcus.</p></div>
+    <div class="cta">
+      <a class="btn pri" href="${REF_LINK}" target="_blank" rel="noopener">${ic("ext")}Open ${best.r.m.name} on Arcus</a>
+      <button class="btn ghost" data-go="learn">${ic("book")}How funding works</button>
+    </div>
+  </div></div>`;
+
+  /* funding history strips: green where it paid your side, red where it didn't */
+  $$("#carryGrid .ccspark").forEach(n=>{
+    const x=sorted[+n.dataset.cs]; if(!x) return;
+    const vals=x.r.spark;
+    if(vals.length>4) n.innerHTML=fundSpark(vals, x.mth.side==="SHORT"?1:-1);
+  });
+  wireCarryControls(best);
+  carryClock(best.r.m);
+  carryFlow($("#cbFlow"), bm);
+  const cc=$("#carryChar");
+  if(cc&&window.ArcChars){ const pool=ArcChars.ids.filter(z=>z!=="ghost");
+    character(cc,pool[Math.floor(Math.random()*pool.length)],88); }
+  magnetise($("#carryGrid"),".ccard",8);
+  countUp($("#cbBig"), netHold);
+  reveal(root); glow(root);
+}
+
+/* count the headline into place so a control change is felt, not just read */
+function countUp(el,to){
+  if(!el||REDUCED){ return; }
+  const t0=performance.now(), dur=620, from=to*0.62;
+  (function step(t){
+    const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,3);
+    el.textContent=usd(from+(to-from)*e);
+    if(k<1) requestAnimationFrame(step);
+  })(t0);
+}
+
+/* live countdown to the next hourly settlement */
+function carryClock(m){
+  const el=$("#cbCount"); if(!el) return;
+  function tick(){
+    if(!document.body.contains(el)) return;
+    let next=m.nextAt;
+    if(!next||next<Date.now()) next=Math.ceil(Date.now()/3600000)*3600000;
+    const s=Math.max(0,Math.floor((next-Date.now())/1000));
+    el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+    el.__t=setTimeout(tick,1000);
+  }
+  tick();
+}
+
+/* ---- the flow: money moving from the paying side to the collecting side ----
+   Speed and density track the real hourly rate. Cursor pushes the stream. */
+function carryFlow(cv,m){
+  if(!cv) return;
+  const c=cv.getContext("2d");
+  let W=0,H=0,dpr=1,parts=[],px=-999,py=-999,pvx=0,last=0,live=false;
+  const collectRight = m.side==="SHORT";
+  function size(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    dpr=Math.min(r.width<640?1.5:2,window.devicePixelRatio||1); W=r.width; H=r.height;
+    cv.width=W*dpr; cv.height=H*dpr; c.setTransform(dpr,0,0,dpr,0,0);
+  }
+  size();
+  const density = clamp(Math.round(m.rate*1e5*10)+22, 22, 60);
+  function spawn(){
+    const y=H*(0.14+Math.random()*0.72);
+    return { x: collectRight? -14 : W+14,
+             y, vy:(Math.random()-0.5)*0.12,
+             vx:(collectRight?1:-1)*(0.55+Math.random()*0.85),
+             r:1.8+Math.random()*3.1, a:0.34+Math.random()*0.52, sp:Math.random()*6.28 };
+  }
+  for(let i=0;i<density;i++){ const p=spawn(); p.x=Math.random()*W; parts.push(p); }
+  cv.addEventListener("pointermove",e=>{ const r=cv.getBoundingClientRect();
+    const nx=e.clientX-r.left; pvx=nx-px; px=nx; py=e.clientY-r.top; },{passive:true});
+  cv.addEventListener("pointerleave",()=>{ px=py=-999; pvx=0; },{passive:true});
+
+  function frame(t){
+    carryRaf=requestAnimationFrame(frame);
+    if(!live) return;
+    const dt=Math.min(3,(t-last)/16.7)||1; last=t;
+    if(!W){ size(); if(!W) return; }
+    c.clearRect(0,0,W,H);
+    const g=getComputedStyle(document.documentElement).getPropertyValue("--gain").trim()||"#37B57A";
+    for(let i=0;i<parts.length;i++){
+      const p=parts[i];
+      p.sp+=0.05*dt;
+      p.x+=p.vx*dt; p.y+=p.vy*dt+Math.sin(p.sp)*0.16*dt;
+      /* pointer pushes the stream aside, and shoves it along if you sweep with it */
+      const dx=p.x-px, dy=p.y-py, d2=dx*dx+dy*dy;
+      if(d2<7000){ const d=Math.sqrt(d2)||1, f=(1-d/84)*1.7;
+        p.y+=dy/d*f*dt; p.x+=(dx/d*f*0.5+clamp(pvx*0.02,-1.2,1.2))*dt; }
+      p.y=clamp(p.y,4,H-4);
+      const gone = collectRight ? p.x>W+16 : p.x<-16;
+      if(gone) parts[i]=spawn();
+      const fade = collectRight ? clamp(p.x/(W*0.22),0,1)*clamp((W-p.x)/(W*0.18),0,1)
+                                : clamp((W-p.x)/(W*0.22),0,1)*clamp(p.x/(W*0.18),0,1);
+      c.globalAlpha=p.a*fade;
+      c.fillStyle=g;
+      c.beginPath(); c.arc(p.x,p.y,p.r,0,6.283); c.fill();
+      /* short trail = kinetic read of speed */
+      c.globalAlpha=p.a*fade*0.34; c.lineWidth=p.r*0.95; c.strokeStyle=g; c.lineCap="round";
+      c.beginPath(); c.moveTo(p.x,p.y); c.lineTo(p.x-p.vx*10,p.y); c.stroke();
+    }
+    c.globalAlpha=1;
+    pvx*=0.82;
+  }
+  if(REDUCED) return;
+  carryIO=new IntersectionObserver(es=>{ live=es[0].isIntersecting; last=performance.now(); },{threshold:0.05});
+  carryIO.observe(cv);
+  window.addEventListener("resize",size,{passive:true});
+  carryRaf=requestAnimationFrame(frame);
+}
+
+/* a funding history strip — bars above the line paid you, below cost you */
+function fundSpark(vals,sign){
+  const w=260,h=44,mx=Math.max.apply(null,vals.map(Math.abs))||1;
+  const bw=Math.max(1.1,w/vals.length-0.6);
+  const bars=vals.map((v,i)=>{
+    const paid=Math.sign(v)===sign;
+    const hgt=Math.max(1,Math.abs(v)/mx*(h/2-2));
+    const x=(i/vals.length)*w;
+    const y=paid? h/2-hgt : h/2;
+    return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}"
+      fill="${paid?"var(--gain)":"var(--loss)"}" opacity="${paid?0.85:0.9}" rx="0.5"/>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    ${bars}<line x1="0" y1="${h/2}" x2="${w}" y2="${h/2}" stroke="var(--rule-2)" stroke-width="1"/></svg>`;
+}
+
+function wireCarryControls(){
+  const mi=$("#cMargin"), lv=$("#cLev");
+  if(mi) mi.addEventListener("input",()=>{
+    const v=parseInt(mi.value.replace(/[^0-9]/g,""),10);
+    carryMargin=clamp(isFinite(v)?v:1000,10,10000000);
+    clearTimeout(mi.__t); mi.__t=setTimeout(()=>paintCarry(),300);
+  });
+  if(lv) lv.addEventListener("input",()=>{
+    carryLev=+lv.value; const t=$("#cLevV"); if(t) t.textContent=carryLev+"×";
+    clearTimeout(lv.__t); lv.__t=setTimeout(()=>paintCarry(),140);
+  });
+  const fe=$("#cFee");
+  if(fe) fe.addEventListener("click",e=>{ const b=e.target.closest("[data-fee]"); if(!b)return;
+    carryMaker=b.dataset.fee==="maker"; paintCarry(); });
+  const so=$("#cSort");
+  if(so) so.addEventListener("click",e=>{ const b=e.target.closest("[data-cs]"); if(!b)return;
+    carrySort=b.dataset.cs; paintCarry(); });
+  const ho=$("#cHold");
+  if(ho) ho.addEventListener("click",e=>{ const b=e.target.closest("[data-ch]"); if(!b)return;
+    carryHold=+b.dataset.ch; paintCarry(); });
 }
 
 /* ============================================================
