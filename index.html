@@ -218,6 +218,9 @@ section{margin-top:56px}
 /* reveal */
 .rv{opacity:0;transform:translateY(18px)}
 .rv.in{animation:rvIn .72s cubic-bezier(.16,.84,.3,1) forwards}
+/* a repaint the user triggered themselves arrives already there — the entrance
+   animation still starts at opacity 0, so applying .in alone would flash */
+.rv.now{animation:none!important;opacity:1;transform:none}
 @keyframes rvIn{to{opacity:1;transform:none}}
 
 /* ============ HERO / SEARCH ============ */
@@ -1451,9 +1454,13 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .stage[data-ratio="tall"]{max-width:100%}
   .pactions .btn{flex:1 1 45%}
   .pod{display:flex;text-align:left;padding:13px}
-  .pod .in{flex-direction:row;align-items:center;gap:12px;width:100%}
-  .pod canvas{width:44px;height:44px}
-  .pod .big{font-size:19px;margin-left:auto}
+  .pod .in{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;
+    align-items:center;gap:4px 10px;width:100%}
+  .pod .medal{grid-area:1/1/3/2}
+  .pod canvas{grid-area:1/2/3/3;width:44px;height:44px}
+  .pod .ad{grid-area:1/3/3/4;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pod .big{grid-area:1/4/2/5;font-size:19px;text-align:right}
+  .pod .sub{grid-area:2/4/3/5;text-align:right;white-space:nowrap}
   .pfield{height:400px}
   .closer .ci{padding:20px;gap:16px}
   .closer .cta{margin-left:0;width:100%}
@@ -1478,6 +1485,9 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .gauge{width:112px;height:112px}
   .bars{min-width:100%}
   .chartbox{height:184px}
+  .pod .medal{font-size:10.5px;padding:3px 7px}
+  .pod .ad{font-size:11px}
+  .pod .sub{font-size:10.5px}
   .hero{padding:26px 0 4px}
   .searchbox .field{padding:5px 5px 5px 13px;border-radius:15px}
   .searchbox input{font-size:16px;padding:11px 0}
@@ -2402,7 +2412,16 @@ const io = "IntersectionObserver" in window ? new IntersectionObserver((es)=>{
     io.unobserve(e.target);
   });
 },{rootMargin:"0px 0px -14% 0px",threshold:.08}) : null;
+/* A repaint driven by a control the user just moved must not replay the entrance
+   animation — everything drops to opacity 0 and flashes back in, which reads as
+   the whole page reloading. In quiet mode the new markup is simply already there. */
+let REVEAL_QUIET=false;
+function quietly(fn){ REVEAL_QUIET=true; try{ fn(); } finally { setTimeout(()=>REVEAL_QUIET=false,0); } }
 function reveal(scope){
+  if(REVEAL_QUIET){
+    $$(".rv",scope||document).forEach(n=>{ n.style.animationDelay="0ms"; n.classList.add("in","now"); });
+    return;
+  }
   const nodes=$$(".rv:not(.in)",scope||document);
   nodes.forEach(n=>{ io?io.observe(n):n.classList.add("in"); });
   /* safety net for elements already on screen that the observer never reported —
@@ -3133,12 +3152,12 @@ function renderLeaders(){
   $("#lbSort").addEventListener("click",e=>{ const b2=e.target.closest("button"); if(!b2) return;
     $$("#lbSort button").forEach(x=>x.classList.remove("on")); b2.classList.add("on");
     lbS=b2.dataset.s;                    /* re-rack in place — no refetch, so the movement reads */
-    if(lbData.length){ paintArena(false); paintTable(); }
+    if(lbData.length) quietly(()=>{ paintArena(false); paintTable(); });
   });
   $("#lbView").addEventListener("click",e=>{ const b2=e.target.closest("[data-v]"); if(!b2)return;
     lbView=b2.dataset.v; $$("#lbView button").forEach(x=>x.classList.toggle("on",x.dataset.v===lbView));
     $("#lbArena").hidden=lbView!=="arena"; $("#lbList").hidden=lbView==="arena";
-    if(lbView==="arena") paintArena(true); });
+    if(lbView==="arena") quietly(()=>paintArena(true)); });
   load();
 
   async function load(){
@@ -5880,7 +5899,7 @@ function paintPlays(){
   if(grid) grid.addEventListener("click",e=>{ const c2=e.target.closest("[data-play]"); if(c2) openPlay(+c2.dataset.play); });
   const pf=$("#playFilters");
   if(pf) pf.addEventListener("click",e=>{ const b2=e.target.closest("[data-pf]"); if(!b2) return;
-    runFilter=b2.dataset.pf; runShown=12; paintPlayList(); });
+    runFilter=b2.dataset.pf; runShown=12; quietly(paintPlayList); });
   const bp=$("#bestPlay"); if(bp) bp.addEventListener("click",()=>openPlay(0));
   const rp=$("#randPlay"); if(rp) rp.addEventListener("click",()=>openPlay(Math.floor(Math.random()*Math.min(runPlays.length,12))));
   reveal($("#runRoot")); glow($("#runRoot"));
@@ -5911,7 +5930,7 @@ function paintPlayList(){
     const left=runView.length-runShown, next=Math.min(12,left);
     more.innerHTML=`<button class="btn ghost" id="moreBtn">${ic("plus")}Show ${next} more
       <span class="dim3" style="font-weight:500">· ${runShown} of ${runView.length}</span></button>`;
-    $("#moreBtn").addEventListener("click",()=>{ runShown+=12; paintPlayList(); });
+    $("#moreBtn").addEventListener("click",()=>{ runShown+=12; quietly(paintPlayList); });
   } else {
     more.innerHTML = runView.length>12
       ? `<span class="dim3" style="font-size:12.5px">All ${runView.length} shown</span>` : "";
@@ -6466,7 +6485,7 @@ function paintRadar(){
   }
   paintMovers();
   $("#moveSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-mv]"); if(!b)return;
-    mv=b.dataset.mv; $$("#moveSeg button").forEach(x=>x.classList.toggle("on",x.dataset.mv===mv)); paintMovers(); });
+    mv=b.dataset.mv; $$("#moveSeg button").forEach(x=>x.classList.toggle("on",x.dataset.mv===mv)); quietly(paintMovers); });
 
 
   /* setup sparklines */
@@ -7041,24 +7060,24 @@ function wireCarryControls(){
   if(mi) mi.addEventListener("input",()=>{
     const v=parseInt(mi.value.replace(/[^0-9]/g,""),10);
     carryMargin=clamp(isFinite(v)?v:1000,10,10000000);
-    clearTimeout(mi.__t); mi.__t=setTimeout(()=>paintCarry(),300);
+    clearTimeout(mi.__t); mi.__t=setTimeout(()=>quietly(paintCarry),300);
   });
   if(lv) lv.addEventListener("input",()=>{
     carryLev=+lv.value; const t=$("#cLevV"); if(t) t.textContent=carryLev+"×";
-    clearTimeout(lv.__t); lv.__t=setTimeout(()=>paintCarry(),140);
+    clearTimeout(lv.__t); lv.__t=setTimeout(()=>quietly(paintCarry),140);
   });
   const fe=$("#cFee");
   if(fe) fe.addEventListener("click",e=>{ const b=e.target.closest("[data-fee]"); if(!b)return;
-    carryMaker=b.dataset.fee==="maker"; paintCarry(); });
+    carryMaker=b.dataset.fee==="maker"; quietly(paintCarry); });
   const so=$("#cSort");
   if(so) so.addEventListener("click",e=>{ const b=e.target.closest("[data-cs]"); if(!b)return;
-    carrySort=b.dataset.cs; paintCarry(); });
+    carrySort=b.dataset.cs; quietly(paintCarry); });
   const hg=$("#cHedge");
   if(hg) hg.addEventListener("click",e=>{ const b=e.target.closest("[data-hg]"); if(!b)return;
-    carryHedged=b.dataset.hg==="1"; paintCarry(); });
+    carryHedged=b.dataset.hg==="1"; quietly(paintCarry); });
   const ho=$("#cHold");
   if(ho) ho.addEventListener("click",e=>{ const b=e.target.closest("[data-ch]"); if(!b)return;
-    carryHold=+b.dataset.ch; paintCarry(); });
+    carryHold=+b.dataset.ch; quietly(paintCarry); });
 }
 
 /* ============================================================
