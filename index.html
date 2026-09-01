@@ -1211,6 +1211,40 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   transition:gap .2s}
 .ccfoot .go svg{width:13px;height:13px}
 .ccard:hover .ccfoot .go{gap:9px}
+.hpill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:100px;
+  font-size:10.5px;font-weight:600;cursor:help;border:1px solid var(--rule-2);
+  background:var(--surface-3);color:var(--ink-2);transition:.2s;white-space:nowrap}
+.hpill svg{width:11px;height:11px}
+.hpill:hover{transform:translateY(-1px);border-color:var(--rule-2)}
+.hpill.easy{color:var(--gain);background:var(--gain-bg);border-color:color-mix(in srgb,var(--gain) 24%,transparent)}
+.hpill.mid{color:var(--copper);background:color-mix(in srgb,var(--copper) 12%,transparent);
+  border-color:color-mix(in srgb,var(--copper) 26%,transparent)}
+.hpill.hard{color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);
+  border-color:color-mix(in srgb,var(--warn) 26%,transparent)}
+.cbrisk{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:13px;
+  background:var(--surface-3);border:1px solid var(--rule-2);color:var(--ink-2);font-size:13px;line-height:1.5}
+.cbrisk svg{width:17px;height:17px;color:var(--brand);flex:none;margin-top:1px}
+.cbrisk b{color:var(--ink)}
+
+/* hedge-difficulty comparison */
+.hgap{border:1px solid var(--rule);border-radius:17px;background:var(--surface);padding:18px;
+  display:flex;flex-direction:column;gap:14px}
+.hrow{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(90px,1fr) auto;gap:16px;align-items:center}
+.hl{display:flex;gap:10px;align-items:flex-start;min-width:0}
+.hl>div{min-width:0}
+.hl b{display:block;font-size:14px;letter-spacing:-.01em}
+.hl s{text-decoration:none;display:block;color:var(--ink-3);font-size:11.5px;line-height:1.4;margin-top:2px}
+.hb{height:12px;border-radius:100px;background:var(--surface-3);overflow:hidden;border:1px solid var(--rule)}
+.hb i{display:block;height:100%;width:0;border-radius:100px;
+  background:linear-gradient(90deg,var(--brand-dim),var(--brand));
+  transition:width 1s cubic-bezier(.2,.9,.25,1)}
+.hrow.in .hb i{width:var(--w)}
+.hv{font-family:"Archivo";font-size:19px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  min-width:62px;text-align:right}
+.hnote{display:flex;gap:10px;align-items:flex-start;color:var(--ink-2);font-size:12.8px;line-height:1.55;
+  padding-top:14px;border-top:1px solid var(--rule)}
+.hnote svg{width:16px;height:16px;color:var(--warn);flex:none;margin-top:2px}
+
 .ccflags{display:flex;gap:6px;flex-wrap:wrap;margin-top:-4px}
 .fpill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:100px;
   font-size:10.5px;font-weight:600;cursor:help;border:1px solid transparent;transition:.2s}
@@ -1361,6 +1395,12 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .cbclock .cap{font-size:9px}
   .cbclock b{font-size:14px}
   .cbflowleg{margin-top:12px;padding-top:11px;gap:7px}
+  .cbrisk{padding:11px 12px;font-size:12.3px;gap:8px}
+  .hgap{padding:14px;gap:16px}
+  .hrow{grid-template-columns:1fr auto;gap:8px 12px}
+  .hrow .hb{grid-column:1/-1;order:3}
+  .hv{font-size:17px;min-width:0}
+  .hnote{font-size:12px}
   .cbflowleg .fl{font-size:11px;padding:3px 8px}
   .ctlbar .seg{width:100%}
   .ctlbar .seg button{flex:1;padding:0 6px;font-size:11px;white-space:nowrap}
@@ -6026,7 +6066,19 @@ function magnetise(scope,sel,strength){
    tiers. Nothing is modelled, projected or smoothed.
    ============================================================ */
 let carryData=null, carryBusy=false, carryRaf=null, carryIO=null;
-let carryMargin=1000, carryLev=3, carryMaker=true, carrySort="apr", carryHold=720;
+let carryMargin=1000, carryLev=3, carryMaker=true, carrySort="apr", carryHold=720, carryHedged=false;
+
+/* How hard the neutral leg is to put on. Arcus lists perps only — all 51 markets
+   are PERPETUAL, there is no spot book here — so the hedge always sits off-venue,
+   and what it costs depends entirely on what the underlying is. */
+const HEDGEABILITY={
+  CRYPTO:["easy","Easy to hedge","The same coin trades spot on every major venue, 24/7, so the neutral leg is cheap and quick to put on."],
+  EQUITIES:["hard","Hard to hedge","The neutral leg is the actual share through a stock broker — different rails, and it only trades in market hours. That friction is a large part of why this rate stays where it is."],
+  COMMODITIES:["hard","Hard to hedge","The neutral leg is an ETF or a futures account, not a wallet, and it keeps exchange hours."],
+  INDICES:["hard","Hard to hedge","The neutral leg is an index ETF through a broker, in market hours only."],
+  FOREX:["mid","Fiddly to hedge","The neutral leg needs an FX account rather than a wallet."]
+};
+const hedgeOf = cat => HEDGEABILITY[cat] || ["mid","Fiddly to hedge","The neutral leg isn't something you can put on in a wallet."];
 const HOURS_Y=24*365;
 
 function fundStats(rates,n){
@@ -6070,7 +6122,7 @@ async function carryScan(onStep){
 }
 
 /* what the numbers mean for a given size */
-function carryMath(row,margin,lev,maker,fees){
+function carryMath(row,margin,lev,maker,fees,hedged){
   const s=row.w.d7, notional=margin*lev;
   const side = s.mean>0 ? "SHORT" : "LONG";          /* you take the side that collects */
   const rate = Math.abs(s.mean);                     /* per hour, on notional */
@@ -6080,6 +6132,11 @@ function carryMath(row,margin,lev,maker,fees){
   const roundTrip = notional*feeRate*2;
   const breakEvenHrs = perHr>0 ? roundTrip/perHr : Infinity;
   const aprOnMargin = margin>0 ? perYear/margin : 0;
+  /* Hedged, the spot leg is unlevered capital sitting alongside the margin.
+     Neutral on price costs you the whole notional a second time. */
+  const spotLeg = hedged ? notional : 0;
+  const capital = margin + spotLeg;
+  const aprOnCapital = capital>0 ? perYear/capital : 0;
   /* how far price can move before the exchange closes an UNHEDGED position */
   const liqMove = lev>0 ? 100/lev : 100;
   const nowRate = row.m.fr;
@@ -6087,7 +6144,8 @@ function carryMath(row,margin,lev,maker,fees){
   /* worst single hour in the window, as a cost */
   const worstHr = notional*Math.min(0, s.mean>0 ? -Math.abs(s.min) : -Math.abs(s.max));
   return {side, rate, perHr, perDay, perMonth, perYear, roundTrip, breakEvenHrs,
-          aprOnMargin, liqMove, notional, nowRate, nowAligned, worstHr, feeRate};
+          aprOnMargin, aprOnCapital, spotLeg, capital, liqMove, notional,
+          nowRate, nowAligned, worstHr, feeRate};
 }
 
 /* ---------- the page ---------- */
@@ -6132,10 +6190,10 @@ function stopCarry(){
 function paintCarry(){
   stopCarry();
   const D=carryData, root=$("#carryRoot");
-  const rows=D.rows.map(r=>({r, mth:carryMath(r,carryMargin,carryLev,carryMaker,D.fees)}))
+  const rows=D.rows.map(r=>({r, mth:carryMath(r,carryMargin,carryLev,carryMaker,D.fees,carryHedged)}))
     .filter(x=>x.mth.perYear>0);
   const sorted=rows.slice().sort((a,b)=>{
-    if(carrySort==="apr") return b.mth.aprOnMargin-a.mth.aprOnMargin;
+    if(carrySort==="apr") return b.mth.aprOnCapital-a.mth.aprOnCapital;
     if(carrySort==="steady") return b.r.w.d7.consistency-a.r.w.d7.consistency;
     return b.r.m.oi-a.r.m.oi;
   });
@@ -6182,6 +6240,13 @@ function paintCarry(){
       </div>
     </div>
     <div class="cfield">
+      <label>Position <button class="info" data-tip="Unhedged means the perp on its own — you collect funding and you carry the price risk. Hedged means the same perp against the underlying held spot, so price cancels out. Arcus lists perps only, so that second leg is always at another venue, and its capital counts.">?</button></label>
+      <div class="seg" id="cHedge">
+        <button data-hg="0" class="${carryHedged?"":"on"}">Unhedged</button>
+        <button data-hg="1" class="${carryHedged?"on":""}">Hedged</button>
+      </div>
+    </div>
+    <div class="cfield">
       <label>Rank by</label>
       <div class="seg" id="cSort">
         ${[["apr","Yield"],["steady","Consistency"],["oi","Depth"]].map(o=>`<button data-cs="${o[0]}" class="${carrySort===o[0]?"on":""}">${o[1]}</button>`).join("")}
@@ -6199,6 +6264,7 @@ function paintCarry(){
             <span class="tk">${best.r.m.base.slice(0,4)}</span>
             <b>${best.r.m.name}</b>
             <span class="cbside ${bm.side==="SHORT"?"s":"l"}">${ic(bm.side==="SHORT"?"down":"up")}${bm.side} collects</span>
+            <span class="hpill ${hedgeOf(best.r.m.cat)[0]}" data-tip="${hedgeOf(best.r.m.cat)[2]}">${ic("scale")}${hedgeOf(best.r.m.cat)[1]}</span>
           </div>
         </div>
         <div class="cbclock" id="cbClock" data-tip="Funding settles once an hour. Whoever is holding the position at that moment receives it — or pays it.">
@@ -6210,7 +6276,7 @@ function paintCarry(){
         <div class="cbpay">
           <span class="cap">Hold it for <span class="seg tiny" id="cHold">${HOLDS.map(h=>`<button data-ch="${h[0]}" class="${carryHold===h[0]?"on":""}">${h[1].replace("a ","")}</button>`).join("")}</span></span>
           <b class="cbbig ${netHold>=0?"gain":"loss"}" id="cbBig">${usd(netHold)}</b>
-          <span class="sub">after ${usd(bm.roundTrip)} of entry + exit fees, on ${usd(bm.notional)} of position</span>
+          <span class="sub">after ${usd(bm.roundTrip)} of entry + exit fees, on ${usd(bm.notional)} of position${carryHedged?" — the spot leg's own fees and borrow are not in this number, because Arclight can't see them":""}</span>
           <div class="cbtick"><i>${ic("coin")}</i><span id="cbTick">collecting ${usd(bm.perHr)} an hour</span></div>
           <div class="cbflowleg">
             <span class="fl ${bm.side==="SHORT"?"pay":"get"}">${bm.side==="SHORT"?"Longs pay":"Longs collect"}</span>
@@ -6220,8 +6286,10 @@ function paintCarry(){
           </div>
         </div>
         <div class="cbgrid">
-          <div class="cbnum"><span class="cap">Yield on margin</span>
-            <b class="big gain">${(bm.aprOnMargin*100).toFixed(1)}%</b><span class="sub">a year, at the realised rate</span></div>
+          <div class="cbnum"><span class="cap">${carryHedged?"Yield on total capital":"Yield on margin"}</span>
+            <b class="big gain">${(bm.aprOnCapital*100).toFixed(1)}%</b><span class="sub">${carryHedged
+              ?`a year on ${usd(bm.capital)} — ${usd(carryMargin)} margin plus ${usd(bm.spotLeg)} of spot`
+              :`a year on ${usd(carryMargin)} of margin, at the realised rate`}</span></div>
           <div class="cbnum"><span class="cap">Same sign</span>
             <b class="big">${Math.round(bs.consistency*100)}%</b><span class="sub">of the last ${bs.hours} hours</span></div>
           <div class="cbnum"><span class="cap">Fees covered in</span>
@@ -6230,6 +6298,9 @@ function paintCarry(){
             <b class="big ${bm.worstHr<0?"loss":""}">${bm.worstHr<0?usd(bm.worstHr):"none"}</b><span class="sub">${bm.worstHr<0?"the priciest hour in the window":"it never flipped in 7 days"}</span></div>
         </div>
       </div>
+      <div class="cbrisk">${ic("shield")}<span>${carryHedged
+        ? `Price cancels out, but the perp leg is still liquidated by roughly a <b>${bm.liqMove.toFixed(0)}% move</b> against it — your gain on the spot side sits at another venue and can't top up margin here. The ${usd(bm.spotLeg)} spot leg has its own fees, and on Arcus there is no spot book at all (every one of its markets is a perpetual), so that leg is somewhere else by definition.`
+        : `Unhedged, this is a directional bet that happens to collect funding. A <b>${bm.liqMove.toFixed(0)}% move</b> against it closes the position, and a 1% move is worth about ${hrsText(bm.perHr>0?(bm.notional*0.01)/bm.perHr:Infinity)} of carry — the price risk dwarfs the income. Switch to <b>Hedged</b> to see what staying neutral actually costs.`}</span></div>
       ${bm.nowAligned?"":`<div class="cbwarn">${ic("alert")}<span>The live rate is <b>${(bm.nowRate*100).toFixed(4)}%</b> an hour, which is the other way round from the 7-day average. Funding has just flipped — the position would be paying, not collecting, at this moment.</span></div>`}
     </div>
   </div>
@@ -6250,9 +6321,10 @@ function paintCarry(){
               <span><b>${r.m.name}</b><s>${usd(r.m.oi)} open interest</s></span></div>
             <span class="cbside ${m.side==="SHORT"?"s":"l"}">${ic(m.side==="SHORT"?"down":"up")}${m.side}</span>
           </div>
+          <div class="ccflags"><span class="hpill ${hedgeOf(r.m.cat)[0]}" data-tip="${hedgeOf(r.m.cat)[2]}">${ic("scale")}${hedgeOf(r.m.cat)[1]}</span></div>
           ${flags.length?`<div class="ccflags">${flags.map(f=>`<span class="fpill ${f[0]}" data-tip="${f[1]}">${ic(f[0]==="thin"?"layers":"alert")}${f[0]==="flip"?"coin-flip":f[0]==="thin"?"thin market":"rate flipped"}</span>`).join("")}</div>`:""}
           <div class="ccnums">
-            <div><span class="cap">Yield on margin</span><b class="gain">${(m.aprOnMargin*100).toFixed(1)}%</b><s>a year</s></div>
+            <div><span class="cap">${carryHedged?"Yield on capital":"Yield on margin"}</span><b class="gain">${(m.aprOnCapital*100).toFixed(1)}%</b><s>${carryHedged?"a year, hedged":"a year"}</s></div>
             <div><span class="cap">${holdLabel(carryHold)} at ${carryLev}×</span><b>${usd(m.perHr*carryHold-m.roundTrip)}</b><s>after fees</s></div>
             <div><span class="cap">Same sign</span><b>${Math.round(s.consistency*100)}%</b><s>of 7 days</s></div>
             <div><span class="cap">Fees covered in</span><b>${hrsText(m.breakEvenHrs)}</b><s>${carryMaker?"limit":"market"}</s></div>
@@ -6268,13 +6340,42 @@ function paintCarry(){
   </section>
 
   <section>
+    <div class="sechead"><div class="t"><span class="eyebrow">The pattern</span>
+      <h2>The best rates sit where the hedge is hardest</h2>
+      <p>Grouped by how hard the neutral leg is to put on, using each market's realised 7-day funding. This is the whole reason the numbers at the top of the board are as large as they are.</p></div></div>
+    <div class="hgap">
+      ${(()=>{
+        const T={easy:[],mid:[],hard:[]};
+        D.rows.forEach(r=>T[hedgeOf(r.m.cat)[0]].push(Math.abs(r.w.d7.apr)));
+        const med=a=>{ if(!a.length) return 0; const b=a.slice().sort((x,y)=>x-y);
+          return b.length%2? b[(b.length-1)/2] : (b[b.length/2-1]+b[b.length/2])/2; };
+        const M={easy:med(T.easy),mid:med(T.mid),hard:med(T.hard)};
+        const top=Math.max(M.easy,M.mid,M.hard)||1;
+        const LAB={easy:["Spot on any exchange","Crypto perps — the coin trades spot 24/7, so anyone can arb this"],
+                   mid:["Needs an FX account","Currency perps — a neutral leg exists, but not in a wallet"],
+                   hard:["Needs a stock broker","Equity, index and commodity perps — the neutral leg is a share or an ETF, in market hours only"]};
+        return ["hard","mid","easy"].filter(k=>T[k].length).map(k=>`
+          <div class="hrow rv">
+            <div class="hl"><span class="hpill ${k}">${ic("scale")}${k==="easy"?"Easy":k==="mid"?"Fiddly":"Hard"}</span>
+              <div><b>${LAB[k][0]}</b><s>${LAB[k][1]} · ${T[k].length} market${T[k].length>1?"s":""}</s></div></div>
+            <div class="hb"><i style="--w:${(M[k]/top*100).toFixed(1)}%"></i></div>
+            <b class="hv">${(M[k]*100).toFixed(1)}%</b>
+          </div>`).join("");
+      })()}
+      <p class="hnote">${ic("alert")}<span>Median funding a year, on notional. The gap is not free money — it is the price of the friction. If the neutral leg needs a brokerage account, settled shares and an open exchange, far fewer people can take the other side, so the rate has no reason to come down. Anything you collect there, you are being paid for handling that friction.</span></p>
+    </div>
+  </section>
+
+  <section>
     <div class="sechead"><div class="t"><span class="eyebrow">Read this part</span>
       <h2>What makes this real, and what breaks it</h2>
       <p>If any of it were made up, you'd catch it in a minute against the exchange. So here is exactly where each number comes from and what it doesn't cover.</p></div></div>
     <div class="truths">
       ${[
-        ["shield","This is only income if you hedge it",
-         "Collecting funding means holding a perp position, and on its own that is a directional bet. Price moves dwarf funding — a 1% move against you is worth roughly a month of carry on most of these. The market-neutral version is short the perp and hold the same asset spot, so price cancels out and the funding doesn't. Arclight can't see your spot leg, so nothing here accounts for the cost of holding it."],
+        ["shield","This is only income if you hedge it, and Arcus can't hedge it for you",
+         "Collecting funding means holding a perp position, and on its own that is a directional bet — price moves dwarf funding. The neutral version is short the perp and hold the same asset spot. <b>Every one of the markets Arcus lists is a perpetual; there is no spot book</b>, so that second leg is always at another venue. Switch the <b>Hedged</b> toggle above and the yield is recomputed on margin plus the spot capital, which is the number that actually matters. What Arclight still can't see is your spot venue's fees, borrow, or transfer costs."],
+        ["scale","Hedged does not mean safe",
+         `Neutral on price is not neutral on margin. A ${(100/carryLev).toFixed(0)}% move against the perp leg still liquidates it, and the matching gain on your spot leg is at a different venue where it cannot top the margin up. People lose money on \u201cmarket-neutral\u201d carry almost entirely this way, not by being wrong about the funding.`],
         ["clock","The rate changes every hour and these are averages",
          "Every headline figure is the <b>realised average of the last 168 hourly payments</b>, not a promise about the next 168. The live rate is printed on each card beside it, and a card is flagged the moment the current rate stops matching the direction the average points."],
         ["alert","It flips, and then it costs you",
@@ -6438,6 +6539,9 @@ function wireCarryControls(){
   const so=$("#cSort");
   if(so) so.addEventListener("click",e=>{ const b=e.target.closest("[data-cs]"); if(!b)return;
     carrySort=b.dataset.cs; paintCarry(); });
+  const hg=$("#cHedge");
+  if(hg) hg.addEventListener("click",e=>{ const b=e.target.closest("[data-hg]"); if(!b)return;
+    carryHedged=b.dataset.hg==="1"; paintCarry(); });
   const ho=$("#cHold");
   if(ho) ho.addEventListener("click",e=>{ const b=e.target.closest("[data-ch]"); if(!b)return;
     carryHold=+b.dataset.ch; paintCarry(); });
