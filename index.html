@@ -194,8 +194,8 @@ ul{margin:0;padding:0;list-style:none}
 
 /* ============ PAGES ============ */
 .page{display:none;padding-bottom:96px}
-.page.on{display:block;animation:pageIn .5s cubic-bezier(.2,.8,.3,1)}
-@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.page.on{display:block;animation:pageIn .26s cubic-bezier(.2,.8,.3,1)}
+@keyframes pageIn{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:none}}
 section{margin-top:56px}
 .sechead{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px;flex-wrap:wrap}
 .sechead .t{display:flex;flex-direction:column;gap:5px}
@@ -319,33 +319,34 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .copybtn svg{width:14px;height:14px}
 
 /* archetype banner */
-.arche{position:relative;border-radius:18px;padding:18px 20px;overflow:hidden;
+.arche{--emW:84px;--emGap:18px;position:relative;border-radius:18px;padding:20px 22px;overflow:hidden;
   border:1px solid var(--rule-2);background:linear-gradient(135deg,var(--surface-2),var(--surface))}
 .arche::before{content:"";position:absolute;inset:0;opacity:.5;
   background:radial-gradient(600px circle at 12% 0%,var(--brand-glow),transparent 58%)}
-.arche .in{position:relative;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-.arche .em{width:76px;height:76px;border-radius:50%;flex:none;position:relative}
+.arche .in{position:relative;display:flex;gap:var(--emGap);align-items:center;flex-wrap:wrap}
+.arche .em{width:var(--emW);height:var(--emW);border-radius:50%;flex:none;position:relative}
 .arche .em canvas{width:100%;height:100%;border-radius:50%;display:block;box-shadow:0 0 0 1px var(--rule-2),0 8px 24px -10px rgba(0,0,0,.8)}
 .arche .em::after{content:"";position:absolute;inset:-9px;border-radius:50%;
   background:radial-gradient(circle,var(--brand-glow),transparent 70%);z-index:-1}
 .arche .tagline{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--brand);margin-top:3px}
 .arche h2{font-size:clamp(20px,3vw,26px)}
 .arche .who{flex:1;min-width:170px;display:flex;flex-direction:column;gap:2px}
-.arche .desc{position:relative;color:var(--ink-2);font-size:14px;margin-top:12px;max-width:64ch;line-height:1.5}
+.arche .desc{position:relative;color:var(--ink-2);font-size:14.5px;margin-top:14px;max-width:64ch;line-height:1.55;
+  margin-left:calc(var(--emW) + var(--emGap))}
 .wacts{margin-left:auto;display:flex;gap:8px;flex:none}
-.arche .lvl{margin-left:auto;text-align:right;flex:none}
+.arche .lvl{margin-left:auto;margin-right:28px;text-align:right;flex:none}
 .arche .lvl .n{font-family:"Archivo";font-weight:800;font-size:30px;letter-spacing:-.04em;line-height:1}
 .arche .lvl .l{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
 
 /* ================= SCORE HERO ================= */
 .arche .lvl{display:flex;flex-direction:column;align-items:center;gap:7px}
-.scoreRing{position:relative;width:96px;height:96px}
+.scoreRing{position:relative;width:126px;height:126px}
 .scoreRing svg{width:100%;height:100%;transform:rotate(-90deg)}
-.scoreRing .t{fill:none;stroke:var(--surface-3);stroke-width:8}
-.scoreRing .v{fill:none;stroke:url(#gg);stroke-width:8;stroke-linecap:round;
+.scoreRing .t{fill:none;stroke:var(--surface-3);stroke-width:7}
+.scoreRing .v{fill:none;stroke:url(#gg);stroke-width:7;stroke-linecap:round;
   transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.25,1)}
 .scoreRing .n{position:absolute;inset:0;display:grid;place-items:center;
-  font-family:"Archivo";font-weight:800;font-size:33px;letter-spacing:-.045em;line-height:1}
+  font-family:"Archivo";font-weight:800;font-size:42px;letter-spacing:-.045em;line-height:1}
 .arche .lvl .l{display:flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;
   font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
 
@@ -361,13 +362,35 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .bar:hover .fl{filter:brightness(1.18)}
 
 /* ================= HOVER CHART ================= */
-.chartbox{position:relative;height:170px;touch-action:pan-y}
+/* pager */
+.pager{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:13px;
+  border-top:1px solid var(--rule)}
+.pgb{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none;
+  border:1px solid var(--rule);background:var(--surface-2);color:var(--ink-2);transition:.18s}
+.pgb svg{width:15px;height:15px}
+.pgb:hover:not(:disabled){color:var(--brand);border-color:var(--brand);transform:translateY(-1px)}
+.pgb:active:not(:disabled){transform:scale(.9)}
+.pgb:disabled{opacity:.32;cursor:default}
+.pgd{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pgd button{width:7px;height:7px;border-radius:50%;background:var(--rule-2);transition:.22s cubic-bezier(.2,1.5,.4,1)}
+.pgd button:hover{background:var(--ink-3);transform:scale(1.35)}
+.pgd button.on{background:var(--brand);width:19px;border-radius:100px}
+.pgof{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-2)}
+.pgn{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums}
+.pgn s{text-decoration:none;color:var(--ink-3)}
+@keyframes pgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.chartbox{position:relative;height:212px;touch-action:pan-y}
 .chartbox canvas{width:100%;height:100%;display:block}
 .chartbox .cq{position:absolute;pointer-events:none;padding:8px 11px;border-radius:10px;
   background:var(--surface-3);border:1px solid var(--rule-2);box-shadow:var(--shadow-2);
   opacity:0;transform:translateY(5px);transition:.16s;white-space:nowrap;z-index:3}
 .chartbox .cq.on{opacity:1;transform:none}
-.chartbox .cq b{display:block;font-family:"Archivo";font-weight:700;font-size:15px;letter-spacing:-.02em}
+.chartbox .cq b{display:block;font-family:"Archivo";font-weight:700;font-size:15.5px;letter-spacing:-.02em}
+.chartbox .cq u{text-decoration:none;display:block;margin-top:4px;padding-top:4px;border-top:1px solid var(--rule);
+  font-family:"JetBrains Mono",monospace;font-size:10px;white-space:nowrap}
+.chartbox .cq u.g{color:var(--gain)} .chartbox .cq u.r{color:var(--loss)}
 .chartbox .cq s{text-decoration:none;display:block;font-family:"JetBrains Mono",monospace;
   font-size:10.5px;color:var(--ink-3);margin-top:2px}
 
@@ -470,7 +493,8 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .chero .cname{position:relative;font-family:"Archivo";font-weight:800;font-size:21px;letter-spacing:-.03em;line-height:1.1}
 .chero .ctag2{position:relative;font-size:11.5px;color:var(--ink-3);text-align:center;max-width:26ch;line-height:1.35}
 .cbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px 0}
-.cbody .lab{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3)}
+.cbody .clab{display:block;font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-3);border:0;padding:0;background:none}
 .cbody .big{font-family:"Archivo";font-weight:800;font-size:clamp(30px,9vw,42px);letter-spacing:-.05em;line-height:1;
   font-variant-numeric:tabular-nums}
 .cbody .roi{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:5px 10px;border-radius:100px;
@@ -615,7 +639,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .warn.mid{background:rgba(217,164,65,.13);color:var(--warn)}
 .warn.bad{background:var(--loss-bg);color:var(--loss)}
 
-.seesaw{position:relative;height:212px;display:grid;place-items:center;overflow:hidden;
+.seesaw{position:relative;height:236px;padding-bottom:28px;display:grid;place-items:center;overflow:hidden;
   cursor:grab;touch-action:none;user-select:none}
 .seesaw:active{cursor:grabbing}
 .seesaw .beamwrap{position:relative;width:min(100%,340px);height:140px}
@@ -625,6 +649,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .seesaw .beam::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:14px;height:14px;border-radius:50%;background:var(--ink-3);opacity:.6}
 .seesaw .pan{position:absolute;display:block;top:6px;width:112px;margin-left:-56px;
+  transform-origin:50% 0;will-change:transform;
   transform-origin:50% 0;will-change:transform}
 .seesaw .pan .rope{display:block;width:1.5px;height:24px;margin:0 auto;background:var(--rule-2)}
 .seesaw .plate{display:block;border-radius:12px;border:1px solid var(--rule);background:var(--surface-2);
@@ -636,7 +661,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .seesaw .pivot{position:absolute;left:50%;top:72px;transform:translateX(-50%);
   width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;
   border-top:34px solid var(--surface-3);z-index:-1}
-.seesaw .hintline{position:absolute;bottom:0;left:0;right:0;text-align:center;
+.seesaw .hintline{position:absolute;bottom:2px;left:0;right:0;text-align:center;pointer-events:none;
   font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--ink-3);opacity:.7;pointer-events:none}
 
@@ -1091,6 +1116,16 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 
 /* ================= CARRY / FUNDING ================= */
 .chero{padding:42px 0 4px;max-width:62ch}
+.cherotop{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.rfbtn{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px;border-radius:100px;
+  border:1px solid var(--rule);background:var(--surface-2);color:var(--ink-2);font-size:11.5px;font-weight:600;
+  transition:.2s}
+.rfbtn svg{width:13px;height:13px;transition:transform .5s cubic-bezier(.2,.9,.3,1)}
+.rfbtn:hover{color:var(--brand);border-color:var(--brand);transform:translateY(-1px)}
+.rfbtn:hover svg{transform:rotate(-180deg)}
+.rfbtn:disabled{opacity:.55}
+.rfbtn.spin svg{animation:rfspin .9s linear infinite}
+@keyframes rfspin{to{transform:rotate(360deg)}}
 .chero h1{font-size:clamp(30px,5.4vw,52px);letter-spacing:-.035em;line-height:1.02;margin-top:12px}
 .chero .lede{color:var(--ink-2);font-size:clamp(15px,2vw,17.5px);line-height:1.55;margin-top:16px;max-width:56ch}
 .chero .lede b{color:var(--ink)}
@@ -1122,7 +1157,15 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .cbin{position:relative;padding:24px;display:flex;flex-direction:column;gap:20px;pointer-events:none}
 .cbin>*,.cbin a,.cbin button,.cbin [data-coin]{pointer-events:auto}
 .cbtop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.cbmk{display:flex;align-items:center;gap:10px;margin-top:9px;flex-wrap:wrap;cursor:pointer}
+.cbact{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.cbgo{white-space:nowrap;transition:transform .22s cubic-bezier(.2,.9,.3,1),box-shadow .22s,filter .22s}
+.cbgo:hover{transform:translateY(-2px);box-shadow:0 10px 26px -12px var(--brand);filter:brightness(1.06)}
+.cbgo:active{transform:translateY(0) scale(.97)}
+.cbgo svg{transition:transform .22s}
+.cbgo:hover svg{transform:translate(2px,-2px)}
+.cbmk{display:flex;align-items:center;gap:10px;margin-top:9px;flex-wrap:wrap;cursor:pointer;
+  transition:transform .22s cubic-bezier(.2,.9,.3,1)}
+.cbmk:hover{transform:translateX(3px)}
 .cbmk .tk{width:34px;height:34px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;
   font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:600;color:var(--ink-2);flex:none;
   border:1px solid var(--rule);transition:.2s}
@@ -1133,6 +1176,8 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .cbside svg{width:13px;height:13px}
 .cbside.s{background:var(--loss-bg);color:var(--loss)}
 .cbside.l{background:var(--gain-bg);color:var(--gain)}
+.cbclock{transition:border-color .25s,transform .25s}
+.cbclock:hover{border-color:var(--brand);transform:translateY(-1px)}
 .cbclock{display:inline-flex;align-items:center;gap:8px;cursor:help;padding:7px 12px;border-radius:100px;
   border:1px solid var(--rule-2);background:color-mix(in srgb,var(--surface) 84%,transparent);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -1158,6 +1203,8 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .cbbig{font-family:"Archivo";font-size:clamp(38px,6.6vw,62px);letter-spacing:-.04em;line-height:1;
   font-variant-numeric:tabular-nums;margin-top:2px}
 .cbpay .sub{color:var(--ink-2);font-size:13px;max-width:46ch}
+.cbtick{transition:border-color .25s,transform .25s}
+.cbtick:hover{border-color:var(--brand);transform:translateY(-1px)}
 .cbtick{display:inline-flex;align-items:center;gap:8px;margin-top:9px;padding:6px 11px;border-radius:100px;
   border:1px solid var(--rule-2);background:var(--surface);width:fit-content;
   font-size:12.5px;color:var(--ink-2);font-family:"JetBrains Mono",monospace}
@@ -1168,7 +1215,12 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 
 .cbgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);
   border:1px solid var(--rule);border-radius:14px;overflow:hidden}
-.cbnum{background:var(--surface);padding:13px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cbnum{background:var(--surface);padding:13px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;
+  transition:background .25s,transform .25s cubic-bezier(.2,.9,.3,1)}
+.cbnum:hover{background:var(--surface-2)}
+.cbnum .big{transition:transform .25s cubic-bezier(.2,1.4,.4,1);transform-origin:left center}
+.cbnum:hover .big{transform:scale(1.05)}
+.cbgrid:hover .cbnum:not(:hover){opacity:.72;transition:opacity .25s}
 .cbnum .big{font-family:"Archivo";font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;
   font-variant-numeric:tabular-nums}
 .cbnum .sub{color:var(--ink-3);font-size:11.5px;line-height:1.35}
@@ -1336,8 +1388,8 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .lab .lh{padding:16px 16px 0;gap:11px}
   .lab .lb2{padding:16px}
   .pgout{padding:16px}
-  .seesaw{height:196px}
-  .seesaw .pan{width:92px;margin-left:-46px}
+  .seesaw{height:214px;padding-bottom:26px}
+  .seesaw .pan{width:84px;margin-left:-42px}
   .seesaw .plate{padding:8px 4px}
   .seesaw .plate b{font-size:13px}
   .fundrow{padding:11px 12px;gap:10px}
@@ -1383,6 +1435,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .arche .in{gap:13px}
   .gauge{width:112px;height:112px}
   .bars{min-width:100%}
+  .chartbox{height:184px}
   .hero{padding:26px 0 4px}
   .searchbox .field{padding:5px 5px 5px 13px;border-radius:15px}
   .searchbox input{font-size:16px;padding:11px 0}
@@ -1391,6 +1444,9 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
   .ctlbar{position:static;padding:13px;gap:13px 12px;border-radius:14px;backdrop-filter:none;-webkit-backdrop-filter:none}
   .ctlbar .cfield{flex:1 1 100%}
   .ctlbar .cfield.grow{flex:1 1 100%}
+  .cbtop{gap:12px}
+  .cbact{width:100%;flex-direction:row;align-items:center;gap:9px;flex-wrap:wrap}
+  .cbgo{flex:1;min-width:150px;justify-content:center;height:44px}
   .cbclock{padding:6px 10px;gap:6px}
   .cbclock .cap{font-size:9px}
   .cbclock b{font-size:14px}
@@ -1476,6 +1532,8 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 <g id="i-rf" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L20 15.5"/><path d="M20 20v-4.5h-4.5"/></g>
 <g id="i-coin" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v8.8M14.3 9.6c-.5-.7-1.4-1-2.3-1-1.3 0-2.3.7-2.3 1.8 0 2.4 4.6 1.3 4.6 3.7 0 1.1-1 1.9-2.3 1.9-1 0-1.9-.4-2.4-1.1"/></g>
 <g id="i-fund" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5A8.5 8.5 0 0 1 18 6.2M20.5 14.5A8.5 8.5 0 0 1 6 17.8"/><path d="M3.2 5.6v4h4M20.8 18.4v-4h-4"/><circle cx="12" cy="12" r="2.6"/></g>
+<g id="i-cl" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></g>
+<g id="i-cr" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></g>
 <g id="i-radar" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><path d="M12 12l6.4-6.4"/><circle cx="16.4" cy="7.6" r="1.5" fill="currentColor" stroke="none"/></g>
 <g id="i-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-6 7 6 7"/><path d="M20 4v16"/></g>
 <g id="i-star" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1L3.4 9.9l6-.8z"/></g>
@@ -2154,7 +2212,11 @@ function tipEl(){ if(!tipNode){ tipNode=el("div"); tipNode.id="tip"; document.bo
 function tipShow(anchor){
   const key=anchor.dataset.tip, t=TIPS[key];
   const n=tipEl();
-  const html = t ? `<b>${t[0]}</b>${t[1]}` : (anchor.dataset.tipText||"");
+  /* data-tip is either a key into TIPS or the sentence itself. The second form
+     used to render nothing at all, so every hand-written tooltip on the page
+     showed a help cursor and then no tooltip. */
+  const html = t ? `<b>${t[0]}</b>${t[1]}`
+                 : (anchor.dataset.tipText || (key && /\s/.test(key) ? key : ""));
   if(!html) return;
   n.innerHTML=html;
   n.classList.add("on"); tipAnchor=anchor; anchor.classList.add("on");
@@ -2173,13 +2235,21 @@ function tipHide(){ if(tipNode) tipNode.classList.remove("on");
   if(tipAnchor) tipAnchor.classList.remove("on"); tipAnchor=null; }
 document.addEventListener("pointerover",e=>{
   if(!FINE) return;
-  const a=e.target.closest("[data-tip]"); if(!a||a===tipAnchor) return;
-  clearTimeout(tipHideT); tipShow(a);
+  const a=e.target.closest("[data-tip]"); if(!a) return;
+  /* clear the pending hide FIRST — moving between children of the same anchor
+     fires pointerout on the way, and returning early used to leave that timer
+     armed, so the tooltip vanished while the cursor was still on the thing */
+  clearTimeout(tipHideT);
+  if(a===tipAnchor) return;
+  tipShow(a);
 });
 document.addEventListener("pointerout",e=>{
   if(!FINE) return;
   const a=e.target.closest("[data-tip]"); if(!a) return;
-  clearTimeout(tipHideT); tipHideT=setTimeout(tipHide,120);
+  const to=e.relatedTarget;
+  if(to&&a.contains(to)) return;            /* still inside the same anchor */
+  if(to&&tipNode&&tipNode.contains(to)) return;  /* moved onto the tooltip itself */
+  clearTimeout(tipHideT); tipHideT=setTimeout(tipHide,150);
 });
 document.addEventListener("click",e=>{
   const a=e.target.closest("[data-tip]");
@@ -2441,6 +2511,9 @@ function show(p){
   if(current==="wallet"&&p!=="wallet"&&typeof stopCast==="function") stopCast();
   if(current==="carry"&&p!=="carry"&&typeof stopCarry==="function") stopCarry();
   if(current==="learn"&&p!=="learn"&&ssRaf){ cancelAnimationFrame(ssRaf); ssRaf=null; }
+  /* the see-saw's loop is cancelled on the way out; renderLearn only ever runs
+     once, so returning to the page has to restart it or the beam sits dead */
+  if(p==="learn"&&loaded.learn&&!ssRaf&&ssFrame&&!REDUCED) ssRaf=requestAnimationFrame(ssFrame);
   current=p;
   PAGES.forEach(x=>$("#p-"+x).classList.toggle("on",x===p));
   setNav(p);
@@ -3324,7 +3397,7 @@ function wirePlayground(){
 }
 
 /* ---------- 2. funding see-saw: a real spring you can shove ---------- */
-let ssRaf=null;
+let ssRaf=null; let ssFrame=null;
 async function wireSeesaw(){
   const beam=$("#ssBeam"), stage=$("#ssStage"); if(!beam) return;
   const ms=await markets().catch(()=>[]);
@@ -3349,39 +3422,43 @@ async function wireSeesaw(){
       const push=(ptr.down?0.80:0.26)*dx*(0.25+0.75*Math.abs(dx));
       vel += push + ptr.vx*0.02;
     }
-    vel*=damp; ang=clamp(ang+vel,-26,26);
-    if(Math.abs(ang)>=26) vel*=-0.35;
+    vel*=damp; ang=clamp(ang+vel,-22,22);
+    if(Math.abs(ang)>=22) vel*=-0.35;
     beam.style.transform=`rotate(${ang.toFixed(2)}deg)`;
+    /* the pans sweep low at full tilt — fade the hint rather than collide with it */
+    const hn=$("#ssHint");
+    if(hn) hn.style.opacity=String(clamp(1-(Math.abs(ang)-4)/9,0,1));
 
-    /* the pans hang: they counter-rotate and swing with their own inertia */
-    const rad=ang*Math.PI/180;
+    /* The pans are children of the beam, so the rotation already carries them
+       to the right place — they only need to counter-rotate so the plate hangs
+       level, plus a little swing of their own. Adding a translateY here as well
+       double-applied the tilt and tore them off the ends of the beam. */
     const beamW=(beam.getBoundingClientRect().width||320);
-    const half=beamW*0.46;                       /* the arm, not the whole panel */
-    /* keep the pans inside the beam no matter how narrow the screen gets */
     const panW=(panL&&panL.offsetWidth)||112;
-    const off=clamp((beamW/2-panW/2-4)/Math.max(1,beamW/2),0,0.46);
+    /* how far along each arm the pan can sit and still keep its whole width —
+       and the swing of its bottom corners — inside the beam */
+    const off=clamp(1-panW/Math.max(1,beamW)-0.05, 0.16, 0.66);
     [[panL,-1],[panR,1]].forEach(([pan,dir])=>{
       if(!pan) return;
       const sw = dir<0? swingL : swingR;
-      pan.style.left=(50+dir*off*100)+"%";
-      pan.style.transform=`translateY(${(Math.sin(rad)*dir*half).toFixed(1)}px) rotate(${(-ang+sw).toFixed(2)}deg)`;
+      pan.style.left=(50+dir*off*50)+"%";
+      pan.style.transform=`rotate(${(-ang+sw).toFixed(2)}deg)`;
     });
-    svL += (-swingL)*0.12 - vel*0.9; svL*=0.90; swingL=clamp(swingL+svL,-11,11);
-    svR += (-swingR)*0.12 + vel*0.9; svR*=0.90; swingR=clamp(swingR+svR,-11,11);
+    svL += (-swingL)*0.12 - vel*0.9; svL*=0.90; swingL=clamp(swingL+svL,-7,7);
+    svR += (-swingR)*0.12 + vel*0.9; svR*=0.90; swingR=clamp(swingR+svR,-7,7);
 
     ptr.vx*=0.85;
     ssRaf=requestAnimationFrame(frame);
   }
+  ssFrame=frame;
   if(ssRaf) cancelAnimationFrame(ssRaf);
   if(!REDUCED) ssRaf=requestAnimationFrame(frame);
 
   stage.addEventListener("pointermove",e=>{
     if(ptr.px!=null) ptr.vx=e.clientX-ptr.px;
     ptr.px=e.clientX; ptr.x=e.clientX;
-    const h=$("#ssHint"); if(h) h.style.opacity="0";
   },{passive:true});
-  stage.addEventListener("pointerleave",()=>{ ptr.x=null; ptr.px=null; ptr.vx=0; ptr.down=false;
-    const h=$("#ssHint"); if(h) h.style.opacity=""; });
+  stage.addEventListener("pointerleave",()=>{ ptr.x=null; ptr.px=null; ptr.vx=0; ptr.down=false; });
   stage.addEventListener("pointerdown",e=>{ ptr.down=true; ptr.x=e.clientX; ptr.px=e.clientX; });
   window.addEventListener("pointerup",()=>{ ptr.down=false; });
 
@@ -3854,7 +3931,7 @@ function paintWallet(){
   const CH=(window.ArcChars?ArcChars.get(arc.id):{name:arc.n,tag:""});
   const gotN=bg.filter(b=>b.got).length;
   const root=$("#walletRoot");
-  const posHTML = w.positions.length ? w.positions.map(p=>`
+  const posRow = p=>`
     <div class="line neu" style="align-items:center">
       <div class="ic" style="background:${p.side==="LONG"?"var(--gain-bg)":"var(--loss-bg)"};color:${p.side==="LONG"?"var(--gain)":"var(--loss)"}">${ic(p.side==="LONG"?"up":"down")}</div>
       <div class="tx" style="flex:1">
@@ -3862,7 +3939,7 @@ function paintWallet(){
           <b class="coinlink" data-coin="${p.market}">${p.market}</b><span class="mono ${p.upnl>=0?"gain":"loss"}">${usd(p.upnl,{plus:true})}</span></div>
         <div class="dim3" style="font-size:12.5px;margin-top:2px">
           ${p.side==="LONG"?"Betting up":"Betting down"} · ${num(p.size,4)} @ ${usd(p.entry)} → now ${usd(p.mark)} · ${usd(p.notional)} position${p.lev?` · ${p.lev}× set`:""}</div>
-      </div></div>`).join("") : `<div class="dim3" style="padding:6px 2px;font-size:13.5px">No open positions — this wallet is flat right now.</div>`;
+      </div></div>`;
 
   const totVol=w.mktRank.reduce((s,x)=>s+x.vol,0)||1;
   const mixHTML = w.mktRank.slice(0,6).map((m,i)=>{
@@ -3872,14 +3949,13 @@ function paintWallet(){
       <span class="tr"><i class="fl" style="width:0" data-w="${share.toFixed(1)}"></i></span>
       <span class="nm">${share>=1?Math.round(share)+"%":"<1%"}</span></div>`;}).join("");
 
-  const recent = w.fills.slice(-8).reverse();
-  const recentHTML = recent.length? recent.map(f=>`
+  const recent = w.fills.slice().reverse();
+  const fillRow = f=>`
     <div class="trow" style="grid-template-columns:52px 1fr auto auto">
       <span class="sd ${f.side==="BUY"?"gain":"loss"}">${f.side}</span>
       <span>${f.marketDisplayName}</span>
       <span class="px dim">${num(N(f.size),4)} @ ${usd(N(f.price))}</span>
-      <span class="px dim3">${ago(f.createdAt/1000)}</span></div>`).join("")
-    : `<div class="dim3" style="padding:14px;font-size:13px">No trades recorded.</div>`;
+      <span class="px dim3">${ago(f.createdAt/1000)}</span></div>`;
 
   root.innerHTML=`
   <div class="whead">
@@ -3963,7 +4039,8 @@ function paintWallet(){
 
       <div class="panel rv"><div class="ph"><h3>Open positions</h3>
         <span class="eyebrow">${w.positions.length} live · ${usd(w.notional)} exposure</span></div>
-        <div class="pb"><div class="story">${posHTML}</div></div></div>
+        <div class="pb"><div class="story" id="posList"></div>
+          <div class="pager" id="posPager" hidden></div></div></div>
 
       ${w.mktRank.length?`<div class="panel rv"><div class="ph"><h3>Where the money goes</h3>
         <span class="eyebrow">Share of volume</span></div><div class="pb"><div class="bars">${mixHTML}</div>
@@ -3987,8 +4064,10 @@ function paintWallet(){
           <button class="btn ghost" id="simGo">${ic("users")}Find similar wallets</button>
         </div></div>
 
-      <div class="panel rv"><div class="ph"><h3>Recent fills</h3><span class="eyebrow">Newest first</span></div>
-        <div class="tape">${recentHTML}</div></div>
+      <div class="panel rv"><div class="ph"><h3>Recent fills</h3>
+        <span class="eyebrow">Newest first · ${num(recent.length)} recorded</span></div>
+        <div class="tape" id="fillList"></div>
+        <div class="pager" id="fillPager" hidden></div></div>
 
       <div class="tiles t3 rv">
         ${[["Win rate",w.winRate!=null?Math.round(w.winRate*100)+"%":"—",w.closes?`${w.wins} of ${w.closes} closed trades made money`:"No closed trades yet","winrate"],
@@ -4041,6 +4120,8 @@ function paintWallet(){
   if(gn) countUp(gn,sc.total,v=>Math.round(v),1400);
   if(sn) countUp(sn,sc.total,v=>Math.round(v),1400);
   paintStory(lines);
+  WROW.pos=posRow; WROW.fill=fillRow; WROW.fills=recent;
+  posPage=0; fillPage=0; paintPosList(); paintFillList();
   if(w.curve.length>3) areaChart($("#eqChart"), w.curve, w.curveLabel);
   setTimeout(()=>$$("#walletRoot .fl[data-w]").forEach(f=>{ f.style.width=f.dataset.w+"%"; }),260);
 
@@ -4102,69 +4183,201 @@ function renderStory(){
 }
 
 /* ---------- an equity chart you can actually read ---------- */
+/* ============================================================
+   PAGER — one small control, reused wherever a list gets long.
+   Renders into `host`, hides itself when there is only one page.
+   ============================================================ */
+function pager(host, total, per, page, onPage){
+  if(!host) return;
+  const pages=Math.ceil(total/per)||1;
+  if(pages<2){ host.innerHTML=""; host.hidden=true; return; }
+  host.hidden=false;
+  const from=page*per+1, to=Math.min(total,(page+1)*per);
+  const dots = pages<=12
+    ? `<div class="pgd">${Array.from({length:pages},(_,i)=>
+        `<button class="${i===page?"on":""}" data-p="${i}" aria-label="Page ${i+1}"></button>`).join("")}</div>`
+    : `<span class="pgof">page ${page+1} of ${pages}</span>`;
+  host.innerHTML=`
+    <button class="pgb" data-d="-1" ${page===0?"disabled":""} aria-label="Previous page">${ic("cl")}</button>
+    ${dots}
+    <button class="pgb" data-d="1" ${page===pages-1?"disabled":""} aria-label="Next page">${ic("cr")}</button>
+    <span class="pgn">${num(from)}–${num(to)} <s>of ${num(total)}</s></span>`;
+  host.onclick=e=>{
+    const d=e.target.closest("[data-d]"), j=e.target.closest("[data-p]");
+    if(d) onPage(clamp(page+(+d.dataset.d),0,pages-1));
+    else if(j) onPage(+j.dataset.p);
+  };
+}
+
+/* the two paged lists on the wallet page */
+let posPage=0, fillPage=0;
+const PER=10;
+function paintPosList(){
+  const box=$("#posList"); if(!box) return;
+  const P=W.positions||[];
+  if(!P.length){ box.innerHTML=`<div class="dim3" style="padding:6px 2px;font-size:13.5px">No open positions — this wallet is flat right now.</div>`;
+    pager($("#posPager"),0,PER,0,()=>{}); return; }
+  const pages=Math.ceil(P.length/PER)||1; posPage=clamp(posPage,0,pages-1);
+  box.innerHTML=P.slice(posPage*PER,posPage*PER+PER).map(WROW.pos).join("");
+  pager($("#posPager"),P.length,PER,posPage,i=>{ posPage=i; paintPosList(); flick($("#posList")); });
+}
+function paintFillList(){
+  const box=$("#fillList"); if(!box) return;
+  const F=WROW.fills||[];
+  if(!F.length){ box.innerHTML=`<div class="dim3" style="padding:14px;font-size:13px">No trades recorded.</div>`;
+    pager($("#fillPager"),0,PER,0,()=>{}); return; }
+  const pages=Math.ceil(F.length/PER)||1; fillPage=clamp(fillPage,0,pages-1);
+  box.innerHTML=F.slice(fillPage*PER,fillPage*PER+PER).map(WROW.fill).join("");
+  pager($("#fillPager"),F.length,PER,fillPage,i=>{ fillPage=i; paintFillList(); flick($("#fillList")); });
+}
+/* a short settle on the new page so a jump reads as movement, not a redraw */
+function flick(box){
+  if(!box||REDUCED) return;
+  [...box.children].forEach((n2,i)=>{
+    n2.style.animation="none"; void n2.offsetWidth;
+    n2.style.animation=`pgIn .34s cubic-bezier(.2,.9,.3,1) ${Math.min(i,9)*22}ms both`;
+  });
+}
+const WROW={pos:null,fill:null,fills:[]};
+
 function areaChart(host, values, label){
   if(!host||!values||values.length<2) return;
   host.innerHTML="";
   const cv=el("canvas"); host.appendChild(cv);
   const q=el("div","cq"); host.appendChild(q);
   const c=cv.getContext("2d");
-  let W=0,H=0,pts=[],hoverI=-1,intro=0,raf=null;
+  let W=0,H=0,pts=[],hoverI=-1,intro=0,raf=null,hx=null,hxT=null,pulse=0;
   const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const START=values[0], LAST=values[values.length-1];
+  const up = LAST>=START;
+
+  /* geometry: a real gutter on the right so the value axis has room to live */
+  let AX=66, PL=8, PT=20, PB=26, mn=0, mx=1, rg=1, ticks=[];
   function size(){
     const r=host.getBoundingClientRect(), dpr=Math.min(2,window.devicePixelRatio||1);
     W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr;
     cv.style.width=W+"px"; cv.style.height=H+"px"; c.setTransform(dpr,0,0,dpr,0,0);
-    const mn=Math.min.apply(null,values), mx=Math.max.apply(null,values), rg=(mx-mn)||1;
-    const PL=10, PR=10, PT=16, PB=22;
-    pts=values.map((v,i)=>[PL+(i/(values.length-1))*(W-PL-PR), PT+(1-(v-mn)/rg)*(H-PT-PB)]);
+    AX = W<430 ? 54 : 66;
+    const lo=Math.min.apply(null,values), hi=Math.max.apply(null,values);
+    const pad=((hi-lo)||Math.abs(hi)||1)*0.10;
+    mn=lo-pad; mx=hi+pad; rg=(mx-mn)||1;
+    const n=W<430?3:4;
+    ticks=Array.from({length:n+1},(_,i)=>mn+rg*i/n);
+    pts=values.map((v,i)=>[PL+(i/(values.length-1))*(W-PL-AX-10), yOf(v)]);
   }
+  const yOf = v => PT+(1-(v-mn)/rg)*(H-PT-PB);
+  const plotR = () => W-AX-10;
+
   function draw(){
-    const up=values[values.length-1]>=values[0];
     const col=up?css("--gain"):css("--loss");
+    const ink3=css("--ink-3"), rule=css("--rule");
     c.clearRect(0,0,W,H);
     const n=Math.max(2,Math.round(pts.length*intro));
     const seg=pts.slice(0,n);
-    /* grid */
-    c.strokeStyle=css("--rule"); c.lineWidth=1;
-    for(let i=0;i<=3;i++){ const y=16+(H-38)*i/3;
-      c.beginPath(); c.moveTo(0,y); c.lineTo(W,y); c.stroke(); }
-    /* area */
-    const g=c.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,hexA2(col,.30)); g.addColorStop(1,hexA2(col,0));
-    c.beginPath(); c.moveTo(seg[0][0],H-22);
+    const base=H-PB;
+
+    /* --- grid + the value axis the chart was missing --- */
+    c.font='500 10.5px "JetBrains Mono", monospace';
+    c.textBaseline="middle";
+    ticks.forEach((t,i)=>{
+      const y=yOf(t);
+      c.strokeStyle=rule; c.lineWidth=1;
+      c.beginPath(); c.moveTo(PL,y); c.lineTo(plotR(),y); c.stroke();
+      c.textAlign="right"; c.fillStyle=ink3;
+      c.fillText(usd(t), W-8, y);
+      /* a tick nub so the label reads as an axis, not floating text */
+      c.strokeStyle=css("--rule-2");
+      c.beginPath(); c.moveTo(plotR(),y); c.lineTo(plotR()+5,y); c.stroke();
+    });
+    c.strokeStyle=rule; c.lineWidth=1;
+    c.beginPath(); c.moveTo(plotR()+0.5,PT); c.lineTo(plotR()+0.5,base); c.stroke();
+
+    /* --- where it started, so the whole shape has a reference --- */
+    const sy=yOf(START);
+    c.strokeStyle=hexA2(ink3,.55); c.lineWidth=1; c.setLineDash([4,5]);
+    c.beginPath(); c.moveTo(PL,sy); c.lineTo(plotR(),sy); c.stroke(); c.setLineDash([]);
+    c.textAlign="left"; c.fillStyle=ink3; c.font='500 9.5px "JetBrains Mono", monospace';
+    c.fillText("START", PL+3, sy-9);
+
+    /* --- area, clipped to the plot --- */
+    c.save();
+    c.beginPath(); c.rect(PL,PT-6,plotR()-PL,base-PT+6); c.clip();
+    const g=c.createLinearGradient(0,PT,0,base);
+    g.addColorStop(0,hexA2(col,.34)); g.addColorStop(.7,hexA2(col,.06)); g.addColorStop(1,hexA2(col,0));
+    c.beginPath(); c.moveTo(seg[0][0],base);
     seg.forEach(p=>c.lineTo(p[0],p[1]));
-    c.lineTo(seg[seg.length-1][0],H-22); c.closePath(); c.fillStyle=g; c.fill();
-    /* line */
+    c.lineTo(seg[seg.length-1][0],base); c.closePath(); c.fillStyle=g; c.fill();
+
+    /* --- line --- */
     c.beginPath(); seg.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));
     c.strokeStyle=col; c.lineWidth=2.4; c.lineJoin="round"; c.lineCap="round";
-    c.save(); c.shadowColor=hexA2(col,.5); c.shadowBlur=12; c.stroke(); c.restore();
-    /* endpoint */
+    c.save(); c.shadowColor=hexA2(col,.55); c.shadowBlur=14; c.stroke(); c.restore();
+    c.restore();
+
+    /* --- endpoint, breathing --- */
     const e=seg[seg.length-1];
-    c.fillStyle=col; c.beginPath(); c.arc(e[0],e[1],4.2,0,7); c.fill();
-    /* hover */
-    if(hoverI>=0 && hoverI<pts.length){
-      const p=pts[hoverI];
-      c.strokeStyle=css("--rule-2"); c.lineWidth=1; c.setLineDash([3,5]);
-      c.beginPath(); c.moveTo(p[0],10); c.lineTo(p[0],H-22); c.stroke(); c.setLineDash([]);
-      c.fillStyle=col; c.beginPath(); c.arc(p[0],p[1],5.5,0,7); c.fill();
-      c.fillStyle=css("--surface"); c.beginPath(); c.arc(p[0],p[1],2.4,0,7); c.fill();
+    const pr=1+Math.sin(pulse)*0.18;
+    c.fillStyle=hexA2(col,.22);
+    c.beginPath(); c.arc(e[0],e[1],9*pr,0,7); c.fill();
+    c.fillStyle=col; c.beginPath(); c.arc(e[0],e[1],4.4,0,7); c.fill();
+
+    /* --- hover: crosshair both ways, plus the value pinned on the axis --- */
+    if(hoverI>=0 && hoverI<pts.length && hx!=null){
+      const py=yOf(values[hoverI]);
+      /* soft band under the cursor */
+      const bg=c.createLinearGradient(hx-26,0,hx+26,0);
+      bg.addColorStop(0,hexA2(col,0)); bg.addColorStop(.5,hexA2(col,.10)); bg.addColorStop(1,hexA2(col,0));
+      c.fillStyle=bg; c.fillRect(Math.max(PL,hx-26),PT-6,52,base-PT+6);
+
+      c.strokeStyle=hexA2(col,.55); c.lineWidth=1; c.setLineDash([3,5]);
+      c.beginPath(); c.moveTo(hx,PT-6); c.lineTo(hx,base); c.stroke();
+      c.beginPath(); c.moveTo(hx,py); c.lineTo(plotR(),py); c.stroke();
+      c.setLineDash([]);
+
+      /* the reading, sitting in the axis gutter where it belongs */
+      const lbl=usd(values[hoverI]);
+      c.font='600 11px "JetBrains Mono", monospace';
+      const lw=c.measureText(lbl).width;
+      const chW=Math.max(lw+14, W-8-(plotR()+5));
+      c.fillStyle=col; rr(c,plotR()+5,py-11,chW,22,7); c.fill();
+      c.fillStyle=css("--ground"); c.textAlign="center"; c.textBaseline="middle";
+      c.fillText(lbl, plotR()+5+chW/2, py+1);
+
+      c.fillStyle=col; c.beginPath(); c.arc(hx,py,6,0,7); c.fill();
+      c.fillStyle=css("--surface"); c.beginPath(); c.arc(hx,py,2.6,0,7); c.fill();
     }
+    c.textAlign="left"; c.textBaseline="alphabetic";
   }
-  function anim(){ intro=Math.min(1,intro+0.045); draw(); if(intro<1) raf=requestAnimationFrame(anim); }
+
+  function anim(){
+    intro=Math.min(1,intro+0.045);
+    pulse+=0.06;
+    if(hxT!=null){ hx = hx==null? hxT : hx+(hxT-hx)*0.32; }
+    draw();
+    raf=requestAnimationFrame(anim);
+  }
   function at(x){ let best=0,bd=1e9;
     pts.forEach((p,i)=>{ const d=Math.abs(p[0]-x); if(d<bd){bd=d;best=i;} }); return best; }
+
   host.addEventListener("pointermove",e=>{
-    const r=cv.getBoundingClientRect(); hoverI=at(e.clientX-r.left); draw();
-    const p=pts[hoverI], v=values[hoverI];
-    const back=values.length-1-hoverI;
-    q.innerHTML=`<b>${usd(v)}</b><s>${back===0?"now":back+" step"+(back===1?"":"s")+" ago"}</s>`;
+    const r=cv.getBoundingClientRect(), x=e.clientX-r.left;
+    if(x>plotR()+6){ hoverI=-1; hxT=null; hx=null; q.classList.remove("on"); return; }
+    hoverI=at(x); hxT=pts[hoverI][0]; if(REDUCED){ hx=hxT; draw(); }
+    const v=values[hoverI], back=values.length-1-hoverI;
+    const d=v-START, dp=START!==0? d/Math.abs(START)*100 : 0;
+    q.innerHTML=`<b>${usd(v)}</b>
+      <s>${back===0?"now":back+" step"+(back===1?"":"s")+" ago"}</s>
+      <u class="${d>=0?"g":"r"}">${d>=0?"▲":"▼"} ${usd(Math.abs(d))} (${dp>=0?"+":"−"}${Math.abs(dp).toFixed(1)}%) from start</u>`;
     q.classList.add("on");
-    const qw=q.offsetWidth||90;
-    q.style.left=clamp(p[0]-qw/2,4,W-qw-4)+"px";
-    q.style.top=clamp(p[1]-q.offsetHeight-12,2,H-40)+"px";
+    const qw=q.offsetWidth||110, qh=q.offsetHeight||44;
+    q.style.left=clamp(pts[hoverI][0]-qw/2,4,plotR()-qw-2)+"px";
+    q.style.top=clamp(yOf(v)-qh-14,2,H-qh-24)+"px";
   },{passive:true});
-  host.addEventListener("pointerleave",()=>{ hoverI=-1; q.classList.remove("on"); draw(); });
-  size(); if(REDUCED){ intro=1; draw(); } else { intro=0; anim(); }
+  host.addEventListener("pointerleave",()=>{ hoverI=-1; hxT=null; hx=null; q.classList.remove("on"); },{passive:true});
+
+  size();
+  if(REDUCED){ intro=1; draw(); }
+  else anim();
   let rz; window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{size();draw();},180); },{passive:true});
 }
 function hexA2(col,a){
@@ -4205,7 +4418,7 @@ function paintCard(){
       <span class="cname">${d.charName}</span>
       <span class="ctag2">${d.charTag}</span></div>
     <div class="cbody">
-      <span class="lab">${d.label}</span>
+      <span class="clab">${d.label}</span>
       <span class="big ${cardMode==="pnl"?(d.up?"gain":"loss"):""}">${d.big}</span>
       ${d.roi?`<span class="roi ${d.up?"up":"dn"}">${ic(d.up?"up":"down",'width:12px;height:12px')}${d.roi}</span>`:""}
       <div class="cmini">${d.mini.map(m=>`<div><div class="k">${m[0]}</div><div class="v">${m[1]}</div></div>`).join("")}</div>
@@ -4216,7 +4429,7 @@ function paintCard(){
     <span class="glowline"></span>
     <div class="ctop"><span class="brandmark"><span class="lg"><svg width="16" height="16" viewBox="0 0 29 29" fill="#F7F2EA"><use href="#i-logo"/></svg></span>
       <span>${SITE_NAME}</span></span><span class="ctag">Breakdown</span></div>
-    <div class="cbody"><span class="lab">Arclight score</span>
+    <div class="cbody"><span class="clab">Arclight score</span>
       <span class="big">${d.sc.total}<span style="font-size:.42em;color:var(--ink-3)">/100</span></span>
       <div class="bars" style="margin-top:16px;gap:11px">${d.sc.parts.map(p=>`<div class="bar" style="grid-template-columns:88px 1fr 30px">
         <span class="lb" style="font-size:11.5px">${p[0]}</span>
@@ -4245,7 +4458,7 @@ function shareX(){
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);
   c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
 function drawCard(ratio){
-  const w=W, d=cardData();
+  const d=cardData();
   const tall = ratio!=="wide";
   const W_= tall?1080:1600, H_= tall?1350:900;
   const cv=document.createElement("canvas"); cv.width=W_; cv.height=H_;
@@ -4255,6 +4468,15 @@ function drawCard(ratio){
     ? {bg:"#0B120D",card:"#131E16",card2:"#0E1710",ink:"#F2EEE4",ink2:"#9FB0A4",ink3:"#6B7C70",rule:"#243328",brand:"#4E9E62",gain:"#5FB07C",loss:"#D9695C"}
     : {bg:"#EFEDE4",card:"#FFFFFF",card2:"#F7F4EC",ink:"#14231A",ink2:"#4C5E52",ink3:"#7C8C81",rule:"#D9D5C7",brand:"#2E6B3C",gain:"#2E7D52",loss:"#B0453A"};
 
+  /* ---------- one margin, one footer, everything measured off them ---------- */
+  const M      = tall ? 90 : 96;
+  const headY  = tall ? 76 : 66;      /* top of the logo block   */
+  const headH  = 68;
+  const footR  = H_ - (tall ? 132 : 118);   /* the footer rule    */
+  const footB  = footR + 52;                /* its single text line */
+  const bandT  = headY + headH + (tall ? 54 : 46);   /* content band */
+  const bandB  = footR - (tall ? 54 : 46);
+
   /* ---- ground ---- */
   const g=c.createLinearGradient(0,0,W_,H_);
   g.addColorStop(0,P.card); g.addColorStop(.55,P.card2); g.addColorStop(1,P.bg);
@@ -4263,29 +4485,32 @@ function drawCard(ratio){
   for(let x=0;x<W_;x+=54){c.beginPath();c.moveTo(x,0);c.lineTo(x,H_);c.stroke();}
   for(let y=0;y<H_;y+=54){c.beginPath();c.moveTo(0,y);c.lineTo(W_,y);c.stroke();}
 
-  const M = tall?84:110;
-  const heroR = tall?170:150;
-  const heroX = tall? W_/2 : M+heroR+20;
-  const heroY = tall? 430 : H_/2 - 10;
+  /* ---------- hero geometry ---------- */
+  const heroR = tall ? 172 : 156;
+  const heroX = tall ? W_/2 : M + heroR;
+  const heroY = tall ? bandT + heroR + 6 : (bandT + bandB)/2;
 
-  /* glow behind the hero */
   const hg=c.createRadialGradient(heroX,heroY,heroR*.5,heroX,heroY,heroR*2);
   hg.addColorStop(0,dark?"rgba(78,158,98,.34)":"rgba(46,107,60,.20)"); hg.addColorStop(1,"rgba(0,0,0,0)");
   c.fillStyle=hg; c.fillRect(0,0,W_,H_);
 
   /* ---- header ---- */
-  c.fillStyle="#234728"; rr(c,M,tall?70:60,68,68,20); c.fill();
-  c.save(); c.translate(M+10,(tall?70:60)+10); c.scale(1.68,1.68); c.fillStyle="#F7F2EA";
+  c.fillStyle="#234728"; rr(c,M,headY,headH,headH,20); c.fill();
+  c.save(); c.translate(M+10,headY+10); c.scale(1.68,1.68); c.fillStyle="#F7F2EA";
   c.fill(new Path2D("M6 5h7.5A10.5 10.5 0 0 1 24 15.5V23a1 1 0 0 1-1 1h-3.6a1 1 0 0 1-1-1v-7.5A5.9 5.9 0 0 0 12.5 9.6H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"));
   c.fill(new Path2D("M6 11.6h6.2a1 1 0 0 1 .72 1.7l-6.2 6.2A1 1 0 0 1 5 18.8v-6.2a1 1 0 0 1 1-1z"));
   c.fill(new Path2D("M18.4 17.5v6.2a1 1 0 0 1-1 1h-6.2a1 1 0 0 1-.7-1.7l6.2-6.2a1 1 0 0 1 1.7.7z"));
   c.restore();
-  c.fillStyle=P.ink; c.font='700 40px Archivo, sans-serif'; c.textBaseline="middle"; c.textAlign="left";
-  c.fillText(SITE_NAME, M+88, (tall?70:60)+36);
-  c.font='500 22px "JetBrains Mono", monospace'; c.fillStyle=P.brand; c.textAlign="right";
-  const tagT=d.tag.toUpperCase(), tw=c.measureText(tagT).width;
-  c.strokeStyle=P.brand; c.lineWidth=2; rr(c,W_-M-tw-36,(tall?70:60)+16,tw+36,42,21); c.stroke();
-  c.fillText(tagT, W_-M-18,(tall?70:60)+38); c.textAlign="left";
+  c.textBaseline="middle";
+  c.fillStyle=P.ink; c.font='700 40px Archivo, sans-serif'; c.textAlign="left";
+  c.fillText(SITE_NAME, M+headH+20, headY+headH/2);
+  c.font='500 22px "JetBrains Mono", monospace';
+  const tagT=d.tag.toUpperCase(), tw=c.measureText(tagT).width, tpH=44, tpW=tw+40;
+  c.strokeStyle=P.brand; c.lineWidth=2;
+  rr(c,W_-M-tpW,headY+(headH-tpH)/2,tpW,tpH,tpH/2); c.stroke();
+  c.fillStyle=P.brand; c.textAlign="center";
+  c.fillText(tagT, W_-M-tpW/2, headY+headH/2+1);
+  c.textAlign="left";
 
   /* ---- hero character ---- */
   if(window.ArcChars){
@@ -4300,56 +4525,80 @@ function drawCard(ratio){
     c.beginPath(); c.arc(heroX,heroY,heroR,0,7); c.stroke();
   }
 
-  /* ---- text column ---- */
-  const tx = tall? W_/2 : M+heroR*2+70;
-  const ta = tall? "center":"left";
-  c.textAlign=ta;
-  let y = tall? heroY+heroR+72 : 210;
-  c.fillStyle=P.ink; c.font='800 62px Archivo, sans-serif';
-  c.fillText(d.charName, tx, y);
-  y+=40;
-  c.fillStyle=P.ink3; c.font='400 25px "Instrument Sans", sans-serif';
-  c.fillText(d.charTag, tx, y);
-  y+= tall?86:78;
+  /* ---------- the text + tiles block, measured then placed as one unit ----------
+     Every gap below is declared here, so nothing can drift into anything else. */
+  const NAME=64, TAGL=26, LABL=21, BIG=tall?112:116, ROIH=52, TILE=124;
+  const gNameTag = 44, gTagLab = tall?62:58, gLabBig = tall?106:110,
+        gBigRoi  = d.roi ? (tall?54:56) : 0, gRoiTiles = tall?58:56;
+
+  const blockH = NAME + gNameTag + TAGL + gTagLab + LABL + gLabBig + BIG
+               + (d.roi ? gBigRoi + ROIH : 0) + gRoiTiles + TILE;
+
+  const colX  = tall ? W_/2 : M + heroR*2 + 74;
+  const colW  = tall ? W_-M*2 : W_ - (M + heroR*2 + 74) - M;
+  const align = tall ? "center" : "left";
+  /* portrait stacks under the hero; landscape centres the block beside it */
+  const top   = tall ? (heroY + heroR + 62)
+                     : Math.max(bandT, (bandT + bandB)/2 - blockH/2);
+
+  c.textAlign=align; c.textBaseline="alphabetic";
+  let y = top + NAME;
+  c.fillStyle=P.ink; c.font='800 64px Archivo, sans-serif';
+  c.fillText(d.charName, colX, y);
+
+  y += gNameTag;
+  c.fillStyle=P.ink3; c.font='400 26px "Instrument Sans", sans-serif';
+  c.fillText(d.charTag, colX, y);
+
+  y += gTagLab;
   c.fillStyle=P.ink3; c.font='500 21px "JetBrains Mono", monospace';
-  c.fillText(d.label.toUpperCase(), tx, y);
-  y+=76;
+  c.fillText(d.label.toUpperCase(), colX, y);
+
+  y += gLabBig;
   c.fillStyle = cardMode==="pnl" ? (d.up?P.gain:P.loss) : P.ink;
-  c.font='800 116px Archivo, sans-serif';
-  c.fillText(d.big, tx, y);
+  c.font=`800 ${BIG}px Archivo, sans-serif`;
+  c.fillText(d.big, colX, y);
+
   if(d.roi){
-    y+=88; c.font='700 26px "JetBrains Mono", monospace';
-    const rw=c.measureText(d.roi).width, rx = ta==="center"? tx-(rw+40)/2 : tx;
-    c.fillStyle = d.up ? (dark?"rgba(95,176,124,.16)":"rgba(46,125,82,.13)") : (dark?"rgba(217,105,92,.16)":"rgba(176,69,58,.13)");
-    rr(c,rx,y-32,rw+40,50,25); c.fill();
-    c.fillStyle=d.up?P.gain:P.loss; c.textAlign="left"; c.fillText(d.roi, rx+20, y-6); c.textAlign=ta;
+    y += gBigRoi;
+    c.font='700 26px "JetBrains Mono", monospace';
+    const rw=c.measureText(d.roi).width, pw=rw+46;
+    const rx = align==="center" ? colX-pw/2 : colX;
+    c.fillStyle = d.up ? (dark?"rgba(95,176,124,.16)":"rgba(46,125,82,.13)")
+                       : (dark?"rgba(217,105,92,.16)":"rgba(176,69,58,.13)");
+    rr(c,rx,y,pw,ROIH,ROIH/2); c.fill();
+    c.fillStyle=d.up?P.gain:P.loss;
+    c.textAlign="center"; c.textBaseline="middle";
+    c.fillText(d.roi, rx+pw/2, y+ROIH/2+1);
+    c.textAlign=align; c.textBaseline="alphabetic";
+    y += ROIH;
   }
 
   /* ---- three stat tiles ---- */
-  const gy = tall? H_-330 : H_-250;
-  const gx0 = tall? M : M+heroR*2+70;
-  const gw = ((tall?W_-M*2:W_-gx0-M) - 28)/3, gh=118;
+  const gy = y + gRoiTiles;
+  const gap = 16, gw = (colW - gap*2)/3;
+  const gx0 = tall ? M : colX;
   d.mini.forEach((m,i)=>{
-    const x=gx0+i*(gw+14);
-    c.fillStyle=dark?"rgba(255,255,255,.035)":"rgba(20,35,26,.035)"; rr(c,x,gy,gw,gh,20); c.fill();
-    c.strokeStyle=P.rule; c.lineWidth=1.5; rr(c,x,gy,gw,gh,20); c.stroke();
-    c.textAlign="center";
-    c.fillStyle=P.ink3; c.font='500 18px "JetBrains Mono", monospace'; c.fillText(m[0].toUpperCase(),x+gw/2,gy+40);
-    c.fillStyle=P.ink; c.font='700 40px Archivo, sans-serif'; c.fillText(m[1],x+gw/2,gy+86);
+    const x=gx0+i*(gw+gap);
+    c.fillStyle=dark?"rgba(255,255,255,.035)":"rgba(20,35,26,.035)"; rr(c,x,gy,gw,TILE,20); c.fill();
+    c.strokeStyle=P.rule; c.lineWidth=1.5; rr(c,x,gy,gw,TILE,20); c.stroke();
+    c.textAlign="center"; c.textBaseline="middle";
+    c.fillStyle=P.ink3; c.font='500 18px "JetBrains Mono", monospace';
+    c.fillText(m[0].toUpperCase(), x+gw/2, gy+40);
+    c.fillStyle=P.ink; c.font='700 42px Archivo, sans-serif';
+    c.fillText(m[1], x+gw/2, gy+86);
   });
+  c.textBaseline="alphabetic";
 
-  /* ---- footer ---- */
-  c.textAlign="left";
-  c.strokeStyle=P.rule; c.lineWidth=2; c.beginPath(); c.moveTo(M,H_-136); c.lineTo(W_-M,H_-136); c.stroke();
-  c.fillStyle=P.ink2; c.font='500 26px "JetBrains Mono", monospace';
-  c.fillText(cardBlur?"0x••••••••••••":shortA(d.addr), M, H_-92);
-  c.fillStyle=P.ink3; c.font='400 22px "Instrument Sans", sans-serif';
-  c.fillText("built by "+BUILDER.name+" "+BUILDER.handle, M, H_-52);
+  /* ---- footer: one line, address left, site right ---- */
+  c.strokeStyle=P.rule; c.lineWidth=2;
+  c.beginPath(); c.moveTo(M,footR); c.lineTo(W_-M,footR); c.stroke();
+  c.textBaseline="middle";
+  c.textAlign="left"; c.fillStyle=P.ink2; c.font='500 26px "JetBrains Mono", monospace';
+  c.fillText(cardBlur?"0x••••••••••••":shortA(d.addr), M, footB);
   c.textAlign="right"; c.fillStyle=P.brand; c.font='700 26px Archivo, sans-serif';
-  c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), W_-M, H_-92);
-  c.fillStyle=P.ink3; c.font='400 22px "Instrument Sans", sans-serif';
-  c.fillText("arcus perps", W_-M, H_-52);
-  c.textAlign="left";
+  c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), W_-M, footB);
+  c.textAlign="left"; c.textBaseline="alphabetic";
   return cv;
 }
 async function saveImage(){
@@ -4503,31 +4752,57 @@ function fillKind(f,om){
 }
 const KIND_LABEL={OPEN:"ENTRY",ADD:"ADDED",CLOSE:"EXIT",TP:"TARGET HIT",SL:"STOP HIT",LIQ:"LIQUIDATED"};
 
+let PLAY_HIDDEN=0;
 function buildPlays(w){
   const byM={}, out=[];
   const om={}; (w.ordersRaw||[]).forEach(o=>{ if(o&&o.orderId) om[o.orderId]=o; });
   w.fills.forEach(f=>{ (byM[f.marketDisplayName]=byM[f.marketDisplayName]||[]).push(f); });
   const posBy={}; w.positions.forEach(p=>posBy[p.market]=p);
+  const FLAT=1e-9;
   Object.keys(byM).forEach(m=>{
     const fs=byM[m].slice().sort((a,b)=>a.createdAt-b.createdAt);
-    let cur=null, sz=0;
-    fs.forEach(f=>{
-      const mag=Math.abs(N(f.size)), s=(f.side==="BUY"?1:-1)*mag;
-      if(Math.abs(sz)<1e-9 && !cur) cur={m,t0:f.createdAt/1000,fills:[],pnl:0,dir:s>0?"LONG":"SHORT",peak:0,notional:0};
-      const rec={t:f.createdAt/1000,p:N(f.price),s:mag,side:f.side,eff:f.positionEffect||"",
-                 pnl:N(f.closedPnl),liq:!!f.liquidation,role:f.role,orderId:f.orderId};
+    const P=posBy[m];
+    /* The fills endpoint is capped at 1000, so this window nearly always opens
+       in the middle of a position. Counting size forwards from zero is therefore
+       wrong — it treats closes as opens and the running total drifts for good.
+       Anchor instead on the size the exchange says the wallet holds right now
+       and walk backwards: that yields the true position after every fill, and
+       with it the genuine flat points where one trade ends and the next starts. */
+    const endSz = P ? (P.side==="SHORT"?-1:1)*Math.abs(P.size) : 0;
+    const sgn = fs.map(f=>(f.side==="BUY"?1:-1)*Math.abs(N(f.size)));
+    const after = new Array(fs.length);
+    let acc=endSz;
+    for(let i=fs.length-1;i>=0;i--){ after[i]=acc; acc-=sgn[i]; }
+    const before0=acc;              /* what was already held before this window */
+    let cur=null;
+    for(let i=0;i<fs.length;i++){
+      const f=fs[i], prev = i===0 ? before0 : after[i-1];
+      if(!cur) cur={m, t0:f.createdAt/1000, fills:[], pnl:0,
+                    dir: after[i]>0?"LONG":"SHORT", peak:0, notional:0,
+                    /* a trade already running before the window opened: we can
+                       see its closes but not its entry, so its PnL is only a
+                       fragment and it must not be presented as a whole trade */
+                    partial: Math.abs(prev)>FLAT};
+      const rec={t:f.createdAt/1000, p:N(f.price), s:Math.abs(N(f.size)), side:f.side,
+                 eff:f.positionEffect||"", pnl:N(f.closedPnl), liq:!!f.liquidation,
+                 role:f.role, orderId:f.orderId, sz:after[i]};
       rec.kind=fillKind(rec,om);
       cur.fills.push(rec);
-      cur.pnl+=N(f.closedPnl); cur.notional+=mag*N(f.price);
-      sz+=s; cur.peak=Math.max(cur.peak,Math.abs(sz));
-      if(Math.abs(sz)<1e-9){ cur.t1=f.createdAt/1000; cur.open=false; out.push(cur); cur=null; }
-    });
-    if(cur){ const p=posBy[m];
-      cur.t1=Date.now(); cur.open=true; cur.upnl=p?p.upnl:0; cur.mark=p?p.mark:0; cur.size=p?p.size:Math.abs(sz);
-      out.push(cur); }
+      cur.pnl+=rec.pnl; cur.notional+=rec.s*rec.p;
+      cur.peak=Math.max(cur.peak,Math.abs(after[i]));
+      if(Math.abs(after[i])<FLAT){ cur.t1=f.createdAt/1000; cur.open=false; out.push(cur); cur=null; }
+    }
+    if(cur){
+      cur.t1=Date.now(); cur.open=true;
+      cur.upnl=P?P.upnl:0; cur.mark=P?P.mark:0; cur.entry=P?P.entry:0;
+      cur.size=P?P.size:Math.abs(after[fs.length-1]||0);
+      out.push(cur);
+    }
   });
-  return out.map(p=>Object.assign(p,{total:p.pnl+(p.upnl||0)}))
-            .sort((a,b)=>Math.abs(b.total)-Math.abs(a.total));
+  const whole=out.filter(p=>!p.partial && p.fills.length);
+  PLAY_HIDDEN=out.length-whole.length;
+  return whole.map(p=>Object.assign(p,{total:p.pnl+(p.upnl||0)}))
+              .sort((a,b)=>Math.abs(b.total)-Math.abs(a.total));
 }
 
 /* ---------- the renderer ---------- */
@@ -4551,23 +4826,41 @@ function Replay(canvas, play, candles, w){
   const firstFill=play.fills[0]?play.fills[0].t:t0;
 
   /* --- precomputed walk: position, pnl and peak at every bar --- */
+  /* Running PnL along the chart. The old version tracked cash flow, which
+     double-counts: once a position is partly closed, the proceeds sit in `cash`
+     AND in `closedPnl`, so the curve and the closing figure disagreed — badly,
+     on any trade with several exits. This uses weighted-average cost, which is
+     what the exchange itself reports against, and the true position size that
+     buildPlays recovered. Realised comes straight from the venue's closedPnl. */
   const walk=(function(){
-    const rows=[]; let sz=0, cash=0, realized=0, fi=0, peak=-Infinity, trough=Infinity;
+    const rows=[]; let sz=0, basis=0, realized=0, fi=0, peak=-Infinity, trough=Infinity;
+    /* for a position still open, the venue publishes its own average entry —
+       trust that over anything rebuilt from a capped fill list */
+    const trueEntry = play.open && play.entry>0 ? play.entry : 0;
     for(const b of bars){
       while(fi<play.fills.length && play.fills[fi].t<=b.t){
         const f=play.fills[fi], s=(f.side==="BUY"?1:-1)*f.s;
-        sz+=s; cash-=s*f.p; realized+=f.pnl; fi++;
+        if(Math.abs(sz)<1e-9 || Math.sign(s)===Math.sign(sz))
+          basis=(Math.abs(sz)*basis + f.s*f.p)/(Math.abs(sz)+f.s);   /* opening or adding */
+        else if(f.s>Math.abs(sz)) basis=f.p;                          /* flipped through flat */
+        sz = f.sz!=null ? f.sz : sz+s;                                /* reducing keeps the basis */
+        if(Math.abs(sz)<1e-9){ sz=0; basis=0; }
+        realized+=f.pnl; fi++;
       }
-      const unreal=Math.abs(sz)>1e-9 ? sz*b.c+cash : 0;
+      const useB = (fi>=play.fills.length && trueEntry) ? trueEntry : basis;
+      const unreal = (Math.abs(sz)>1e-9 && useB>0) ? sz*(b.c-useB) : 0;
       const total=realized+unreal;
       peak=Math.max(peak,total); trough=Math.min(trough,total);
       rows.push({t:b.t,sz,total,realized,unreal,px:b.c});
     }
     return {rows,peak:isFinite(peak)?peak:0,trough:isFinite(trough)?trough:0};
   })();
-  const PEAK=Math.max(walk.peak,play.total,0.0001);
-  const PMIN=Math.min(walk.trough,play.total,0);
-  const efficiency = PEAK>0 ? clamp(play.total/PEAK,-1,1) : 0;
+  /* one number for the whole clip: what the pod counts up to is what the
+     verdict shows, and the peak line can only be drawn from the same series */
+  const FINAL = walk.rows.length ? walk.rows[walk.rows.length-1].total : (play.total||0);
+  const PEAK=Math.max(walk.peak,FINAL,0.0001);
+  const PMIN=Math.min(walk.trough,FINAL,0);
+  const efficiency = PEAK>0 ? clamp(FINAL/PEAK,-1,1) : 0;
   const peakRow = walk.rows.reduce((a,b)=>b.total>a.total?b:a, walk.rows[0]||{t:t0,total:0});
 
   /* --- state --- */
@@ -5104,7 +5397,7 @@ function Replay(canvas, play, candles, w){
 
     /* footer */
     c.textAlign="left"; c.fillStyle=P.ink3; c.font='400 18px "Instrument Sans", sans-serif';
-    c.fillText(shortA(w.addr)+"  ·  built by "+BUILDER.name+" "+BUILDER.handle, LL.head.x, Hd-30);
+    c.fillText(shortA(w.addr), LL.head.x, Hd-30);
     c.textAlign="right"; c.fillStyle=P.brand; c.font='700 20px Archivo, sans-serif';
     c.fillText((SITE_URL||"arclight").replace(/^https?:\/\//,""), Wd-(LL.wide?52:56), Hd-30);
   }
@@ -5114,7 +5407,7 @@ function Replay(canvas, play, candles, w){
     const e=1-Math.pow(1-k,3), wide=LL.wide;
     c.fillStyle = dark()?`rgba(7,12,9,${0.97*e})`:`rgba(243,241,233,${0.97*e})`;
     c.fillRect(0,0,Wd,Hd);
-    const win=play.total>=0;
+    const win=FINAL>=0;
     const R      = wide?132:172;
     const nameSz = wide?52:66;
     const subSz  = wide?20:25;
@@ -5148,17 +5441,17 @@ function Replay(canvas, play, candles, w){
     y += 46 + pnlSz*0.78;
     c.fillStyle=win?P.up:P.dn; c.font=`800 ${pnlSz}px Archivo, sans-serif`;
     c.save(); c.shadowColor=hexA(win?P.up:P.dn,.5); c.shadowBlur=40;
-    c.fillText(usd(play.total,{plus:true}), cx, y); c.restore();
+    c.fillText(usd(FINAL,{plus:true}), cx, y); c.restore();
 
     /* two compact chips instead of two more sentences */
     y += 40;
     if(PEAK>0.01){
       const pctOf=Math.round(efficiency*100);
-      const chips = play.total>0
+      const chips = FINAL>0
         ? [["PEAK", usd(PEAK,{plus:true}), P.gold],
            ["CAPTURED", pctOf+"%", pctOf>=70?P.up:pctOf>=40?P.gold:P.dn]]
         : [["PEAK", usd(PEAK,{plus:true}), P.gold],
-           ["GAVE BACK", usd(play.total-PEAK), P.dn]];
+           ["GAVE BACK", usd(FINAL-PEAK), P.dn]];
       const cw=wide?214:268, gap=wide?16:20;
       let x0=cx-(chips.length*cw+(chips.length-1)*gap)/2;
       chips.forEach(ch2=>{
@@ -5212,11 +5505,8 @@ function Replay(canvas, play, candles, w){
         if(dtRaw>=0) fire(f,i,F,P); }
     }
     /* state now */
-    let sz=0,cash=0,realized=0;
-    for(const f of play.fills){ if(f.t>cut) break;
-      const s=(f.side==="BUY"?1:-1)*f.s; sz+=s; cash-=s*f.p; realized+=f.pnl; }
-    let px=null; for(const b of bars){ if(b.t<=cut) px=b.c; else break; }
-    const st={sz,total:realized+(Math.abs(sz)>1e-9&&px!=null?sz*px+cash:0)};
+    let row=null; for(const r of walk.rows){ if(r.t<=cut) row=r; else break; }
+    const st = row ? {sz:row.sz,total:row.total} : {sz:0,total:0};
     S.mood=moodFor(st.total);
 
     /* decay */
@@ -6215,7 +6505,10 @@ function paintCarry(){
 
   root.innerHTML=`
   <div class="chero rv">
-    <span class="eyebrow">Funding · read ${ago(D.at)}</span>
+    <div class="cherotop">
+      <span class="eyebrow">Funding · read <span id="carryAgo">${ago(D.at)}</span></span>
+      <button class="rfbtn" id="carryRf" data-tip="Funding settles every hour, so these averages move. This re-reads the whole history from Arcus.">${ic("rf")}<span>Refresh</span></button>
+    </div>
     <h1>Get paid to wait.</h1>
     <p class="lede">A perpetual charges the crowded side every hour and hands the money to the other side.
       Sit on the paying side and it bleeds you. Sit on the receiving side — <b>hedged</b> — and it's income.
@@ -6267,8 +6560,11 @@ function paintCarry(){
             <span class="hpill ${hedgeOf(best.r.m.cat)[0]}" data-tip="${hedgeOf(best.r.m.cat)[2]}">${ic("scale")}${hedgeOf(best.r.m.cat)[1]}</span>
           </div>
         </div>
-        <div class="cbclock" id="cbClock" data-tip="Funding settles once an hour. Whoever is holding the position at that moment receives it — or pays it.">
-          ${ic("clock")}<span class="cap">Next payment in</span><b id="cbCount">–</b>
+        <div class="cbact">
+          <div class="cbclock" id="cbClock" data-tip="Funding settles once an hour. Whoever is holding the position at that moment receives it — or pays it.">
+            ${ic("clock")}<span class="cap">Next payment in</span><b id="cbCount">–</b>
+          </div>
+          <button class="btn pri cbgo" data-coin="${best.r.m.name}">${ic("ext")}Trade ${best.r.m.name}</button>
         </div>
       </div>
 
@@ -6438,6 +6734,7 @@ function carryClock(m){
     if(!next||next<Date.now()) next=Math.ceil(Date.now()/3600000)*3600000;
     const s=Math.max(0,Math.floor((next-Date.now())/1000));
     el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+    const ag=$("#carryAgo"); if(ag&&carryData) ag.textContent=ago(carryData.at);
     el.__t=setTimeout(tick,1000);
   }
   tick();
@@ -6523,6 +6820,11 @@ function fundSpark(vals,sign){
 }
 
 function wireCarryControls(){
+  const rf=$("#carryRf");
+  if(rf) rf.addEventListener("click",()=>{
+    rf.classList.add("spin"); rf.disabled=true;
+    cache.clear(); carryData=null; renderCarry(true);
+  });
   const mi=$("#cMargin"), lv=$("#cLev");
   if(mi) mi.addEventListener("input",()=>{
     const v=parseInt(mi.value.replace(/[^0-9]/g,""),10);
@@ -6572,10 +6874,15 @@ window.addEventListener("resize",()=>{ /* layout is CSS-driven; nothing to recom
   .wacts{margin-left:auto;width:100%;justify-content:space-between;gap:8px;order:3}
   .wacts .ibtn,.wacts .btn{flex:1;min-width:0;height:40px;border-radius:12px}
   .wacts .btn.ghost{padding:0;justify-content:center}
+  .arche{--emW:54px;--emGap:12px;padding:16px}
   .arche .in{padding-right:0;flex-wrap:nowrap;align-items:center}
-  .arche .lvl{position:static;margin-left:auto}
+  .arche .lvl{position:static;margin-left:auto;margin-right:0}
   .arche .who{min-width:0}
-  .arche h2{font-size:20px}
+  .arche .desc{margin-left:0;margin-top:13px;font-size:13.6px}
+  .scoreRing{width:80px;height:80px}
+  .scoreRing .n{font-size:27px}
+  .arche .lvl .l{font-size:8.5px;letter-spacing:.09em}
+  .arche h2{font-size:19px}
   .arche .tagline{font-size:10.5px}
   .avatar{width:44px;height:44px;border-radius:13px}
   .addr{flex:1;min-width:0}
@@ -6584,10 +6891,13 @@ window.addEventListener("resize",()=>{ /* layout is CSS-driven; nothing to recom
   .addr .meta .m1{display:none}
 
   /* archetype banner */
-  .arche{padding:15px 16px}
-  .arche .desc{font-size:13.5px;margin-top:11px}
-  .scoreRing{width:64px;height:64px}
-  .scoreRing .n{font-size:22px}
+  .arche{padding:16px}
+  .arche .desc{font-size:13.6px;margin-top:13px;margin-left:0}
+  .arche .who .eyebrow{display:none}
+  .arche .who{gap:3px}
+  .scoreRing{width:84px;height:84px}
+  .scoreRing .n{font-size:28px}
+  .arche .lvl{gap:5px}
   .arche .lvl .l{font-size:8px;letter-spacing:.08em}
 }
 </style>
