@@ -2580,8 +2580,9 @@ let current="home", loaded={};
 function setNav(p){
   $$("[data-go]").forEach(b=>{ const on=b.dataset.go===p; b.classList.toggle("on",on); });
 }
-/* the router lives in the hash, so Vercel only ever sees "/" — name the page
-   for it explicitly. Page name only; addresses are never passed in. */
+/* The pathname never changes, so analytics cannot tell the pages apart on its
+   own — name the page for it. Page name only, never the address (the beforeSend
+   hook in the analytics snippet strips the hash from the URL as well). */
 function ping(page){ try{ window.va && window.va("event",{name:"page",data:{page:String(page)}}); }catch(e){} }
 function show(p){
   if(!PAGES.includes(p)) p="home";
@@ -7140,9 +7141,21 @@ window.addEventListener("resize",()=>{ /* layout is CSS-driven; nothing to recom
 }
 </style>
 
-<!-- Vercel Web Analytics. Cookieless, and it never sees a wallet address:
-     the router keeps addresses in the URL hash, which is not sent to the
-     server or to analytics, and the per-page event below carries the page
-     name only. -->
-<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<!-- Vercel Web Analytics.
+     The script sends location.href with every event, and this router keeps the
+     wallet address in the hash — so left alone it would ship every address
+     anyone searches to a third party. beforeSend strips the hash and query
+     before anything leaves the browser: Vercel sees the bare origin, and the
+     page name comes from our own event instead. -->
+<script>
+window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};
+window.vaq=window.vaq||[];
+window.vaq.push(["beforeSend",function(e){
+  try{
+    var u=new URL(e.url||location.href);
+    e.url=u.origin+u.pathname;          /* no hash, no query, no address */
+  }catch(_){ e.url="/"; }
+  return e;
+}]);
+</script>
 <script defer src="/_vercel/insights/script.js"></script>
