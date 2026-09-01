@@ -144,7 +144,7 @@ ul{margin:0;padding:0;list-style:none}
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-right:1px solid var(--rule);
 }
-#rail .brand{display:flex;align-items:center;gap:11px;padding:4px 8px;margin-bottom:18px;overflow:hidden}
+#rail .brand{position:relative;display:flex;align-items:center;gap:11px;padding:4px 8px;margin-bottom:18px;overflow:hidden}
 #rail .logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
   background:#234728;flex:none;transition:transform .5s cubic-bezier(.2,.9,.25,1)}
 #rail .logo:hover{transform:rotate(-8deg) scale(1.08)}
@@ -160,7 +160,8 @@ ul{margin:0;padding:0;list-style:none}
   border-radius:0 3px 3px 0;background:var(--brand)}
 #rail .spacer{flex:1}
 #rail.mini{width:76px;padding:18px 15px 16px}
-#rail.mini .wordmark,#rail.mini .lb{opacity:0;transform:translateX(-8px);pointer-events:none}
+#rail.mini .wordmark,#rail.mini .lb{opacity:0;transform:translateX(-8px);pointer-events:none;
+  position:absolute;left:0;top:0;width:0;height:0;margin:0;overflow:hidden}
 #rail.mini .railbtn{justify-content:center;padding:0;width:46px}
 #rail.mini .brand{justify-content:center;padding:0}
 #railToggle svg{transition:transform .34s cubic-bezier(.2,1.2,.4,1)}
