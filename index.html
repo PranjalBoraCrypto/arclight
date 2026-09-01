@@ -6494,23 +6494,34 @@ function paintRadar(){
       else { n.innerHTML=`<div class="sk" style="height:34px;border-radius:6px"></div>`; missing.push({n,name,chg}); }
     });
     (async()=>{
+      /* The scan above has just spent most of this device's rate-limit budget,
+         so these first attempts usually come back 429. Back off long enough for
+         the window to actually refill — the skeleton stays up meanwhile rather
+         than flashing "no chart" at something that is only a few seconds away. */
+      const BACKOFF=[0,1500,3500,7000,12000];
       for(const o of missing){
         if(!o.n.isConnected) continue;
-        let closes=[];
-        for(let a=0; a<3 && closes.length<4; a++){
-          if(a) await wait(600*a);
+        let closes=[], rated=false;
+        for(let a=0; a<BACKOFF.length && closes.length<4; a++){
+          if(BACKOFF[a]) await wait(BACKOFF[a]);
+          if(!o.n.isConnected) break;
           const to=Date.now()*1000;
-          const c=await safe(api(`/v1/candles?market=${o.name}&timeframe=1h&countback=48&to=${to}`,300000),null);
-          closes=((c&&c.candles)||[]).map(x=>N(x.close)).filter(v=>v>0);
+          try{
+            const c=await api(`/v1/candles?market=${o.name}&timeframe=1h&countback=48&to=${to}`,300000);
+            closes=((c&&c.candles)||[]).map(x=>N(x.close)).filter(v=>v>0);
+            rated=false;
+          }catch(err){ rated = err && err.message==="RATE"; }
         }
         if(!o.n.isConnected) continue;
         if(closes.length>3){
           sparkCache[o.name]=closes;
           o.n.innerHTML=spark(closes,120,34,o.chg>=0?"var(--gain)":"var(--loss)");
         } else {
-          o.n.innerHTML=`<span class="nospark" data-tip="Arclight couldn't read an hourly price history for this market just now — either the venue rate-limited the request or it has no candles yet.">no chart</span>`;
+          o.n.innerHTML=`<span class="nospark" data-tip="${rated
+            ?"Arcus rate-limited this device while loading the chart. It refills after about a minute — reload and it will be here."
+            :"Arclight couldn't read an hourly price history for this market just now."}">${rated?"rate limited":"no chart"}</span>`;
         }
-        await wait(120);
+        await wait(150);
       }
     })();
     magnetise($("#moversBox"),".mover");
