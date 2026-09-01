@@ -192,6 +192,19 @@ ul{margin:0;padding:0;list-style:none}
 .ibtn:hover{color:var(--ink);border-color:var(--rule-2);transform:translateY(-1px)}
 .ibtn:active{transform:scale(.94)}
 
+/* ============ SCROLLBARS ============ */
+*{scrollbar-width:thin;scrollbar-color:var(--rule-2) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-corner{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--rule-2);border-radius:100px;
+  border:3px solid transparent;background-clip:content-box;transition:background-color .2s}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-3);background-clip:content-box}
+::-webkit-scrollbar-thumb:active{background:var(--brand);background-clip:content-box}
+/* inside panels the track reads better with a hairline of its own */
+.tblwrap::-webkit-scrollbar,.mb::-webkit-scrollbar,.pb::-webkit-scrollbar{width:8px;height:8px}
+.tblwrap::-webkit-scrollbar-thumb,.mb::-webkit-scrollbar-thumb,.pb::-webkit-scrollbar-thumb{border-width:2px}
+
 /* ============ PAGES ============ */
 .page{display:none;padding-bottom:96px}
 .page.on{display:block;animation:pageIn .26s cubic-bezier(.2,.8,.3,1)}
@@ -319,22 +332,22 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .copybtn svg{width:14px;height:14px}
 
 /* archetype banner */
-.arche{--emW:84px;--emGap:18px;position:relative;border-radius:18px;padding:20px 22px;overflow:hidden;
+.arche{--emW:84px;--emGap:18px;position:relative;border-radius:18px;padding:22px 24px;overflow:hidden;
   border:1px solid var(--rule-2);background:linear-gradient(135deg,var(--surface-2),var(--surface))}
 .arche::before{content:"";position:absolute;inset:0;opacity:.5;
   background:radial-gradient(600px circle at 12% 0%,var(--brand-glow),transparent 58%)}
 .arche .in{position:relative;display:flex;gap:var(--emGap);align-items:center;flex-wrap:wrap}
 .arche .em{width:var(--emW);height:var(--emW);border-radius:50%;flex:none;position:relative}
-.arche .em canvas{width:100%;height:100%;border-radius:50%;display:block;box-shadow:0 0 0 1px var(--rule-2),0 8px 24px -10px rgba(0,0,0,.8)}
+.arche .em canvas{width:100%!important;height:100%!important;border-radius:50%;display:block;box-shadow:0 0 0 1px var(--rule-2),0 8px 24px -10px rgba(0,0,0,.8)}
 .arche .em::after{content:"";position:absolute;inset:-9px;border-radius:50%;
   background:radial-gradient(circle,var(--brand-glow),transparent 70%);z-index:-1}
 .arche .tagline{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--brand);margin-top:3px}
 .arche h2{font-size:clamp(20px,3vw,26px)}
-.arche .who{flex:1;min-width:170px;display:flex;flex-direction:column;gap:2px}
-.arche .desc{position:relative;color:var(--ink-2);font-size:14.5px;margin-top:14px;max-width:64ch;line-height:1.55;
-  margin-left:calc(var(--emW) + var(--emGap))}
+.arche .who{flex:1;min-width:170px;display:flex;flex-direction:column;gap:2px;padding-right:8px}
+.arche .whotop{display:flex;flex-direction:column;gap:2px;min-width:0}
+.arche .desc{position:relative;color:var(--ink-2);font-size:14.5px;margin-top:11px;max-width:62ch;line-height:1.55}
 .wacts{margin-left:auto;display:flex;gap:8px;flex:none}
-.arche .lvl{margin-left:auto;margin-right:28px;text-align:right;flex:none}
+.arche .lvl{margin-left:auto;margin-right:10px;text-align:right;flex:none}
 .arche .lvl .n{font-family:"Archivo";font-weight:800;font-size:30px;letter-spacing:-.04em;line-height:1}
 .arche .lvl .l{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
 
@@ -560,7 +573,7 @@ tbody tr[data-coin]{cursor:pointer}
 .mcard .rt s{text-decoration:none;font-size:11.5px;font-family:"JetBrains Mono",monospace}
 
 /* tape */
-.tape{display:flex;flex-direction:column;gap:1px;max-height:320px;overflow-y:auto}
+.tape{display:flex;flex-direction:column;gap:1px}
 .trow{display:grid;grid-template-columns:64px 1fr auto auto;gap:10px;align-items:center;padding:8px 14px;font-size:12.5px;
   border-bottom:1px solid var(--rule)}
 .trow.new{animation:tapeIn .5s cubic-bezier(.2,.9,.3,1)}
@@ -1062,6 +1075,7 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .ptag.hold{background:var(--brand-glow);color:var(--brand)}
 .ptag.tp{background:rgba(232,184,75,.16);color:var(--copper)}
 .ptag.sl{background:var(--loss-bg);color:var(--loss)}
+.ptag.part{background:var(--surface-3);color:var(--ink-3);border:1px dashed var(--rule-2);cursor:help}
 .ptag.liq{background:var(--loss-bg);color:var(--loss);animation:liqPulse 1.9s ease-in-out infinite}
 @keyframes liqPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,105,92,.4)}50%{box-shadow:0 0 0 6px rgba(217,105,92,0)}}
 .stage{transition:box-shadow .4s}
@@ -2168,7 +2182,8 @@ function openArcus(market){ window.open(arcusUrl(market),"_blank","noopener"); }
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-coin]");
   if(!t) return;
-  if(e.target.closest("[data-chart],[data-tip]")) return;   /* the chart icon and tooltips keep their own jobs */
+  if(e.target.closest("[data-chart]")) return;   /* the chart icon keeps its own job */
+  if(e.target.closest(".info")) return;          /* so does a bare help button */
   e.preventDefault(); openArcus(t.dataset.coin);
 });
 
@@ -2253,7 +2268,19 @@ document.addEventListener("pointerout",e=>{
 });
 document.addEventListener("click",e=>{
   const a=e.target.closest("[data-tip]");
-  if(a){ e.preventDefault(); e.stopPropagation(); if(tipAnchor===a) tipHide(); else tipShow(a); return; }
+  if(a){
+    /* Tap-to-toggle exists for touch, where there is no hover. It must never
+       swallow the click on something that also does a job — a coin cell opens
+       the market on Arcus, and that is the point of clicking it. */
+    const helpOnly = a.classList.contains("info") || !a.closest("[data-coin],[data-go],[data-play],a,button");
+    if(helpOnly && (!FINE || a.classList.contains("info"))){
+      e.preventDefault(); e.stopPropagation();
+      if(tipAnchor===a) tipHide(); else tipShow(a);
+      return;
+    }
+    if(!FINE) tipShow(a);      /* show it, but let the click through */
+    return;
+  }
   if(tipAnchor) tipHide();
 },true);
 /* follow the anchor while the page moves instead of closing — a tap that
@@ -3626,14 +3653,18 @@ function analyse(addr,d){
   const firstDep=d.transfers.length? Math.min.apply(null,d.transfers.map(t=>t.createdAt/1000)) : null;
 
   /* equity curve from portfolio */
-  let curve=[], curveLabel="";
+  let curve=[], curveLabel="", curves={};
   if(d.port&&Array.isArray(d.port.data)){
-    const want=["totalMonth","totalAll","totalWeek","totalDay"];
-    for(const key of want){
+    /* the endpoint hands back four windows — keep them all so the chart can be
+       switched, instead of silently pinning everyone to 30 days */
+    [["totalDay","24h","24 hours"],["totalWeek","7d","7 days"],
+     ["totalMonth","30d","30 days"],["totalAll","All","all time"]].forEach(([key,tab,lab])=>{
       const hit=d.port.data.find(x=>Array.isArray(x)&&x[0]===key);
       const ser=hit&&hit[1]; const pts=ser&&(ser.accountEquityHistory||ser.equityHistory);
-      if(pts&&pts.length>3){ curve=pts.map(p=>N(p[1])); curveLabel={totalDay:"24 hours",totalWeek:"7 days",totalMonth:"30 days",totalAll:"all time"}[key]; break; }
-    }
+      if(pts&&pts.length>3) curves[key]={v:pts.map(p=>N(p[1])), tab, lab};
+    });
+    const pref=["totalMonth","totalAll","totalWeek","totalDay"].find(k=>curves[k]);
+    if(pref){ curve=curves[pref].v; curveLabel=curves[pref].lab; curves.__pref=pref; }
   }
 
   const volLife=Q(st.lifetimeVolume), feesLife=Q(st.lifetimeFeesPaid);
@@ -3657,7 +3688,7 @@ function analyse(addr,d){
     volLife,feesLife,feesFill,vol24,vol7,vol30,fundNet,orders,cancels,cancelRate:orders?cancels/orders:0,
     deposits,withdrawals,first,last,days,winRate,closes,wins,makerPct,liq,effLev,marginUse,
     mktRank,byCat,catTop,rwaShare,markets:mktRank.length,biggestWin,biggestLoss,lbRank,
-    tier:st.tradingFeeTier||null,curve,curveLabel,openSince};
+    tier:st.tradingFeeTier||null,curve,curveLabel,curves,openSince};
 }
 
 /* ---------- archetype ---------- */
@@ -3981,8 +4012,9 @@ function paintWallet(){
 
     <div class="arche rv"><div class="in">
       <span class="em"><canvas id="archeChar"></canvas></span>
-      <div class="who"><span class="eyebrow">Trading personality</span><h2>${CH.name}</h2>
-        <div class="tagline">${CH.tag}</div></div>
+      <div class="who"><div class="whotop"><span class="eyebrow">Trading personality</span><h2>${CH.name}</h2>
+          <div class="tagline">${CH.tag}</div></div>
+        <p class="desc">${arc.d}</p></div>
       <div class="lvl">
         <div class="scoreRing">
           <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -3992,8 +4024,7 @@ function paintWallet(){
           <span class="n" id="scoreN">0</span></div>
         <div class="l">Arclight score <button class="info" data-tip="score" aria-label="How the score works">?</button></div>
       </div>
-    </div>
-    <p class="desc">${arc.d}</p></div>
+    </div></div>
   </div>
 
   <div class="dash" style="margin-top:22px">
@@ -4012,7 +4043,8 @@ function paintWallet(){
       </div>
 
       ${w.curve.length>3?`<div class="panel rv"><div class="ph"><h3>Account value over time</h3>
-        <span class="eyebrow">Last ${w.curveLabel}</span></div>
+        <div class="seg tiny" id="eqRange">${["totalDay","totalWeek","totalMonth","totalAll"]
+          .filter(k=>w.curves[k]).map(k=>`<button data-eq="${k}" class="${k===w.curves.__pref?"on":""}">${w.curves[k].tab}</button>`).join("")}</div></div>
         <div class="pb"><div class="chartbox" id="eqChart"></div></div></div>`:""}
 
       <div class="panel rv" id="storyPanel"><div class="ph">
@@ -4106,7 +4138,13 @@ function paintWallet(){
 
   stopCast();
   character($("#wav"),arc.id,52);
-  const ac=$("#archeChar"); if(ac) character(ac,arc.id,76);
+  const ac=$("#archeChar");
+  if(ac){
+    const emSize=()=>Math.round((ac.parentElement&&ac.parentElement.getBoundingClientRect().width)||76);
+    character(ac,arc.id,emSize());
+    let ar2; window.addEventListener("resize",()=>{ if(!ac.isConnected) return;
+      clearTimeout(ar2); ar2=setTimeout(()=>{ if(ac.isConnected) character(ac,arc.id,emSize()); },200); },{passive:true});
+  }
   paintCard();
 
   /* animate numbers */
@@ -4123,6 +4161,12 @@ function paintWallet(){
   WROW.pos=posRow; WROW.fill=fillRow; WROW.fills=recent;
   posPage=0; fillPage=0; paintPosList(); paintFillList();
   if(w.curve.length>3) areaChart($("#eqChart"), w.curve, w.curveLabel);
+  const eqr=$("#eqRange");
+  if(eqr) eqr.addEventListener("click",e=>{
+    const b=e.target.closest("[data-eq]"); if(!b) return;
+    $$("button",eqr).forEach(x=>x.classList.remove("on")); b.classList.add("on");
+    const c=w.curves[b.dataset.eq]; if(c) areaChart($("#eqChart"), c.v, c.lab);
+  });
   setTimeout(()=>$$("#walletRoot .fl[data-w]").forEach(f=>{ f.style.width=f.dataset.w+"%"; }),260);
 
   /* interactions */
@@ -4242,6 +4286,7 @@ const WROW={pos:null,fill:null,fills:[]};
 
 function areaChart(host, values, label){
   if(!host||!values||values.length<2) return;
+  if(host.__raf){ cancelAnimationFrame(host.__raf); host.__raf=null; }
   host.innerHTML="";
   const cv=el("canvas"); host.appendChild(cv);
   const q=el("div","cq"); host.appendChild(q);
@@ -4350,11 +4395,12 @@ function areaChart(host, values, label){
   }
 
   function anim(){
+    if(!cv.isConnected){ host.__raf=null; return; }   /* range switched out */
     intro=Math.min(1,intro+0.045);
     pulse+=0.06;
     if(hxT!=null){ hx = hx==null? hxT : hx+(hxT-hx)*0.32; }
     draw();
-    raf=requestAnimationFrame(anim);
+    host.__raf=raf=requestAnimationFrame(anim);
   }
   function at(x){ let best=0,bd=1e9;
     pts.forEach((p,i)=>{ const d=Math.abs(p[0]-x); if(d<bd){bd=d;best=i;} }); return best; }
@@ -4378,7 +4424,8 @@ function areaChart(host, values, label){
   size();
   if(REDUCED){ intro=1; draw(); }
   else anim();
-  let rz; window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{size();draw();},180); },{passive:true});
+  let rz; window.addEventListener("resize",()=>{ if(!cv.isConnected) return;
+    clearTimeout(rz); rz=setTimeout(()=>{ if(cv.isConnected){size();draw();} },180); },{passive:true});
 }
 function hexA2(col,a){
   col=(col||"").trim();
@@ -4799,10 +4846,10 @@ function buildPlays(w){
       out.push(cur);
     }
   });
-  const whole=out.filter(p=>!p.partial && p.fills.length);
-  PLAY_HIDDEN=out.length-whole.length;
-  return whole.map(p=>Object.assign(p,{total:p.pnl+(p.upnl||0)}))
-              .sort((a,b)=>Math.abs(b.total)-Math.abs(a.total));
+  const kept=out.filter(p=>p.fills.length);
+  PLAY_HIDDEN=kept.filter(p=>p.partial).length;
+  return kept.map(p=>Object.assign(p,{total:p.pnl+(p.upnl||0)}))
+             .sort((a,b)=>Math.abs(b.total)-Math.abs(a.total));
 }
 
 /* ---------- the renderer ---------- */
@@ -4848,7 +4895,11 @@ function Replay(canvas, play, candles, w){
         realized+=f.pnl; fi++;
       }
       const useB = (fi>=play.fills.length && trueEntry) ? trueEntry : basis;
-      const unreal = (Math.abs(sz)>1e-9 && useB>0) ? sz*(b.c-useB) : 0;
+      /* on a trade that was already running when the fill history begins we know
+         the size but not what it cost, so there is no honest mark-to-market for
+         it — unless it is the live position, where Arcus publishes the entry */
+      const canMark = (!play.partial || trueEntry>0);
+      const unreal = (canMark && Math.abs(sz)>1e-9 && useB>0) ? sz*(b.c-useB) : 0;
       const total=realized+unreal;
       peak=Math.max(peak,total); trough=Math.min(trough,total);
       rows.push({t:b.t,sz,total,realized,unreal,px:b.c});
@@ -5607,13 +5658,23 @@ function renderRunEmpty(){
 async function loadRun(addr){
   addr=(addr||"").toLowerCase(); runAddr=addr;
   const root=$("#runRoot");
-  root.innerHTML=`<div class="scanner"><div class="scanline"><i></i></div>
-    <div class="st">Reconstructing every trade this wallet made…</div></div>`;
+  root.innerHTML=`<section style="margin-top:26px">
+    <div class="sechead"><div class="t"><span class="eyebrow">History run</span>
+      <h2>Reconstructing every trade</h2>
+      <p>Reading this wallet's fills, orders and open positions, then stitching them back into whole trades.</p></div></div>
+    <div id="runLoad" style="height:250px"></div></section>`;
+  const RL=radarLoader($("#runLoad"));
+  RL.step("fills",1,4);
   try{
+    RL.step("account, positions and fills",2,4);
     runW = (W && W.addr===addr) ? W : await fetchWallet(addr);
+    RL.step("stitching fills into trades",3,4);
     runPlays = buildPlays(runW);
+    RL.step("ready",4,4);
+    RL.stop();
     paintPlays();
   }catch(e){
+    RL.stop();
     root.innerHTML=`<div class="empty"><div class="ei">${ic("alert")}</div>
       <h3>${e&&e.message==="RATE"?"Arcus is rate-limiting this device":"Couldn't reach Arcus"}</h3>
       <p>${e&&e.message==="RATE"?"Wait about a minute and try again.":"The exchange API didn't answer."}</p>
@@ -5631,6 +5692,7 @@ function playCard(p,i){
     <div class="pcTop">
       <span class="pcMkt">${p.m}</span>
       <span class="ptag ${tag[1]}">${tag[0]}</span>
+      ${p.partial?`<span class="ptag part" data-tip="This position was already open when the visible fill history begins, so its entry isn't in the data. The figure shown is the profit Arcus recorded on the exits we can see — not the whole trade.">PART</span>`:""}
     </div>
     <div class="pcPnl ${win?"gain":"loss"}">${usd(p.total,{plus:true})}</div>
     <div class="pcMeta">
@@ -6710,12 +6772,12 @@ function paintCarry(){
   if(cc&&window.ArcChars){ const pool=ArcChars.ids.filter(z=>z!=="ghost");
     character(cc,pool[Math.floor(Math.random()*pool.length)],88); }
   magnetise($("#carryGrid"),".ccard",8);
-  countUp($("#cbBig"), netHold);
+  carryCount($("#cbBig"), netHold);
   reveal(root); glow(root);
 }
 
 /* count the headline into place so a control change is felt, not just read */
-function countUp(el,to){
+function carryCount(el,to){
   if(!el||REDUCED){ return; }
   const t0=performance.now(), dur=620, from=to*0.62;
   (function step(t){
@@ -6878,7 +6940,10 @@ window.addEventListener("resize",()=>{ /* layout is CSS-driven; nothing to recom
   .arche .in{padding-right:0;flex-wrap:nowrap;align-items:center}
   .arche .lvl{position:static;margin-left:auto;margin-right:0}
   .arche .who{min-width:0}
-  .arche .desc{margin-left:0;margin-top:13px;font-size:13.6px}
+  .arche .in{flex-wrap:wrap}
+  .arche .who{display:contents}
+  .arche .whotop{flex:1;min-width:0}
+  .arche .desc{flex:1 1 100%;order:9;margin-top:12px;font-size:13.4px;max-width:none}
   .scoreRing{width:80px;height:80px}
   .scoreRing .n{font-size:27px}
   .arche .lvl .l{font-size:8.5px;letter-spacing:.09em}
@@ -6892,7 +6957,7 @@ window.addEventListener("resize",()=>{ /* layout is CSS-driven; nothing to recom
 
   /* archetype banner */
   .arche{padding:16px}
-  .arche .desc{font-size:13.6px;margin-top:13px;margin-left:0}
+  .arche .desc{font-size:13.4px;margin-top:10px}
   .arche .who .eyebrow{display:none}
   .arche .who{gap:3px}
   .scoreRing{width:84px;height:84px}
