@@ -560,15 +560,23 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
 .chero canvas{position:relative;border-radius:50%;box-shadow:0 10px 30px -12px rgba(0,0,0,.9),0 0 0 1px var(--rule-2)}
 .chero .cname{position:relative;font-family:"Archivo";font-weight:800;font-size:21px;letter-spacing:-.03em;line-height:1.1}
 .chero .ctag2{position:relative;font-size:11.5px;color:var(--ink-3);text-align:center;max-width:26ch;line-height:1.35}
-.cbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px 0}
+/* centred to match the portrait export, which has always centred this block —
+   the label/figure/pill used to sit left under a centred hero, so the card
+   read as two different layouts stacked on each other */
+.cbody{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;gap:3px;padding:4px 0}
 .cbody .clab{display:block;font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--ink-3);border:0;padding:0;background:none}
 .cbody .big{font-family:"Archivo";font-weight:800;font-size:clamp(30px,9vw,42px);letter-spacing:-.05em;line-height:1;
   font-variant-numeric:tabular-nums}
 .cbody .roi{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:5px 10px;border-radius:100px;
-  font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;align-self:flex-start}
+  font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;align-self:center}
 .cbody .roi.up{background:var(--gain-bg);color:var(--gain)}
 .cbody .roi.dn{background:var(--loss-bg);color:var(--loss)}
+/* the centred column would otherwise shrink these to their content width */
+.cbody>div{width:100%}
+/* ...but the score breakdown on the back is a labelled list, not a headline */
+.cbody .bars{text-align:left}
 .cmini{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px;align-content:start}
 .cmini>div{background:color-mix(in srgb,var(--ground) 55%,transparent);border:1px solid var(--rule);border-radius:10px;padding:7px 8px;text-align:center}
 .cmini .k{font-family:"JetBrains Mono",monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
