@@ -1293,6 +1293,14 @@ input[type=range].sl::-moz-range-thumb{width:22px;height:22px;border:3px solid v
 .cbmid{display:grid;gap:20px}
 .cbpay{display:flex;flex-direction:column;gap:6px;min-width:0}
 .cbpay>.cap{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.figrow{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}
+.figrow .fl{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3)}
+@media(max-width:760px){
+  .figrow{width:100%}
+  .figrow #cardFig{flex:1}
+  .figrow #cardFig button{flex:1;height:34px;font-size:12px}
+}
 .seg.tiny{padding:2px}
 .seg.tiny button{height:22px;padding:0 8px;font-size:10.5px;border-radius:8px;letter-spacing:0;text-transform:none;
   font-family:"Archivo"}
@@ -2303,6 +2311,7 @@ const TIPS={
   profit:["Net P&L, all time","What the account is worth today minus everything ever put into it, net of withdrawals. It covers the wallet's <b>entire</b> history and already has every trading fee and every funding payment inside it. That's why it can be negative while the realised figure below it is positive — realised only counts the trades Arcus will hand us, and that's a much shorter window."],
   window:["What this page can see","Arcus returns at most <b>1,000 fills</b> and 1,000 funding payments per wallet. On a busy account that can be a few hours. Anything we count from those rows — realised P&L, fees, funding — describes that window only. Older trades are just as real, they're inside the all-time number, but they can't be listed here."],
   realwin:["Realised in this window","Profit actually banked on positions closed inside the slice of history Arcus returned. Not lifetime realised P&L — if the wallet has been trading longer than the window, the rest sits before it."],
+  cardfig:["What the card leads with","<b>All time</b> — account value minus everything deposited, fees and funding included. <b>Realised</b> — profit banked on closed trades, covering only the slice of history Arcus returns, which the card states on its face. <b>Unrealised</b> — paper profit on positions still open right now."],
   unrealnow:["Unrealised right now","Paper profit or loss on positions that are still open, marked at the current price. It becomes realised only when they're closed."],
   volLife:["Traded all time","Total dollar value of every fill this wallet has made. Turnover, not profit."],
   funding:["Funding","Perpetuals charge an hourly fee to whichever side of the trade is more crowded. Negative means this wallet has been paying it. Arcus returns at most 1,000 funding payments, so on a busy account this covers a recent window rather than the whole life of the wallet — the all-time total is already inside the net P&L figure."],
@@ -3937,7 +3946,17 @@ function story(w,arc){
    WALLET — render
    ============================================================ */
 const SITE_URL="https://arclight-five.vercel.app";   /* your live site */
-let cardMode="pnl", cardBlur=false;
+let cardMode="pnl", cardBlur=false, cardFig="net";
+/* Which figure the profit card leads with. "real" and "unreal" are only
+   offered when the wallet actually has them, and both carry their span in
+   the label — a card is seen without the page around it, so a window figure
+   that doesn't say it's a window is exactly the confusion we just fixed. */
+function figFor(w){
+  let f=cardFig;
+  if(f==="real"   && !(w.closes>0))        f="net";
+  if(f==="unreal" && !w.positions.length)  f="net";
+  return f;
+}
 
 let castTimer=null, castI=0;
 function renderWalletEmpty(){
@@ -4406,6 +4425,15 @@ function paintWallet(){
           <button data-m="pnl" class="${cardMode==="pnl"?"on":""}">Profit card</button>
           <button data-m="act" class="${cardMode==="act"?"on":""}">Activity card</button>
         </div>
+        ${(w.closes>0||w.positions.length)?`<div class="figrow" id="cardFigRow"${cardMode==="pnl"?"":" hidden"}>
+          <span class="fl">Lead with</span>
+          <div class="seg tiny" id="cardFig">
+            <button data-p="net" class="${figFor(w)==="net"?"on":""}">All time</button>
+            ${w.closes>0?`<button data-p="real" class="${figFor(w)==="real"?"on":""}">Realised</button>`:""}
+            ${w.positions.length?`<button data-p="unreal" class="${figFor(w)==="unreal"?"on":""}">Unrealised</button>`:""}
+          </div>
+          <button class="info" data-tip="cardfig" aria-label="What these show">?</button>
+        </div>`:""}
         <div class="cardctl">
           <button class="btn ghost" id="cFlip">${ic("flip")}Flip</button>
           <button class="btn ghost" id="cBlurBtn">${ic("eyeoff")}${cardBlur?"Show":"Hide"} wallet</button>
@@ -4474,7 +4502,12 @@ function paintWallet(){
   $("#cBlurBtn").addEventListener("click",()=>{ cardBlur=!cardBlur;
     $("#cBlurBtn").innerHTML=ic("eyeoff")+(cardBlur?"Show":"Hide")+" wallet"; paintCard(); });
   $("#cardSeg").addEventListener("click",e=>{ const b=e.target.closest("[data-m]"); if(!b)return;
-    $$("#cardSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); cardMode=b.dataset.m; paintCard(); });
+    $$("#cardSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); cardMode=b.dataset.m;
+    const fr=$("#cardFigRow"); if(fr) fr.hidden = cardMode!=="pnl";   /* only meaningful on the profit card */
+    paintCard(); });
+  const figSeg=$("#cardFig");
+  if(figSeg) figSeg.addEventListener("click",e=>{ const b=e.target.closest("[data-p]"); if(!b)return;
+    $$("#cardFig button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); cardFig=b.dataset.p; paintCard(); });
   $("#cImg").addEventListener("click",saveImage);
   $("#cShare").addEventListener("click",shareX);
 
@@ -4724,20 +4757,36 @@ function cardData(){
   const w=W, arc=archetype(w), sc=score(w), bg=badges(w);
   const CH=(window.ArcChars?ArcChars.get(arc.id):{name:arc.n,tag:""});
   const pnlMode = cardMode==="pnl";
+  const SC=["Score",sc.total+"/100"];
+  /* the span the fills window actually covers, said out loud on the card */
+  const span = w.fillsCapped&&w.winSpan ? `last ${dur(w.winSpan)}` : "all of it";
+
+  /* Whichever figure leads, the three tiles below it are its own context —
+     never a number from a different span sitting unexplained beside it. */
+  const FIG={
+    net:{ label: w.profitAllTime?"Net P&L, all time":"P&L in view",
+          big: usd(w.profit,{plus:true}), up: w.profit>=0,
+          roi: w.netDep>0? pct(w.roi*100)+" on deposits" : "",
+          mini:[["Account",usd(w.equity)],["Deposited",usd(w.netDep)],SC] },
+    real:{ label:`Realised · ${span}`,
+          big: usd(w.realized,{plus:true}), up: w.realized>=0,
+          roi: w.winRate!=null? Math.round(w.winRate*100)+"% of "+num(w.closes)+" closes won" : num(w.closes)+" closes",
+          mini:[["Account",usd(w.equity)],["Unrealised",usd(w.unreal,{plus:true})],SC] },
+    unreal:{ label:"Unrealised · open now",
+          big: usd(w.unreal,{plus:true}), up: w.unreal>=0,
+          roi: w.positions.length+" position"+(w.positions.length===1?"":"s")+" open",
+          mini:[["Exposure",usd(w.notional)],["Realised",usd(w.realized,{plus:true})],SC] }
+  };
+  const f=FIG[figFor(w)];
   return {
     charId:arc.id, charName:CH.name, charTag:CH.tag,
     tag: pnlMode?"Profit & loss":"Activity",
-    label: pnlMode?(w.profitAllTime?"Net P&L, all time":"P&L in view"):"Traded all time",
-    big: pnlMode? usd(w.profit,{plus:true}) : usd(w.volLife),
-    up: pnlMode? w.profit>=0 : true,
-    roi: pnlMode? (w.netDep>0?pct(w.roi*100)+" on deposits":"") : num(w.fillCount)+" fills",
-    /* "Realised" used to sit here. It's a window figure and the headline is
-       all-time, so on a card with no room to explain that, the two read as a
-       contradiction. Deposited reconciles with the headline instead:
-       account - deposited = the big number. */
-    mini: pnlMode
-      ? [["Account",usd(w.equity)],["Deposited",usd(w.netDep)],["Score",sc.total+"/100"]]
-      : [["Markets",String(w.markets)],["Win rate",w.winRate!=null?Math.round(w.winRate*100)+"%":"—"],["Score",sc.total+"/100"]],
+    label: pnlMode? f.label : "Traded all time",
+    big: pnlMode? f.big : usd(w.volLife),
+    up: pnlMode? f.up : true,
+    roi: pnlMode? f.roi : num(w.fillCount)+" fills",
+    mini: pnlMode? f.mini
+      : [["Markets",String(w.markets)],["Win rate",w.winRate!=null?Math.round(w.winRate*100)+"%":"—"],SC],
     arc:arc.n, addr:w.addr, sc
   };
 }
@@ -4780,9 +4829,16 @@ function paintCard(){
 function shareX(){
   const w=W, d=cardData(), arc=archetype(w);
   const who = cardBlur? "A wallet" : shortA(w.addr);
-  const l1 = cardMode==="pnl"
-    ? `${who} on Arcus: ${usd(w.profit,{plus:true})} net P&L${w.netDep>0?` (${pct(w.roi*100)} on deposits)`:""}.`
-    : `${who} on Arcus: ${usd(w.volLife)} traded across ${w.markets} market${w.markets===1?"":"s"}.`;
+  /* the tweet has to carry the same span the card does, or the number
+     travels without the caveat that makes it true */
+  const f=figFor(w);
+  const l1 = cardMode!=="pnl"
+    ? `${who} on Arcus: ${usd(w.volLife)} traded across ${w.markets} market${w.markets===1?"":"s"}.`
+    : f==="real"
+      ? `${who} on Arcus: ${usd(w.realized,{plus:true})} realised${w.fillsCapped&&w.winSpan?` in the last ${dur(w.winSpan)}`:""} across ${num(w.closes)} closed trades.`
+    : f==="unreal"
+      ? `${who} on Arcus: ${usd(w.unreal,{plus:true})} unrealised on ${w.positions.length} open position${w.positions.length===1?"":"s"}.`
+      : `${who} on Arcus: ${usd(w.profit,{plus:true})} net P&L${w.netDep>0?` (${pct(w.roi*100)} on deposits)`:""}.`;
   const txt=`${l1}\n\nArchetype: ${arc.n} · Score ${d.sc.total}/100\n\nRead any Arcus wallet in plain English 👇`;
   const url=SITE_URL||REF_LINK;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(url)}`,"_blank","noopener");
@@ -4885,8 +4941,14 @@ function drawCard(ratio){
   c.fillText(d.charTag, colX, y);
 
   y += gTagLab;
-  c.fillStyle=P.ink3; c.font='500 21px "JetBrains Mono", monospace';
-  c.fillText(d.label.toUpperCase(), colX, y);
+  /* the label now varies in length (it can carry a time span), so fit it to
+     the column rather than trusting one hand-checked string to be widest */
+  c.fillStyle=P.ink3;
+  const LT=d.label.toUpperCase();
+  let lps=21;
+  c.font=`500 ${lps}px "JetBrains Mono", monospace`;
+  while(lps>13 && c.measureText(LT).width>colW){ lps--; c.font=`500 ${lps}px "JetBrains Mono", monospace`; }
+  c.fillText(LT, colX, y);
 
   y += gLabBig;
   c.fillStyle = cardMode==="pnl" ? (d.up?P.gain:P.loss) : P.ink;
@@ -4895,7 +4957,9 @@ function drawCard(ratio){
 
   if(d.roi){
     y += gBigRoi;
-    c.font='700 26px "JetBrains Mono", monospace';
+    let rps=26;
+    c.font=`700 ${rps}px "JetBrains Mono", monospace`;
+    while(rps>15 && c.measureText(d.roi).width+46>colW){ rps--; c.font=`700 ${rps}px "JetBrains Mono", monospace`; }
     const rw=c.measureText(d.roi).width, pw=rw+46;
     const rx = align==="center" ? colX-pw/2 : colX;
     c.fillStyle = d.up ? (dark?"rgba(95,176,124,.16)":"rgba(46,125,82,.13)")
