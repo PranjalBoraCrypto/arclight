@@ -463,32 +463,6 @@ footer{margin-top:80px;border-top:1px solid var(--rule);background:var(--surface
   box-shadow:0 0 14px -4px var(--b1,var(--brand))}
 .bar .nm{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-3);text-align:right}
 
-/* ================= P&L SCOPE SPLIT ================= */
-.wps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.wpsr{position:relative;padding:15px 16px 14px;border-radius:13px;background:var(--surface-2);
-  border:1px solid var(--rule);overflow:hidden;
-  transition:transform .26s,border-color .26s,box-shadow .26s}
-.wpsr::after{content:"";position:absolute;inset:0;border-radius:13px;pointer-events:none;opacity:0;transition:opacity .32s;
-  background:radial-gradient(340px circle at var(--mx,50%) var(--my,0%),var(--brand-glow),transparent 64%)}
-.wpsr:hover{transform:translateY(-3px);border-color:var(--rule-2);box-shadow:var(--shadow-2)}
-.wpsr:hover::after{opacity:1}
-.wpsr.lead{border-color:var(--rule-2);background:
-  linear-gradient(180deg,var(--brand-glow),transparent 58%),var(--surface-2)}
-.wpsr .k{display:flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:10px;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-.wpsr .v{display:block;margin-top:9px;font-family:"Archivo";font-weight:700;font-size:25px;
-  letter-spacing:-.035em;font-variant-numeric:tabular-nums;line-height:1.05}
-.wpsr .s{display:block;margin-top:8px;font-size:12.5px;color:var(--ink-2);line-height:1.5}
-.wpsnote{margin-top:14px;padding:13px 15px;border-radius:12px;background:var(--surface-2);
-  border:1px solid var(--rule);border-left:2px solid var(--brand-dim);
-  font-size:12.5px;color:var(--ink-2);line-height:1.6}
-.wpsnote b{color:var(--ink);font-weight:600}
-@media(max-width:900px){
-  .wps{grid-template-columns:1fr}
-  .wpsr .v{font-size:23px}
-  .wpsr:hover{transform:none}
-}
-
 /* ================= NARRATIVE ================= */
 .story{display:flex;flex-direction:column;gap:11px}
 .line{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border-radius:13px;background:var(--surface-2);
@@ -2300,12 +2274,9 @@ const TIPS={
   oi:["Open interest","Money sitting in positions that are still open. Unlike volume it doesn't reset — it's what's at risk right now."],
   busiest:["Busiest market","Whichever market moved the most dollars in the last 24 hours."],
   equity:["Account value","What the account is worth today: cash plus the current value of anything still open."],
-  profit:["Net P&L, all time","What the account is worth today minus everything ever put into it, net of withdrawals. It covers the wallet's <b>entire</b> history and already has every trading fee and every funding payment inside it. That's why it can be negative while the realised figure below it is positive — realised only counts the trades Arcus will hand us, and that's a much shorter window."],
-  window:["What this page can see","Arcus returns at most <b>1,000 fills</b> and 1,000 funding payments per wallet. On a busy account that can be a few hours. Anything we count from those rows — realised P&L, fees, funding — describes that window only. Older trades are just as real, they're inside the all-time number, but they can't be listed here."],
-  realwin:["Realised in this window","Profit actually banked on positions closed inside the slice of history Arcus returned. Not lifetime realised P&L — if the wallet has been trading longer than the window, the rest sits before it."],
-  unrealnow:["Unrealised right now","Paper profit or loss on positions that are still open, marked at the current price. It becomes realised only when they're closed."],
+  profit:["Total profit","Account value minus everything ever deposited, plus anything withdrawn. The honest number — it counts fees and funding."],
   volLife:["Traded all time","Total dollar value of every fill this wallet has made. Turnover, not profit."],
-  funding:["Funding","Perpetuals charge an hourly fee to whichever side of the trade is more crowded. Negative means this wallet has been paying it. Arcus returns at most 1,000 funding payments, so on a busy account this covers a recent window rather than the whole life of the wallet — the all-time total is already inside the net P&L figure."],
+  funding:["Funding","Perpetuals charge an hourly fee to whichever side of the trade is more crowded. Negative means this wallet has been paying it."],
   score:["Arclight score","Our own 0–100 read of the wallet, not an Arcus number. Profitability 30%, consistency 20%, risk control 22%, activity 18%, range 10%."],
   badges:["Badges","Ours, not the exchange's. Each one is unlocked by something in the wallet's own trading record."],
   winrate:["Win rate","Of the trades this wallet has closed, the share that came out in profit. Open positions don't count."],
@@ -2505,7 +2476,7 @@ function countUp(node,to,fmt,ms){
 /* ---------- pointer glow on tiles (desktop only) ---------- */
 function glow(scope){
   if(!FINE) return;
-  $$(".tile,.wpsr",scope||document).forEach(t=>{
+  $$(".tile",scope||document).forEach(t=>{
     if(t.__g) return; t.__g=1;
     t.addEventListener("pointermove",e=>{
       const r=t.getBoundingClientRect();
@@ -3782,29 +3753,7 @@ function analyse(addr,d){
   const first = fills.length? fills[0].createdAt/1000 : firstDep;
   const last  = fills.length? fills[fills.length-1].createdAt/1000 : null;
   const days  = first? Math.max(1,(Date.now()-first)/86400000) : 0;
-
-  /* ---- how much history we can actually see -------------------------------
-     /v1/fills and /v1/funding both hard-cap at 1000 rows. On a busy account
-     that is HOURS, not a lifetime: one live wallet returned 1000 fills
-     spanning 2h18m against $602m of lifetime volume. So `realized`, `feesFill`
-     and `fundNet` are all WINDOW figures and every label that shows them has
-     to say so.
-
-     equity - netDeposits is the only all-time-true P&L the venue gives us, and
-     it already contains every fee and every funding payment ever charged.
-     Printing that next to a window-scoped "realised" with no scope on either
-     is what made a profitable trader read "-$18,000" and assume we were broken.
-     They were both right — they were just measuring different spans. */
-  const fillsCapped = fills.length>=1000;
-  const fundCapped  = d.fund.length>=1000;
-  const winFrom = fills.length? fills[0].createdAt/1000 : null;
-  const winTo   = fills.length? fills[fills.length-1].createdAt/1000 : null;
-  const winSpan = (winFrom&&winTo)? Math.max(0,winTo-winFrom) : 0;
-  const fundTs  = d.fund.map(f=>N(f.time)/1000).filter(t=>t>0);
-  const fundSpan= fundTs.length? Math.max.apply(null,fundTs)-Math.min.apply(null,fundTs) : 0;
-
   const profit = hasAcct? equity-netDep : realized+unreal;
-  const profitAllTime = hasAcct;
   const roi = netDep>0? profit/netDep : 0;
   const winRate = closes? wins/closes : null;
   const makerPct = fills.length? makers/fills.length : 0;
@@ -3814,8 +3763,7 @@ function analyse(addr,d){
   const catTop = Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
   const rwaShare = (()=>{const t=Object.values(byCat).reduce((s,v)=>s+v,0);return t? ((byCat.EQUITIES||0)+(byCat.COMMODITIES||0)+(byCat.INDICES||0))/t : 0;})();
 
-  return {addr,active,hasAcct,equity,netDep,free,profit,profitAllTime,roi,realized,unreal,notional,positions,ordersRaw:d.orders,
-    fillsCapped,fundCapped,winFrom,winTo,winSpan,fundSpan,
+  return {addr,active,hasAcct,equity,netDep,free,profit,roi,realized,unreal,notional,positions,ordersRaw:d.orders,
     fills,fillCount:fills.length,episodes,medHold,longestOpen,holds,
     volLife,feesLife,feesFill,vol24,vol7,vol30,fundNet,orders,cancels,cancelRate:orders?cancels/orders:0,
     deposits,withdrawals,first,last,days,winRate,closes,wins,makerPct,liq,effLev,marginUse,
@@ -3899,23 +3847,15 @@ function story(w,arc){
   } else if(w.fillCount) add("neu","Completely flat right now — no open positions, everything closed out.","check");
 
   if(w.realized!==0&&w.closes>0){
-    const scope = w.fillsCapped&&w.winSpan ? ` in roughly the last ${dur(w.winSpan)}` : "";
-    add(w.realized>=0?"good":"bad", `Across ${num(w.closes)} closed trades${scope} this wallet banked ${money(w.realized)}${w.winRate!=null?`, winning ${Math.round(w.winRate*100)}% of them`:""}.`,"act");
-  }
-  /* The one that bit us: a trader whose recent closes are green but whose
-     account is down all time reads the two numbers as a contradiction. Say
-     out loud that they're different spans before they have to ask. */
-  if(w.hasAcct&&w.fillsCapped&&w.realized!==0&&w.profit!==0&&Math.sign(w.realized)!==Math.sign(w.profit)){
-    add("neu", `Those two figures disagree on purpose. The closes above are only the slice Arcus will hand over — 1,000 fills, about ${dur(w.winSpan)}. Measured all the way back, the account is ${w.profit>=0?"up":"down"} <b>${usdExact(Math.abs(w.profit))}</b> after fees and funding. Both are right; they're just different windows.`,"clock");
+    add(w.realized>=0?"good":"bad", `Across ${num(w.closes)} closed trades this wallet banked ${money(w.realized)}${w.winRate!=null?`, winning ${Math.round(w.winRate*100)}% of them`:""}.`,"act");
   }
   if(w.unreal!==0&&Math.abs(w.unreal)>Math.abs(w.realized)*1.5&&w.realized!==0){
-    add("neu", `Almost all of the gain is still on paper — ${money(w.unreal)} unrealised versus ${money(w.realized)} actually taken${w.fillsCapped?" in this window":""}. Nothing is real until it's closed.`,"clock");
+    add("neu", `Almost all of the gain is still on paper — ${money(w.unreal)} unrealised versus ${money(w.realized)} actually taken. Nothing is real until it's closed.`,"clock");
   }
   if(w.fundNet<-1){
     const drag=w.equity>0?Math.abs(w.fundNet)/w.equity*100:0;
-    const fspan = w.fundCapped&&w.fundSpan ? ` over the last ${dur(w.fundSpan)}` : "";
-    add(drag>4?"bad":"neu", `Holding costs money here: <b>${usdExact(Math.abs(w.fundNet))}</b> paid out in funding${fspan}${drag>1?`, about ${drag.toFixed(1)}% of the account`:""}. That's the hourly fee for staying on the crowded side of the trade.`,"clock");
-  } else if(w.fundNet>1) add("good", `Funding works in this wallet's favour — <b>${usdExact(w.fundNet)} collected</b>${w.fundCapped&&w.fundSpan?` over the last ${dur(w.fundSpan)}`:""} just for being on the less crowded side.`,"clock");
+    add(drag>4?"bad":"neu", `Holding costs money here: <b>${usdExact(Math.abs(w.fundNet))}</b> paid out in funding so far${drag>1?`, about ${drag.toFixed(1)}% of the account`:""}. That's the hourly fee for staying on the crowded side of the trade.`,"clock");
+  } else if(w.fundNet>1) add("good", `Funding works in this wallet's favour — <b>${usdExact(w.fundNet)} collected</b> just for being on the less crowded side.`,"clock");
 
   if(w.effLev>0){
     const risky=w.effLev>5;
@@ -4282,48 +4222,14 @@ function paintWallet(){
       <div class="tiles t4 rv">
         ${[
           ["Account value","wallet",w.equity,usd,w.hasAcct?`Deposited ${usd(w.netDep)}${w.withdrawals?` · withdrew ${usd(w.withdrawals)}`:""}`:"No balance found","equity"],
-          [w.profitAllTime?"Net P&L · all time":"P&L · in view","act",w.profit,v=>usd(v,{plus:true}),
-            w.profitAllTime
-              ? (w.netDep>0?`${pct(w.roi*100)} on money deposited · fees and funding included`
-                          :"Account value minus net deposits")
-              : `Realised plus unrealised, last ${num(w.fillCount)} fills only`,
-            w.profitAllTime?"profit":"window"],
+          ["Total profit","act",w.profit,v=>usd(v,{plus:true}),w.netDep>0?`${pct(w.roi*100)} on money deposited`:"Realised plus unrealised","profit"],
           ["Traded all time","scale",w.volLife,usd,`${usd(w.vol24)} in the last 24h`,"volLife"],
-          [w.fundCapped?"Funding · in view":"Funding paid","clock",w.fundNet,v=>usd(v,{plus:true}),
-            (w.fundNet<0?"Cost of staying in positions":"Collected for taking the unpopular side")
-            + (w.fundCapped&&w.fundSpan?` · last ${dur(w.fundSpan)}`:""),"funding"]
+          ["Funding paid","clock",w.fundNet,v=>usd(v,{plus:true}),w.fundNet<0?"Cost of staying in positions":"Collected for taking the unpopular side","funding"]
         ].map((t,i)=>`<div class="tile">
           <div class="k">${ic(t[1],"width:14px;height:14px;color:var(--brand)")}<span>${t[0]}</span><button class="info" data-tip="${t[5]}" aria-label="What this means">?</button></div>
           <div class="v ${i===1?(w.profit>=0?"gain":"loss"):i===3?(w.fundNet>=0?"gain":"loss"):""}" data-v="${t[2]}" data-f="${i===1||i===3?"plus":"n"}">—</div>
           <div class="sub">${t[4]}</div></div>`).join("")}
       </div>
-
-      ${w.hasAcct?`<div class="panel rv" id="pnlSplit"><div class="ph">
-        <h3 style="display:flex;align-items:center;gap:8px">Where the P&amp;L comes from
-          <button class="info" data-tip="window" aria-label="What this page can see">?</button></h3>
-        <span class="eyebrow">${w.fillsCapped?"Partial history":"Complete history"}</span></div>
-        <div class="pb">
-          <div class="wps">
-            <div class="wpsr lead">
-              <span class="k">All time<button class="info" data-tip="profit" aria-label="How this is worked out">?</button></span>
-              <span class="v ${w.profit>=0?"gain":"loss"}">${usd(w.profit,{plus:true})}</span>
-              <span class="s">${usd(w.equity)} in the account against ${usd(w.netDep)} put in. Straight from Arcus's own balance, so every fee and funding payment ever charged is already inside it.</span>
-            </div>
-            <div class="wpsr">
-              <span class="k">Realised, in view<button class="info" data-tip="realwin" aria-label="What this covers">?</button></span>
-              <span class="v ${w.realized>=0?"gain":"loss"}">${usd(w.realized,{plus:true})}</span>
-              <span class="s">${num(w.closes)} close${w.closes===1?"":"s"} across the ${num(w.fillCount)} fills Arcus returned${w.winSpan?` — about ${dur(w.winSpan)} of trading`:""}.</span>
-            </div>
-            <div class="wpsr">
-              <span class="k">Unrealised, right now<button class="info" data-tip="unrealnow" aria-label="What this covers">?</button></span>
-              <span class="v ${w.unreal>=0?"gain":"loss"}">${usd(w.unreal,{plus:true})}</span>
-              <span class="s">${w.positions.length} position${w.positions.length===1?"":"s"} still open, ${usd(w.notional)} of exposure marked at the current price.</span>
-            </div>
-          </div>
-          <p class="wpsnote">${w.fillsCapped
-            ? `<b>These three don't add up, and they aren't supposed to.</b> Arcus hands out a maximum of 1,000 fills per wallet — for this one that's roughly the last ${dur(w.winSpan)}. Everything traded before that is counted in the all-time figure but can't be listed here. So a wallet can be up on the window and down all time, or the other way round, and both numbers are correct.`
-            : `This wallet's whole trade history fits inside what Arcus returned, so these do reconcile: realised plus unrealised, less fees and funding, is the all-time figure.`}</p>
-        </div></div>`:""}
 
       ${w.curve.length>3?`<div class="panel rv"><div class="ph"><h3>Account value over time</h3>
         <div class="seg tiny" id="eqRange">${["totalDay","totalWeek","totalMonth","totalAll"]
@@ -4727,16 +4633,12 @@ function cardData(){
   return {
     charId:arc.id, charName:CH.name, charTag:CH.tag,
     tag: pnlMode?"Profit & loss":"Activity",
-    label: pnlMode?(w.profitAllTime?"Net P&L, all time":"P&L in view"):"Traded all time",
+    label: pnlMode?"Total profit":"Traded all time",
     big: pnlMode? usd(w.profit,{plus:true}) : usd(w.volLife),
     up: pnlMode? w.profit>=0 : true,
     roi: pnlMode? (w.netDep>0?pct(w.roi*100)+" on deposits":"") : num(w.fillCount)+" fills",
-    /* "Realised" used to sit here. It's a window figure and the headline is
-       all-time, so on a card with no room to explain that, the two read as a
-       contradiction. Deposited reconciles with the headline instead:
-       account - deposited = the big number. */
     mini: pnlMode
-      ? [["Account",usd(w.equity)],["Deposited",usd(w.netDep)],["Score",sc.total+"/100"]]
+      ? [["Account",usd(w.equity)],["Realised",usd(w.realized,{plus:true})],["Score",sc.total+"/100"]]
       : [["Markets",String(w.markets)],["Win rate",w.winRate!=null?Math.round(w.winRate*100)+"%":"—"],["Score",sc.total+"/100"]],
     arc:arc.n, addr:w.addr, sc
   };
@@ -4781,7 +4683,7 @@ function shareX(){
   const w=W, d=cardData(), arc=archetype(w);
   const who = cardBlur? "A wallet" : shortA(w.addr);
   const l1 = cardMode==="pnl"
-    ? `${who} on Arcus: ${usd(w.profit,{plus:true})} net P&L${w.netDep>0?` (${pct(w.roi*100)} on deposits)`:""}.`
+    ? `${who} on Arcus: ${usd(w.profit,{plus:true})} total profit${w.netDep>0?` (${pct(w.roi*100)})`:""}.`
     : `${who} on Arcus: ${usd(w.volLife)} traded across ${w.markets} market${w.markets===1?"":"s"}.`;
   const txt=`${l1}\n\nArchetype: ${arc.n} · Score ${d.sc.total}/100\n\nRead any Arcus wallet in plain English 👇`;
   const url=SITE_URL||REF_LINK;
