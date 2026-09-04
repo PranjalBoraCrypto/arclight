@@ -4778,7 +4778,8 @@ function cardData(){
           mini:[["Account",usd(w.equity)],["Deposited",usd(w.netDep)],SC] },
     real:{ label:`Realised · ${span}`,
           big: usd(w.realized,{plus:true}), up: w.realized>=0,
-          roi: w.winRate!=null? Math.round(w.winRate*100)+"% of "+num(w.closes)+" closes won" : num(w.closes)+" closes",
+          /* "64% of 11 closes won" reads as a riddle. Say it with the counts. */
+          roi: w.closes? `${num(w.wins)} of ${num(w.closes)} trades closed in profit` : "",
           mini:[["Account",usd(w.equity)],["Unrealised",usd(w.unreal,{plus:true})],SC] },
     unreal:{ label:"Unrealised · open now",
           big: usd(w.unreal,{plus:true}), up: w.unreal>=0,
